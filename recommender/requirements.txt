@@ -4,3 +4,4 @@ uvicorn
 starlette
 pymongo[srv]
 python-dotenv
+datamodel-code-generator

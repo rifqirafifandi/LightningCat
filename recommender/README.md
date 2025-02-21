@@ -8,3 +8,10 @@
 ## Development
 
 Setup your configuration in `.env_local` for local testing.
+
+## Codegen
+
+Run:
+```bash
+make codegen
+```
