@@ -1,0 +1,64 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Swagger Petstore
+  license:
+    name: MIT
+
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: unique user name
+          example: dangkhoa
+        area:
+          type: string
+          description: living area (town name)
+        prefer:
+          $ref: "#/components/schemas/Activity"
+        age:
+          $ref: "#/components/schemas/AgeRange"
+    Facility:
+      type: object      
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: facility name
+        area:
+          type: string
+          description: facility location
+        activity:
+          $ref: "#/components/schemas/Activity"
+        age:
+          $ref: "#/components/schemas/AgeRange"
+        gym_type:
+          type: string
+          enum:
+            - gym
+            - swimming_pool
+            - park
+        capacity:
+          type: number
+        lat:
+          type: number
+        lon:
+          type: number
+    Activity:
+      type: string
+      enum:
+        - indoor
+        - outdoor
+        - both
+    AgeRange:
+      type: string
+      enum:
+        - children
+        - adult
+        - senior
