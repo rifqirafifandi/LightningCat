@@ -1,0 +1,6 @@
+packaging
+fastapi[standard]
+uvicorn
+starlette
+pymongo[srv]
+python-dotenv
