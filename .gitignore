@@ -1,0 +1,3 @@
+node_modules/
+build/
+frontend-server-key.pem

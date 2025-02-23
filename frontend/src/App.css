@@ -1,0 +1,82 @@
+.chart-icon{
+  background-image: url('./icons/bar-chart-2.svg');
+  background-size: 70%; 
+  background-position: center; 
+  background-repeat: no-repeat; 
+  background-color: lightseagreen;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid black;
+  cursor: pointer;
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+}
+
+.records-map-pins {
+  background-image: url('./icons/map-pin.svg');
+  background-size: 70%; /* Smaller than 'cover' to show some background color */
+  background-position: center; /* Center the SVG in the circle */
+  background-repeat: no-repeat; /* Prevents the image from repeating */
+  background-color: lightblue; 
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid black;
+  cursor: pointer;
+  display: flex; /* Ensures content alignment */
+  align-items: center; /* Vertically center */
+  justify-content: center; /* Horizontally center */
+}
+
+
+.listing-map-pins {
+  background-image: url('./icons/map-pin.svg');
+  background-size: 70%; /* Smaller than 'cover' to show some background color */
+  background-position: center; /* Center the SVG in the circle */
+  background-repeat: no-repeat; /* Prevents the image from repeating */
+  background-color: lightcoral; 
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid black;
+  cursor: pointer;
+  display: flex; /* Ensures content alignment */
+  align-items: center; /* Vertically center */
+  justify-content: center; /* Horizontally center */
+}
+
+#search-dropdown {
+    overflow: visible;
+    z-index: 10000;
+    position: absolute;
+    width: 49%;
+    background-color: white;
+}
+
+.heading-container {
+  display: flex; /* Enables flexbox */
+  align-items: center; /* Centers children vertically in the container */
+  justify-content: flex-start; /* Aligns children to the start of the container horizontally */
+  gap: 10px
+}
+
+.chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.form-control:focus {
+  box-shadow: none;
+} 
+
+.separator {
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+    margin: 10px 10px 10px 10px;
+}
