@@ -10,6 +10,7 @@ dependencies = [
     "datamodel-code-generator>=0.28.1",
     "fastapi[standard]>=0.115.8",
     "packaging>=24.2",
+    "pip>=25.0.1",
     "pymongo[srv]>=4.11.1",
     "python-dotenv>=1.0.1",
     "starlette>=0.45.3",
