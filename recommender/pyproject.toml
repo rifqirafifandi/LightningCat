@@ -25,3 +25,10 @@ path = "src/recommender/__about__.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/recommender"]
+
+[dependency-groups]
+dev = [
+    "faker>=36.1.1",
+    "jupyterlab>=4.3.5",
+    "shapely>=2.0.7",
+]
