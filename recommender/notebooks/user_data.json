@@ -1,0 +1,121 @@
+[
+    {
+        "username": "f0a9d68f-71d3-4d75-abd9-6aea81b5066b",
+        "activities": [
+            "Basketball"
+        ],
+        "age_range": "Adult",
+        "location": [
+            1.31087340216251,
+            103.765697311082
+        ]
+    },
+    {
+        "username": "3d95e2bd-ffd3-49fb-a79f-dc50a99459e1",
+        "activities": [
+            "Netball",
+            "Rugby"
+        ],
+        "age_range": "Adult",
+        "location": [
+            1.33799861493825,
+            103.693284554819
+        ]
+    },
+    {
+        "username": "71b3e62c-b28c-4be0-8a66-fca669104368",
+        "activities": [
+            "Table_tennis",
+            "Netball",
+            "Volleyball"
+        ],
+        "age_range": "Children",
+        "location": [
+            1.31087340216251,
+            103.765697311082
+        ]
+    },
+    {
+        "username": "841d3952-9a15-465c-8c96-52090913be18",
+        "activities": [
+            "Table_tennis"
+        ],
+        "age_range": "Adult",
+        "location": [
+            1.31087340216251,
+            103.765697311082
+        ]
+    },
+    {
+        "username": "3ca2288c-e7bd-4580-ab56-c64569443bfc",
+        "activities": [
+            "Rugby"
+        ],
+        "age_range": "Senior",
+        "location": [
+            1.31087340216251,
+            103.765697311082
+        ]
+    },
+    {
+        "username": "fe9cbb96-8b43-4f3f-9c44-e90758219aa5",
+        "activities": [
+            "Football",
+            "Pickleball",
+            "Indoor",
+            "Gym"
+        ],
+        "age_range": "Senior",
+        "location": [
+            1.33799861493825,
+            103.693284554819
+        ]
+    },
+    {
+        "username": "52e8d7fe-a4d4-4aa9-84f2-85e91708ee15",
+        "activities": [
+            "Pickleball"
+        ],
+        "age_range": "Children",
+        "location": [
+            1.33799861493825,
+            103.693284554819
+        ]
+    },
+    {
+        "username": "6a2d38f0-fb79-4f44-a0c7-c8ae30f940e2",
+        "activities": [
+            "Basketball",
+            "Tennis"
+        ],
+        "age_range": "Children",
+        "location": [
+            1.30981721657829,
+            103.766484018075
+        ]
+    },
+    {
+        "username": "987d57d5-691b-4be0-8db0-37da45188408",
+        "activities": [
+            "Indoor"
+        ],
+        "age_range": "Senior",
+        "location": [
+            1.30981721657829,
+            103.766484018075
+        ]
+    },
+    {
+        "username": "5e005620-73ce-4bc9-989a-ff62dfba8b54",
+        "activities": [
+            "Football",
+            "Basketball",
+            "Netball"
+        ],
+        "age_range": "Adult",
+        "location": [
+            1.30962889460807,
+            103.762020397147
+        ]
+    }
+]
