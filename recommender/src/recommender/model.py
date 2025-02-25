@@ -11,33 +11,33 @@ from pydantic import BaseModel, Field
 
 
 class GymType(Enum):
-    gym = 'gym'
-    swimming_pool = 'swimming_pool'
-    park = 'park'
+    gym = "gym"
+    swimming_pool = "swimming_pool"
+    park = "park"
 
 
 class Activity(Enum):
-    indoor = 'indoor'
-    outdoor = 'outdoor'
-    both = 'both'
+    indoor = "indoor"
+    outdoor = "outdoor"
+    both = "both"
 
 
 class AgeRange(Enum):
-    children = 'children'
-    adult = 'adult'
-    senior = 'senior'
+    children = "children"
+    adult = "adult"
+    senior = "senior"
 
 
 class User(BaseModel):
-    name: str = Field(..., description='unique user name', example='dangkhoa')
-    area: Optional[str] = Field(None, description='living area (town name)')
+    name: str = Field(..., description="unique user name", example="dangkhoa")
+    area: Optional[str] = Field(None, description="living area (town name)")
     prefer: Optional[Activity] = None
     age: Optional[AgeRange] = None
 
 
 class Facility(BaseModel):
-    name: str = Field(..., description='facility name')
-    area: Optional[str] = Field(None, description='facility location')
+    name: str = Field(..., description="facility name")
+    area: Optional[str] = Field(None, description="facility location")
     activity: Optional[Activity] = None
     age: Optional[AgeRange] = None
     gym_type: Optional[GymType] = None
