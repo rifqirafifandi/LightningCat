@@ -423,6 +423,7 @@ source = { editable = "." }
 dependencies = [
     { name = "dotenv" },
     { name = "faiss-cpu" },
+    { name = "joblib" },
     { name = "loguru" },
     { name = "pandas" },
     { name = "pip" },
@@ -434,6 +435,7 @@ dependencies = [
 requires-dist = [
     { name = "dotenv", specifier = ">=0.9.9" },
     { name = "faiss-cpu", specifier = ">=1.10.0" },
+    { name = "joblib", specifier = ">=1.4.2" },
     { name = "loguru", specifier = ">=0.7.3" },
     { name = "pandas", specifier = ">=2.2.3" },
     { name = "pip", specifier = ">=25.0.1" },
