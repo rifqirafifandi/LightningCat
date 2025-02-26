@@ -24,3 +24,6 @@ path = "src/training_pipeline/__about__.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/training_pipeline"]
+
+[dependency-groups]
+dev = []
