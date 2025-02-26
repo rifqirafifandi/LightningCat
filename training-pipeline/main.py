@@ -1,4 +1,5 @@
 import numpy as np
+import joblib
 from numpy.typing import NDArray
 import pandas as pd
 from loguru import logger
@@ -24,12 +25,13 @@ def transform(df: pd.DataFrame) -> NDArray:
     1. 1-hot encoding for enum
     2. convert coordinates
     """
+    # age-range / activities / lat / lng
     df["lat"] = df["location"].apply(lambda x: x[0])
     df["lng"] = df["location"].apply(lambda x: x[1])
     df = df.drop(columns=["location"])
     transformer = DictVectorizer(sparse=False)
     features = transformer.fit_transform(df.transpose().to_dict().values())
-    return features
+    return features, transformer
 
 
 def index(features: NDArray):
@@ -40,12 +42,14 @@ def index(features: NDArray):
     return index
 
 
-def save(output_dir, indexer, ids):
+def save(output_dir, indexer, ids, transformer):
     index_path = output_dir / "index.bin"
     ids_path = output_dir / "ids.npy"
+    transformer_path = output_dir / "transformer.joblib"
 
     faiss.write_index(indexer, str(index_path))
     np.save(ids_path, ids)
+    joblib.dump(transformer, transformer_path)
 
 
 def main():
@@ -59,14 +63,14 @@ def main():
 
     # setup vector database
     logger.info("Feature engineering")
-    features = transform(df)
+    features, transformer = transform(df)
     logger.info("Vector indexing")
     indexer = index(features)
     assert indexer.is_trained
     logger.info(f"Total indexed points: {indexer.ntotal}")
     output_path = Path("output_index/")
     output_path.mkdir(parents=True, exist_ok=True)
-    save(output_path, indexer, ids)
+    save(output_path, indexer, ids, transformer)
     logger.info("Saved index")
 
 
