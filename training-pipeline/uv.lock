@@ -327,6 +327,9 @@ requires-dist = [
     { name = "pymongo", extras = ["srv"], specifier = ">=4.11.1" },
 ]
 
+[package.metadata.requires-dev]
+dev = []
+
 [[package]]
 name = "tzdata"
 version = "2025.1"
