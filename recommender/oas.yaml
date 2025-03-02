@@ -10,19 +10,18 @@ components:
     User:
       type: object
       required:
-        - name
+        - username
       properties:
-        name:
+        username:
           type: string
           description: unique user name
           example: dangkhoa
-        area:
-          type: string
-          description: living area (town name)
-        prefer:
+        activities:
           $ref: "#/components/schemas/Activity"
-        age:
+        age_range:
           $ref: "#/components/schemas/AgeRange"
+        location:
+          $ref: "#/components/schemas/Location"
     Facility:
       type: object      
       required:
@@ -31,34 +30,60 @@ components:
         name:
           type: string
           description: facility name
-        area:
+        address:
           type: string
-          description: facility location
-        activity:
+          description: facility address
+        activities:
           $ref: "#/components/schemas/Activity"
-        age:
-          $ref: "#/components/schemas/AgeRange"
-        gym_type:
-          type: string
-          enum:
-            - gym
-            - swimming_pool
-            - park
-        capacity:
-          type: number
-        lat:
-          type: number
-        lon:
-          type: number
+        age_range:
+          type: array
+          items:
+            $ref: "#/components/schemas/AgeRange"
+        location:
+          $ref: "#/components/schemas/Location"
+        coordinates:
+          type: array
+          items:
+            ref: "#/components/schemas/Location"
+
     Activity:
-      type: string
-      enum:
-        - indoor
-        - outdoor
-        - both
+      type: array
+      items:
+        type: string
+        enum:
+          - Swimming
+          - Football
+          - Tennis
+          - Gym
+          - Wading
+          - Indoor
+          - Badminton
+          - Table_tennis
+          - Netball
+          - Volleyball
+          - Basketball
+          - Athletics
+          - Football
+          - Soccer
+          - Rugby
+          - Tennis
+          - Squash
+          - Gym
+          - Hockey
+          - Petanque
+          - Gateball
+          - Lawn_bowl
+          - Pickleball
     AgeRange:
       type: string
       enum:
-        - children
-        - adult
-        - senior
+        - Children
+        - Adult
+        - Senior
+    Location:
+      type: array 
+      description: Location of entity (Lat, Lng)
+      items:
+        type: number
+      maxItems: 2
+      minItems: 2

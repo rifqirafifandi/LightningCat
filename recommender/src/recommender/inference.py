@@ -30,6 +30,7 @@ def transform(transformer, user: Dict) -> NDArray:
     user_df = user_df.drop(columns=["location"])
     # TODO: optimize this
     features = transformer.transform(user_df.transpose().to_dict().values())
+    breakpoint()
     return features
 
 
@@ -46,7 +47,9 @@ class Searcher:
             raise RuntimeError(f"Could not find: {username}")
         return user
 
-    def search_facilities_from_user(self, username: str, top_k: int = TOP_K) -> List[Dict]:
+    def search_facilities_from_user(
+        self, username: str, top_k: int = TOP_K
+    ) -> List[Dict]:
         """
         Given a user, return a list of facilities
         """
