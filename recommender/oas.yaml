@@ -4,6 +4,7 @@ info:
   title: Swagger Petstore
   license:
     name: MIT
+    
 
 components:
   schemas:
@@ -44,7 +45,7 @@ components:
         coordinates:
           type: array
           items:
-            ref: "#/components/schemas/Location"
+            $ref: "#/components/schemas/Location"
 
     Activity:
       type: array
@@ -53,7 +54,6 @@ components:
         enum:
           - Swimming
           - Football
-          - Tennis
           - Gym
           - Wading
           - Indoor
@@ -63,12 +63,10 @@ components:
           - Volleyball
           - Basketball
           - Athletics
-          - Football
           - Soccer
           - Rugby
           - Tennis
           - Squash
-          - Gym
           - Hockey
           - Petanque
           - Gateball
