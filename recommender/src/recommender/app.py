@@ -1,9 +1,11 @@
-from typing import List
-from fastapi import FastAPI
-from recommender.inference import Searcher
 from pathlib import Path
-from .model import User, Facility
+from typing import List
 
+from fastapi import FastAPI
+
+from recommender.inference import Searcher
+
+from .model import Facility, User
 
 MODEL_PATH = Path("output_index")
 
@@ -22,10 +24,15 @@ def get_users() -> List[User]:
     return users
 
 
-@app.get("/facilities")
-def get_facilities() -> List[Facility]:
+@app.get("/facilities/")
+def get_facilities() -> list[Facility]:
     facilities = []
     for facility in db.facility.find():
         del facility["_id"]
         facilities.append(facility)
     return facilities
+
+
+@app.get("/rec")
+def get_recs(user: User) -> List[Facility]:
+    return search_app.search_facilities_from_user(user, 5)

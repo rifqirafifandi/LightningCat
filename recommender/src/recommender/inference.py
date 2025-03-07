@@ -2,16 +2,24 @@
 Conduct the search on database
 """
 
-from numpy.typing import NDArray
-import pandas as pd
+import json
+from pathlib import Path
+from typing import Dict
+
+import faiss
 import joblib
 import numpy as np
-import faiss
-from pathlib import Path
-from typing import Dict, List
+import pandas as pd
+from numpy.typing import NDArray
+
 from .database import DB
+from .model import Activity, ActivityEnum, Facility, User
 
 TOP_K = 20
+
+
+def default_activities():
+    return Activity([e.value for e in ActivityEnum])
 
 
 def transform(transformer, user: Dict) -> NDArray:
@@ -24,13 +32,12 @@ def transform(transformer, user: Dict) -> NDArray:
 
     """
     user_df = pd.DataFrame([user])
-    user_df = user_df.drop(columns=["_id", "username"])
+    user_df = user_df.drop(columns=["_id", "username"], errors="ignore")
     user_df["lat"] = user_df["location"].apply(lambda x: x[0])
     user_df["lng"] = user_df["location"].apply(lambda x: x[1])
     user_df = user_df.drop(columns=["location"])
     # TODO: optimize this
     features = transformer.transform(user_df.transpose().to_dict().values())
-    breakpoint()
     return features
 
 
@@ -41,29 +48,62 @@ class Searcher:
         self.id_manager = id_manager
         self.transformer = transformer
 
-    def search_user(self, username: str):
+    def search_user(self, username: str) -> User:
         user = self.db.user.find_one({"username": username})
         if user is None:
             raise RuntimeError(f"Could not find: {username}")
-        return user
+        res = User(
+            username=user["username"],
+            activities=user["activities"],
+            age_range=user["age_range"],
+            location=user["location"],
+        )
+        return res
 
     def search_facilities_from_user(
-        self, username: str, top_k: int = TOP_K
-    ) -> List[Dict]:
-        """
-        Given a user, return a list of facilities
-        """
-        user = self.search_user(username)
-        user_vector = transform(self.transformer, user)
-        _, indexes = self.indexer.search(user_vector, top_k)
+        self, user: User, top_k: int = TOP_K
+    ) -> list[Facility]:
+        # if username exists, then get the original data
+        if user.username is not None:
+            old_user = self.search_user(user.username)
+            user.activities = user.activities or old_user.activities
+            user.location = user.location or old_user.location
+
+        user.activities = user.activities or default_activities()
+        user_dict = json.loads(user.json())
+        return self._search_facilities_from_dict(user_dict, top_k)
+
+    def _search_facilities_from_dict(
+        self, user_dict: dict, top_k: int = TOP_K
+    ) -> list[Facility]:
+        user_vector = transform(self.transformer, user_dict)
+        dis, indexes = self.indexer.search(user_vector, top_k)
 
         results = [
-            res
+            Facility(
+                name=res["name"],
+                address=res["address"],
+                contact=res["contact"],
+                age_range=res["age_range"],
+                activities=res["activities"],
+                coordinates=res["coordinates"],
+                location=res["location"],
+            )
             for res in self.db.facility.find(
                 {"_id": {"$in": self.id_manager[indexes][0].tolist()}}
             )
         ]
         return results
+
+    def search_facilities_from_username(
+        self, username: str, top_k: int = TOP_K
+    ) -> list[Facility]:
+        """
+        Given a user, return a list of facilities
+        """
+        user = self.search_user(username)
+        user_dict = json.loads(user.json())
+        return self._search_facilities_from_dict(user_dict, top_k)
 
     @classmethod
     def from_local_path(clz, index_folder: Path):

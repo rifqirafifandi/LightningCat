@@ -5,13 +5,23 @@ info:
   license:
     name: MIT
     
+paths:
+  /rec:
+    get:
+      operationId: getRecommendation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+
+
 
 components:
   schemas:
     User:
       type: object
-      required:
-        - username
       properties:
         username:
           type: string
