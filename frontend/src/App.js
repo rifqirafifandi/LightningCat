@@ -21,9 +21,9 @@ const App = () => {
   const listingMarkersRef = useRef([]);
   const [map, setMap] = useState(null);
   const [areaState, setAreaState] = useState({
-    town: [], 
-    flatType:[], 
-    yearRangeGte: 2000, 
+    town: [],
+    flatType: [],
+    yearRangeGte: 2000,
     minPsf: undefined,
     maxPsf: undefined,
     minSqf: undefined,
@@ -41,16 +41,12 @@ const App = () => {
     error: recordsError,
     loading: recordsLoading,
     data: recordsData 
-  }] = useLazyQuery(Queries.GET_RECORDS,
-    { variables:  areaState
-  });
+  }] = useLazyQuery(Queries.GET_RECORDS, { variables: areaState });
   const [getListingsData, { 
     error: listingsError, 
     loading: listingsLoading, 
     data: listingsData 
-  }] = useLazyQuery(Queries.GET_LISTINGS,
-    { variables:  areaState
-  });
+  }] = useLazyQuery(Queries.GET_LISTINGS, { variables: areaState });
   const [getDistinctTowns, { 
     error: townsError, 
     loading: townsLoading, 
@@ -65,8 +61,7 @@ const App = () => {
     error: avgPriceError, 
     loading: avgPriceLoading, 
     data: avgPriceData 
-  }] = useLazyQuery(Queries.GET_RECORDS_AVG_PRICE,
-    {variables: areaState});
+  }] = useLazyQuery(Queries.GET_RECORDS_AVG_PRICE, { variables: areaState });
 
   // main hook for handling changes in map view
   // on change in map view, query mongoDB for updated datapoints
@@ -88,73 +83,71 @@ const App = () => {
       getDistinctTowns();
       getDistinctFlatTypes();
 
-// New functionality: Load and display polygons from GeoJSON
-fetch('/SportSGSportFacilitiesGEOJSON.geojson')
-  .then(response => response.json())
-  .then(data => {
-    // Remove the "crs" property if it exists as Mapbox GL does not support it.
-    if (data.crs) {
-      delete data.crs;
-    }
+      // Load and display polygons from the preprocessed GeoJSON file
+      fetch('/SportSGSportFacilitiesGEOJSON.geojson')
+        .then(response => response.json())
+        .then(data => {
+          // Add the GeoJSON source for sport facilities
+          mapInstance.addSource('sportFacilities', {
+            type: 'geojson',
+            data: data
+          });
 
-    // Add the GeoJSON source for sport facilities
-    mapInstance.addSource('sportFacilities', {
-      type: 'geojson',
-      data: data
-    });
+          // Add the fill layer with purple color and semi-transparent fill
+          mapInstance.addLayer({
+            id: 'sportFacilitiesFill',
+            type: 'fill',
+            source: 'sportFacilities',
+            layout: {},
+            paint: {
+              'fill-color': '#800080', // purple
+              'fill-opacity': 0.5
+            }
+          });
 
-    // Add the fill layer with purple color
-    mapInstance.addLayer({
-      id: 'sportFacilitiesFill',
-      type: 'fill',
-      source: 'sportFacilities',
-      layout: {},
-      paint: {
-        'fill-color': '#800080', // purple
-        'fill-opacity': 0.5
-      }
-    });
+          // Add a black border around the polygons
+          mapInstance.addLayer({
+            id: 'sportFacilitiesBorder',
+            type: 'line',
+            source: 'sportFacilities',
+            layout: {},
+            paint: {
+              'line-color': '#000000', // black
+              'line-width': 2
+            }
+          });
 
-    // Add a black border around the polygons
-    mapInstance.addLayer({
-      id: 'sportFacilitiesBorder',
-      type: 'line',
-      source: 'sportFacilities',
-      layout: {},
-      paint: {
-        'line-color': '#000000', // black
-        'line-width': 2
-      }
-    });
+          // Change the cursor when hovering over the polygons
+          mapInstance.on('mouseenter', 'sportFacilitiesFill', () => {
+            mapInstance.getCanvas().style.cursor = 'pointer';
+          });
+          mapInstance.on('mouseleave', 'sportFacilitiesFill', () => {
+            mapInstance.getCanvas().style.cursor = '';
+          });
 
-    // Change the cursor to a pointer when the mouse is over the fill layer.
-    mapInstance.on('mouseenter', 'sportFacilitiesFill', () => {
-      mapInstance.getCanvas().style.cursor = 'pointer';
+          // On click, show a popup with the facility name and all available properties
+          mapInstance.on('click', 'sportFacilitiesFill', (e) => {
+            const feature = e.features && e.features[0];
+            if (feature) {
+              // Example: Render all properties in a table format
+              let popupContent = '<table>';
+              Object.entries(feature.properties).forEach(([key, value]) => {
+                if (key === 'Description' || value === null || value === '') return;
+                popupContent += `<tr><th>${key}</th><td>${value}</td></tr>`;
+              });
+              popupContent += '</table>';
+              
+              new mapboxgl.Popup({ maxWidth: "600px" })
+                .setLngLat(e.lngLat)
+                .setHTML(popupContent)
+                .addTo(mapInstance);
+            }
+          });
+        })
+        .catch(err => {
+          console.error('Error loading sport facilities GeoJSON:', err);
+        });
     });
-    mapInstance.on('mouseleave', 'sportFacilitiesFill', () => {
-      mapInstance.getCanvas().style.cursor = '';
-    });
-
-    // On click, show a popup with the facility name.
-    // If you want to extract the facility name from the HTML table in the "Description" property,
-    // you will need to parse that HTML. For this example, we use a fallback property.
-    mapInstance.on('click', 'sportFacilitiesFill', (e) => {
-      const feature = e.features && e.features[0];
-      if (feature) {
-        // Attempt to extract a facility name.
-        // For example, if you update your data source to include a "SPORTS_CEN" property,
-        // you can simply use: feature.properties.SPORTS_CEN
-        const facilityName = feature.properties.SPORTS_CEN || 'No Name Provided';
-        new mapboxgl.Popup()
-          .setLngLat(e.lngLat)
-          .setHTML(`<strong>${facilityName}</strong>`)
-          .addTo(mapInstance);
-      }
-    });
-  })
-  .catch(err => {
-    console.error('Error loading sport facilities GeoJSON:', err);
-  });    });
 
     mapInstance.on('moveend', () => {
       updateBounds(mapInstance.getBounds().toArray());
@@ -168,10 +161,10 @@ fetch('/SportSGSportFacilitiesGEOJSON.geojson')
     return () => {
       mapInstance.remove();
       recordsMarkersRef.current.forEach(marker => marker.remove());
-      listingMarkersRef.current.forEach(marker => marker.remove()); // Cleanup markers
+      listingMarkersRef.current.forEach(marker => marker.remove());
     };
   }, [getRecordsData, getListingsData, getRecordsAvgPrice]);
-  
+
   // update markers when recordsGeojson or listingGeojson changes
   useEffect(() => {
     if (map) {
@@ -182,60 +175,49 @@ fetch('/SportSGSportFacilitiesGEOJSON.geojson')
 
   // Function to update records markers on the map
   const updateRecordsGeojsonMarkers = (map, geojson) => {
-    recordsMarkersRef.current.forEach(marker => marker.remove()); 
-    recordsMarkersRef.current = []; 
-  
+    recordsMarkersRef.current.forEach(marker => marker.remove());
+    recordsMarkersRef.current = [];
+
     geojson.features.forEach(feature => {
       const el = document.createElement('div');
       el.className = 'records-map-pins';
       
-      // Create HTML string for popup content
       const popupHTML = `
-      <strong>${feature.properties.title}</strong>
-      <p>${feature.properties.description}</p>
+        <strong>${feature.properties.title}</strong>
+        <p>${feature.properties.description}</p>
       `;
-      // Create markers for datapoints 
       const marker = new mapboxgl.Marker(el)
         .setLngLat(feature.geometry.coordinates)
-        .setPopup(
-          new mapboxgl.Popup({ offset: 20 }) 
-            .setHTML(popupHTML)
-        )
+        .setPopup(new mapboxgl.Popup({ offset: 20 }).setHTML(popupHTML))
         .addTo(map);
-  
+
       recordsMarkersRef.current.push(marker);
     });
   };
-  
+
   // Function to update listing markers on the map
   const updateListingGeojsonMarkers = (map, geojson) => {
     listingMarkersRef.current.forEach(marker => marker.remove());
     listingMarkersRef.current = [];
-    
+
     geojson.features.forEach(feature => {
       const el = document.createElement('div');
       el.className = 'listing-map-pins';
       
-      // Correctly formatted HTML with dynamic URL in the href attribute
       const popupHTML = `
         <strong>${feature.properties.title}</strong>
         <p>${feature.properties.description}</p>
         <a href="${feature.properties.linkUrl}" target="_blank" rel="noopener noreferrer">Listing</a>
       `;
-  
-      // Create markers for datapoints 
       const marker = new mapboxgl.Marker(el)
         .setLngLat(feature.geometry.coordinates)
-        .setPopup(
-          new mapboxgl.Popup({ offset: 20 })
-            .setHTML(popupHTML)
-        )        
+        .setPopup(new mapboxgl.Popup({ offset: 20 }).setHTML(popupHTML))
         .addTo(map);
-      
+
       listingMarkersRef.current.push(marker);
     });
   };
-  
+
   // update areaState on map movement
   const updateBounds = (bounds) => {
     const [lonMin, latMin, lonMax, latMax] = [bounds[0][0], bounds[0][1], bounds[1][0], bounds[1][1]];
@@ -247,33 +229,33 @@ fetch('/SportSGSportFacilitiesGEOJSON.geojson')
       lonRangeLte: lonMax
     }));
   };
-  
+
   // Function to fly to location on map based on coordinates (search function)
   const onFlyTo = ({ lng, lat }) => {
     if (map) {
       map.flyTo({
         center: [lng, lat],
-        essential: true, // This is used to indicate that the movement is user-driven
+        essential: true,
         zoom: 15,
       });
     }
   };
-  
+
   return (
     <div>
       <Navbar />
       <div className="container-fluid">
         <div className="row">
           <div className="col-md-6">
-            <div className="row mt-1 mb-1"> 
+            <div className="row mt-1 mb-1">
               <div className="col-md-6">
                 {map && <SearchInputBox onFlyTo={onFlyTo} />}
               </div>
               <div className="col-md-6">
-                <FilterPanel areaState={areaState} setAreaState={setAreaState} towns={townsData} flatTypes={flatTypesData}/>
+                <FilterPanel areaState={areaState} setAreaState={setAreaState} towns={townsData} flatTypes={flatTypesData} />
               </div>
             </div>
-            <div className="map-container" ref={mapContainerRef} style={{ width: '100%', height: 'calc(100vh - 110px)' }}></div> 
+            <div className="map-container" ref={mapContainerRef} style={{ width: '100%', height: 'calc(100vh - 110px)' }}></div>
           </div>
           <div className="col-md-6">
             <SidePanel 
