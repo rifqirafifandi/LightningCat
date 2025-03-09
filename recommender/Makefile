@@ -14,4 +14,7 @@ docker-build:
 	docker build --tag recommender .
 
 docker-serve:
-	docker run -p 8000:8000 recommender
+	docker run            \
+	  --volume .:/app     \
+    --volume /app/.venv \
+    --publish 8000:8000 recommender
