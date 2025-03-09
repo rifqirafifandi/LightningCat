@@ -1,7 +1,6 @@
 import React  from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../App.css';
-import IndexChart from './IndexChart';
 import LoadingSpinner from './LoadingSpinner';
 import Separator from './Separator';
 import RecordsTable from './RecordsTable';
@@ -44,18 +43,6 @@ const SidePanel = (props) => (
     boxSizing: 'border-box',
     zIndex: 1050,
   }}>
-    <div className="heading-container" >
-      <div className="chart-icon"></div>
-      <h5>Historical Price in Area vs Index</h5>
-    </div>
-    <div className="chart-container">
-      {props.avgPriceLoading ? (
-        <LoadingSpinner/>
-      ) : (
-        <IndexChart avgPriceData={props.avgPriceData} />
-      )}
-    </div>
-    <Separator />
     <div className="heading-container">
       <div className="records-map-pins"></div>
       <h5>Historical Transactions</h5>
