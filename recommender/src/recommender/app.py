@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import List
 
 from fastapi import FastAPI
 
@@ -16,7 +15,7 @@ db = search_app.db
 
 
 @app.get("/users/")
-def get_users() -> List[User]:
+def get_users() -> list[User]:
     users = []
     for user in db.user.find():
         del user["_id"]
@@ -34,5 +33,6 @@ def get_facilities() -> list[Facility]:
 
 
 @app.get("/rec")
-def get_recs(user: User) -> List[Facility]:
-    return search_app.search_facilities_from_user(user, 5)
+def get_recs(user: User) -> list[Facility]:
+    res = search_app.search_facilities_from_user(user, 5)
+    return res

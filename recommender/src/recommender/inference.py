@@ -13,13 +13,13 @@ import pandas as pd
 from numpy.typing import NDArray
 
 from .database import DB
-from .model import Activity, ActivityEnum, Facility, User, AgeRange, Location
+from .model import ActivityEnum, AgeRange, Facility, User
 
 TOP_K = 20
 
 
 def default_activities():
-    return Activity([e.value for e in ActivityEnum])
+    return [e.value for e in ActivityEnum]
 
 
 def str_to_activities(activity_strings):
@@ -32,7 +32,7 @@ def str_to_activities(activity_strings):
         else:
             raise RuntimeError(f"Invalid string: {act}")
 
-    return Activity(res)
+    return res
 
 
 def str_to_age_range(age_range_str):
@@ -104,10 +104,10 @@ class Searcher:
                 name=res["name"],
                 address=res["address"],
                 contact=res["contact"],
-                age_range=[str_to_age_range(a) for a in res["age_range"]],
-                activities=str_to_activities(res["activities"]),
-                coordinates=[Location([c[0], c[1]]) for c in res["coordinates"]],
-                location=Location([res["location"][0], res["location"][1]]),
+                age_range=res["age_range"],
+                activities=res["activities"],
+                coordinates=res["coordinates"],
+                location=res["location"],
             )
             for res in self.db.facility.find(
                 {"_id": {"$in": self.id_manager[indexes][0].tolist()}}
