@@ -18,7 +18,7 @@ const App = () => {
   // initialise state and refs
   const mapContainerRef = useRef(null);
   const recordsMarkersRef = useRef([]);
-  const listingMarkersRef = useRef([])
+  const listingMarkersRef = useRef([]);
   const [map, setMap] = useState(null);
   const [areaState, setAreaState] = useState({
     town: [], 
@@ -28,7 +28,7 @@ const App = () => {
     maxPsf: undefined,
     minSqf: undefined,
     maxSqf: undefined,
-  })
+  });
   const [recordsGeojson, setRecordsGeojson] = useState({
     type: 'FeatureCollection',
     features: []
@@ -43,30 +43,30 @@ const App = () => {
     data: recordsData 
   }] = useLazyQuery(Queries.GET_RECORDS,
     { variables:  areaState
-  })
+  });
   const [getListingsData, { 
     error: listingsError, 
     loading: listingsLoading, 
     data: listingsData 
   }] = useLazyQuery(Queries.GET_LISTINGS,
     { variables:  areaState
-  })
+  });
   const [getDistinctTowns, { 
     error: townsError, 
     loading: townsLoading, 
     data: townsData 
-  }] = useLazyQuery(Queries.GET_DISTINCT_TOWNS)
+  }] = useLazyQuery(Queries.GET_DISTINCT_TOWNS);
   const [getDistinctFlatTypes, { 
     error: flatTypesError, 
     loading: flatTypesLoading, 
     data: flatTypesData 
-  }] = useLazyQuery(Queries.GET_DISTINCT_FLAT_TYPES)
+  }] = useLazyQuery(Queries.GET_DISTINCT_FLAT_TYPES);
   const [getRecordsAvgPrice, { 
     error: avgPriceError, 
     loading: avgPriceLoading, 
     data: avgPriceData 
   }] = useLazyQuery(Queries.GET_RECORDS_AVG_PRICE,
-    {variables: areaState})
+    {variables: areaState});
 
   // main hook for handling changes in map view
   // on change in map view, query mongoDB for updated datapoints
@@ -87,7 +87,74 @@ const App = () => {
       getListingsData();
       getDistinctTowns();
       getDistinctFlatTypes();
+
+// New functionality: Load and display polygons from GeoJSON
+fetch('/SportSGSportFacilitiesGEOJSON.geojson')
+  .then(response => response.json())
+  .then(data => {
+    // Remove the "crs" property if it exists as Mapbox GL does not support it.
+    if (data.crs) {
+      delete data.crs;
+    }
+
+    // Add the GeoJSON source for sport facilities
+    mapInstance.addSource('sportFacilities', {
+      type: 'geojson',
+      data: data
     });
+
+    // Add the fill layer with purple color
+    mapInstance.addLayer({
+      id: 'sportFacilitiesFill',
+      type: 'fill',
+      source: 'sportFacilities',
+      layout: {},
+      paint: {
+        'fill-color': '#800080', // purple
+        'fill-opacity': 0.5
+      }
+    });
+
+    // Add a black border around the polygons
+    mapInstance.addLayer({
+      id: 'sportFacilitiesBorder',
+      type: 'line',
+      source: 'sportFacilities',
+      layout: {},
+      paint: {
+        'line-color': '#000000', // black
+        'line-width': 2
+      }
+    });
+
+    // Change the cursor to a pointer when the mouse is over the fill layer.
+    mapInstance.on('mouseenter', 'sportFacilitiesFill', () => {
+      mapInstance.getCanvas().style.cursor = 'pointer';
+    });
+    mapInstance.on('mouseleave', 'sportFacilitiesFill', () => {
+      mapInstance.getCanvas().style.cursor = '';
+    });
+
+    // On click, show a popup with the facility name.
+    // If you want to extract the facility name from the HTML table in the "Description" property,
+    // you will need to parse that HTML. For this example, we use a fallback property.
+    mapInstance.on('click', 'sportFacilitiesFill', (e) => {
+      const feature = e.features && e.features[0];
+      if (feature) {
+        // Attempt to extract a facility name.
+        // For example, if you update your data source to include a "SPORTS_CEN" property,
+        // you can simply use: feature.properties.SPORTS_CEN
+        const facilityName = feature.properties.SPORTS_CEN || 'No Name Provided';
+        new mapboxgl.Popup()
+          .setLngLat(e.lngLat)
+          .setHTML(`<strong>${facilityName}</strong>`)
+          .addTo(mapInstance);
+      }
+    });
+  })
+  .catch(err => {
+    console.error('Error loading sport facilities GeoJSON:', err);
+  });    });
 
     mapInstance.on('moveend', () => {
       updateBounds(mapInstance.getBounds().toArray());
@@ -111,7 +178,7 @@ const App = () => {
       updateRecordsGeojsonMarkers(map, recordsGeojson);
       updateListingGeojsonMarkers(map, listingGeojson);
     }
-  }, [recordsGeojson, listingGeojson, map]); // Update markers when geojson or map changes
+  }, [recordsGeojson, listingGeojson, map]);
 
   // Function to update records markers on the map
   const updateRecordsGeojsonMarkers = (map, geojson) => {
@@ -125,7 +192,6 @@ const App = () => {
       // Create HTML string for popup content
       const popupHTML = `
       <strong>${feature.properties.title}</strong>
-
       <p>${feature.properties.description}</p>
       `;
       // Create markers for datapoints 
@@ -182,7 +248,7 @@ const App = () => {
     }));
   };
   
-  // Fucntion to fly to location on map based on coordinates (search function)
+  // Function to fly to location on map based on coordinates (search function)
   const onFlyTo = ({ lng, lat }) => {
     if (map) {
       map.flyTo({
@@ -192,6 +258,7 @@ const App = () => {
       });
     }
   };
+  
   return (
     <div>
       <Navbar />
@@ -224,6 +291,6 @@ const App = () => {
       </div>
     </div>
   );
-  };
+};
 
 export default App;
