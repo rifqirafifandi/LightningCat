@@ -45,7 +45,7 @@ const SidePanel = (props) => (
   }}>
     <div className="heading-container">
       <div className="records-map-pins"></div>
-      <h5>Historical Transactions</h5>
+      <h5>Facility Details</h5>
     </div>
     <div style={{ flex: '1' }}>
       {props.recordsLoading ? (

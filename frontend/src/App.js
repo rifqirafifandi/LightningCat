@@ -37,6 +37,8 @@ const App = () => {
     type: 'FeatureCollection',
     features: []
   });
+  // New state to hold the custom record data from a polygon click
+  const [customRecordsData, setCustomRecordsData] = useState(null);
   const [getRecordsData, { 
     error: recordsError,
     loading: recordsLoading,
@@ -63,8 +65,6 @@ const App = () => {
     data: avgPriceData 
   }] = useLazyQuery(Queries.GET_RECORDS_AVG_PRICE, { variables: areaState });
 
-  // main hook for handling changes in map view
-  // on change in map view, query mongoDB for updated datapoints
   useEffect(() => {
     const mapInstance = new mapboxgl.Map({
       container: mapContainerRef.current,
@@ -87,37 +87,33 @@ const App = () => {
       fetch('/SportSGSportFacilitiesGEOJSON.geojson')
         .then(response => response.json())
         .then(data => {
-          // Add the GeoJSON source for sport facilities
           mapInstance.addSource('sportFacilities', {
             type: 'geojson',
             data: data
           });
 
-          // Add the fill layer with purple color and semi-transparent fill
           mapInstance.addLayer({
             id: 'sportFacilitiesFill',
             type: 'fill',
             source: 'sportFacilities',
             layout: {},
             paint: {
-              'fill-color': '#800080', // purple
+              'fill-color': '#800080',
               'fill-opacity': 0.5
             }
           });
 
-          // Add a black border around the polygons
           mapInstance.addLayer({
             id: 'sportFacilitiesBorder',
             type: 'line',
             source: 'sportFacilities',
             layout: {},
             paint: {
-              'line-color': '#000000', // black
+              'line-color': '#000000',
               'line-width': 2
             }
           });
 
-          // Change the cursor when hovering over the polygons
           mapInstance.on('mouseenter', 'sportFacilitiesFill', () => {
             mapInstance.getCanvas().style.cursor = 'pointer';
           });
@@ -125,24 +121,28 @@ const App = () => {
             mapInstance.getCanvas().style.cursor = '';
           });
 
-          // On click, show a popup with the facility name and all available properties
-          mapInstance.on('click', 'sportFacilitiesFill', (e) => {
-            const feature = e.features && e.features[0];
-            if (feature) {
-              // Example: Render all properties in a table format
-              let popupContent = '<table>';
-              Object.entries(feature.properties).forEach(([key, value]) => {
-                if (key === 'Description' || value === null || value === '') return;
-                popupContent += `<tr><th>${key}</th><td>${value}</td></tr>`;
-              });
-              popupContent += '</table>';
-              
-              new mapboxgl.Popup({ maxWidth: "600px" })
-                .setLngLat(e.lngLat)
-                .setHTML(popupContent)
-                .addTo(mapInstance);
-            }
-          });
+ // Inside your mapInstance.on('click', 'sportFacilitiesFill', ...) handler:
+mapInstance.on('click', 'sportFacilitiesFill', (e) => {
+  const feature = e.features && e.features[0];
+  if (feature) {
+    let popupContent = '<table>';
+    let recordObj = {};
+    Object.entries(feature.properties).forEach(([key, value]) => {
+      if (key === 'Description' || value === null || value === '') return;
+      popupContent += `<tr><th>${key}</th><td>${value}</td></tr>`;
+      recordObj[key] = value;
+    });
+    popupContent += '</table>';
+    
+    new mapboxgl.Popup({ maxWidth: "600px" })
+      .setLngLat(e.lngLat)
+      .setHTML(popupContent)
+      .addTo(mapInstance);
+
+    // Set custom records data with a flag to indicate custom popup data
+    setCustomRecordsData({ isCustom: true, getRecords: [recordObj] });
+  }
+});
         })
         .catch(err => {
           console.error('Error loading sport facilities GeoJSON:', err);
@@ -165,7 +165,6 @@ const App = () => {
     };
   }, [getRecordsData, getListingsData, getRecordsAvgPrice]);
 
-  // update markers when recordsGeojson or listingGeojson changes
   useEffect(() => {
     if (map) {
       updateRecordsGeojsonMarkers(map, recordsGeojson);
@@ -173,7 +172,6 @@ const App = () => {
     }
   }, [recordsGeojson, listingGeojson, map]);
 
-  // Function to update records markers on the map
   const updateRecordsGeojsonMarkers = (map, geojson) => {
     recordsMarkersRef.current.forEach(marker => marker.remove());
     recordsMarkersRef.current = [];
@@ -195,7 +193,6 @@ const App = () => {
     });
   };
 
-  // Function to update listing markers on the map
   const updateListingGeojsonMarkers = (map, geojson) => {
     listingMarkersRef.current.forEach(marker => marker.remove());
     listingMarkersRef.current = [];
@@ -218,7 +215,6 @@ const App = () => {
     });
   };
 
-  // update areaState on map movement
   const updateBounds = (bounds) => {
     const [lonMin, latMin, lonMax, latMax] = [bounds[0][0], bounds[0][1], bounds[1][0], bounds[1][1]];
     setAreaState(prevState => ({
@@ -230,7 +226,6 @@ const App = () => {
     }));
   };
 
-  // Function to fly to location on map based on coordinates (search function)
   const onFlyTo = ({ lng, lat }) => {
     if (map) {
       map.flyTo({
@@ -262,7 +257,7 @@ const App = () => {
               recordsLoading={recordsLoading}
               listingsLoading={listingsLoading}
               avgPriceLoading={avgPriceLoading}
-              recordsData={recordsData}
+              recordsData={customRecordsData ? customRecordsData : recordsData}
               listingsData={listingsData}
               avgPriceData={avgPriceData}
             />
