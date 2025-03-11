@@ -7,8 +7,7 @@ import Navbar from './components/Navbar';
 import FilterPanel from './components/FilterPanel';
 import SidePanel from './components/SidePanel';
 import SearchInputBox from './components/SearchInputBox';
-import RecordsPins from './components/RecordsPins';
-import ListingPins from './components/ListingPins';
+
 import Queries from './queries/Queries';
 import { useLazyQuery } from '@apollo/client';
 
@@ -17,8 +16,6 @@ mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 const App = () => {
   // initialise state and refs
   const mapContainerRef = useRef(null);
-  const recordsMarkersRef = useRef([]);
-  const listingMarkersRef = useRef([]);
   const [map, setMap] = useState(null);
   const [areaState, setAreaState] = useState({
     town: [],
@@ -29,14 +26,7 @@ const App = () => {
     minSqf: undefined,
     maxSqf: undefined,
   });
-  const [recordsGeojson, setRecordsGeojson] = useState({
-    type: 'FeatureCollection',
-    features: []
-  });
-  const [listingGeojson, setListingGeojson] = useState({
-    type: 'FeatureCollection',
-    features: []
-  });
+
   // New state to hold the custom record data from a polygon click
   const [customRecordsData, setCustomRecordsData] = useState(null);
   const [getRecordsData, { 
@@ -74,8 +64,6 @@ const App = () => {
     });
 
     mapInstance.on('load', () => {
-      updateRecordsGeojsonMarkers(mapInstance, recordsGeojson);
-      updateListingGeojsonMarkers(mapInstance, listingGeojson);
       updateBounds(mapInstance.getBounds().toArray());
       getRecordsAvgPrice();
       getRecordsData();
@@ -121,28 +109,28 @@ const App = () => {
             mapInstance.getCanvas().style.cursor = '';
           });
 
- // Inside your mapInstance.on('click', 'sportFacilitiesFill', ...) handler:
-mapInstance.on('click', 'sportFacilitiesFill', (e) => {
-  const feature = e.features && e.features[0];
-  if (feature) {
-    let popupContent = '<table>';
-    let recordObj = {};
-    Object.entries(feature.properties).forEach(([key, value]) => {
-      if (key === 'Description' || value === null || value === '') return;
-      popupContent += `<tr><th>${key}</th><td>${value}</td></tr>`;
-      recordObj[key] = value;
-    });
-    popupContent += '</table>';
-    
-    new mapboxgl.Popup({ maxWidth: "600px" })
-      .setLngLat(e.lngLat)
-      .setHTML(popupContent)
-      .addTo(mapInstance);
+          // Inside your mapInstance.on('click', 'sportFacilitiesFill', ...) handler:
+          mapInstance.on('click', 'sportFacilitiesFill', (e) => {
+            const feature = e.features && e.features[0];
+            if (feature) {
+              let popupContent = '<table>';
+              let recordObj = {};
+              Object.entries(feature.properties).forEach(([key, value]) => {
+                if (key === 'Description' || value === null || value === '') return;
+                popupContent += `<tr><th>${key}</th><td>${value}</td></tr>`;
+                recordObj[key] = value;
+              });
+              popupContent += '</table>';
+              
+              new mapboxgl.Popup({ maxWidth: "600px" })
+                .setLngLat(e.lngLat)
+                .setHTML(popupContent)
+                .addTo(mapInstance);
 
-    // Set custom records data with a flag to indicate custom popup data
-    setCustomRecordsData({ isCustom: true, getRecords: [recordObj] });
-  }
-});
+              // Set custom records data with a flag to indicate custom popup data
+              setCustomRecordsData({ isCustom: true, getRecords: [recordObj] });
+            }
+          });
         })
         .catch(err => {
           console.error('Error loading sport facilities GeoJSON:', err);
@@ -160,60 +148,8 @@ mapInstance.on('click', 'sportFacilitiesFill', (e) => {
 
     return () => {
       mapInstance.remove();
-      recordsMarkersRef.current.forEach(marker => marker.remove());
-      listingMarkersRef.current.forEach(marker => marker.remove());
     };
   }, [getRecordsData, getListingsData, getRecordsAvgPrice]);
-
-  useEffect(() => {
-    if (map) {
-      updateRecordsGeojsonMarkers(map, recordsGeojson);
-      updateListingGeojsonMarkers(map, listingGeojson);
-    }
-  }, [recordsGeojson, listingGeojson, map]);
-
-  const updateRecordsGeojsonMarkers = (map, geojson) => {
-    recordsMarkersRef.current.forEach(marker => marker.remove());
-    recordsMarkersRef.current = [];
-
-    geojson.features.forEach(feature => {
-      const el = document.createElement('div');
-      el.className = 'records-map-pins';
-      
-      const popupHTML = `
-        <strong>${feature.properties.title}</strong>
-        <p>${feature.properties.description}</p>
-      `;
-      const marker = new mapboxgl.Marker(el)
-        .setLngLat(feature.geometry.coordinates)
-        .setPopup(new mapboxgl.Popup({ offset: 20 }).setHTML(popupHTML))
-        .addTo(map);
-
-      recordsMarkersRef.current.push(marker);
-    });
-  };
-
-  const updateListingGeojsonMarkers = (map, geojson) => {
-    listingMarkersRef.current.forEach(marker => marker.remove());
-    listingMarkersRef.current = [];
-
-    geojson.features.forEach(feature => {
-      const el = document.createElement('div');
-      el.className = 'listing-map-pins';
-      
-      const popupHTML = `
-        <strong>${feature.properties.title}</strong>
-        <p>${feature.properties.description}</p>
-        <a href="${feature.properties.linkUrl}" target="_blank" rel="noopener noreferrer">Listing</a>
-      `;
-      const marker = new mapboxgl.Marker(el)
-        .setLngLat(feature.geometry.coordinates)
-        .setPopup(new mapboxgl.Popup({ offset: 20 }).setHTML(popupHTML))
-        .addTo(map);
-
-      listingMarkersRef.current.push(marker);
-    });
-  };
 
   const updateBounds = (bounds) => {
     const [lonMin, latMin, lonMax, latMax] = [bounds[0][0], bounds[0][1], bounds[1][0], bounds[1][1]];
@@ -263,8 +199,7 @@ mapInstance.on('click', 'sportFacilitiesFill', (e) => {
             />
           </div>
         </div>
-        <RecordsPins recordsLoading={recordsLoading} recordsData={recordsData} setRecordsGeojson={setRecordsGeojson} />
-        <ListingPins listingsLoading={listingsLoading} listingsData={listingsData} setListingGeojson={setListingGeojson} />
+
       </div>
     </div>
   );
