@@ -1,0 +1,97 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Swagger Petstore
+  license:
+    name: MIT
+    
+paths:
+  /rec:
+    get:
+      operationId: getRecommendation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+
+
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+          description: unique user name
+          example: dangkhoa
+        activities:
+          $ref: "#/components/schemas/Activity"
+        age_range:
+          $ref: "#/components/schemas/AgeRange"
+        location:
+          $ref: "#/components/schemas/Location"
+    Facility:
+      type: object      
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: facility name
+        address:
+          type: string
+          description: facility address
+        activities:
+          $ref: "#/components/schemas/Activity"
+        age_range:
+          type: array
+          items:
+            $ref: "#/components/schemas/AgeRange"
+        location:
+          $ref: "#/components/schemas/Location"
+        coordinates:
+          type: array
+          items:
+            $ref: "#/components/schemas/Location"
+
+    Activity:
+      type: array
+      items:
+        type: string
+        enum:
+          - Swimming
+          - Football
+          - Gym
+          - Wading
+          - Indoor
+          - Badminton
+          - Table_tennis
+          - Netball
+          - Volleyball
+          - Basketball
+          - Athletics
+          - Soccer
+          - Rugby
+          - Tennis
+          - Squash
+          - Hockey
+          - Petanque
+          - Gateball
+          - Lawn_bowl
+          - Pickleball
+    AgeRange:
+      type: string
+      enum:
+        - Children
+        - Adult
+        - Senior
+    Location:
+      type: array 
+      description: Location of entity (Lat, Lng)
+      items:
+        type: number
+      maxItems: 2
+      minItems: 2

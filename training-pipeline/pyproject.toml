@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "training-pipeline"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "dotenv>=0.9.9",
+    "faiss-cpu>=1.10.0",
+    "joblib>=1.4.2",
+    "loguru>=0.7.3",
+    "pandas>=2.2.3",
+    "pip>=25.0.1",
+    "pymongo[srv]>=4.11.1",
+    "scikit-learn>=1.6.1",
+]
+
+[tool]
+
+[tool.hatch.version]
+path = "src/training_pipeline/__about__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/training_pipeline"]
+
+[dependency-groups]
+dev = []
