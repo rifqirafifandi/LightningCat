@@ -40,3 +40,11 @@ The backend server's SG has 3 rules:
 3. TCP 80 from `0.0.0.0/0`
 
 Rule #3 is temporary and should be removed ASAP along with its public IP from nginx.conf. The long-term setup is to only allow Port 80 connections from frontend-sever's private IP address.
+
+## Logging
+
+Debug logging has been enabled on the flask, you can tail the log file on the server while testing stuff:
+
+```sh
+tail -f /home/ec2-user/api-server/uwsgi.log
+```
