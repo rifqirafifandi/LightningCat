@@ -82,11 +82,20 @@ const App = () => {
                 }
               });
               
+              // Build a custom popup that displays different data
               new mapboxgl.Popup({ maxWidth: "600px" })
                 .setLngLat(e.lngLat)
-                .setHTML(`<table>${Object.entries(recordObj).map(([key, val]) => `<tr><th>${key}</th><td>${val}</td></tr>`).join('')}</table>`)
+                .setHTML(`
+                  <div>
+                    <h4>${feature.properties.FacilityName || "Facility Information"}</h4>
+                    <p><strong>Address:</strong> ${feature.properties.Address || "Not available"}</p>
+                    <p><strong>Type:</strong> ${feature.properties.Type || "Not specified"}</p>
+                    <p>This popup displays custom data, independent of the records table.</p>
+                  </div>
+                `)
                 .addTo(mapInstance);
               
+              // Send the original data for the records table (recordstable.js) to use
               setCustomRecordsData({ isCustom: true, getRecords: [recordObj] });
             }
           });
