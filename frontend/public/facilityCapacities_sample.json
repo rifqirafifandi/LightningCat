@@ -1,0 +1,421 @@
+{
+    "result": {
+        "data": {
+            "json": {
+                "timestamp": 1739858847246,
+                "swimFacilities": [
+                    {
+                        "id": "06b5ad4a-87f5-4d6d-9067-ba0513bacdd6",
+                        "name": "Sengkang Swimming Complex",
+                        "type": "pool",
+                        "capacityInfo": 6,
+                        "isClosed": false,
+                        "capacityPercentage": 6
+                    },
+                    {
+                        "id": "3cfa97fa-cd83-4b31-a39a-b11f53219ce1",
+                        "name": "Jalan Besar Swimming Complex",
+                        "type": "pool",
+                        "capacityInfo": 0,
+                        "isClosed": false,
+                        "capacityPercentage": 0
+                    },
+                    {
+                        "id": "4b193d70-f3bb-4e86-8f03-6961dac349bf",
+                        "name": "Heartbeat @ Bedok ActiveSG Swimming Complex",
+                        "type": "pool",
+                        "capacityInfo": 9,
+                        "isClosed": false,
+                        "capacityPercentage": 9
+                    },
+                    {
+                        "id": "4b777f53-855a-4c90-acfb-6ab7906d96f6",
+                        "name": "Tampines Swimming Complex",
+                        "type": "pool",
+                        "capacityInfo": 0,
+                        "isClosed": false,
+                        "capacityPercentage": 0
+                    },
+                    {
+                        "id": "515c053c-1712-4fb6-946b-1ffeb06ecd9f",
+                        "name": "Geylang East Swimming Complex",
+                        "type": "pool",
+                        "capacityInfo": 9,
+                        "isClosed": false,
+                        "capacityPercentage": 9
+                    },
+                    {
+                        "id": "5ceb9d66-027f-44a9-bc63-1e7e1c34b56a",
+                        "name": "Yishun Swimming Complex",
+                        "type": "pool",
+                        "capacityInfo": 0,
+                        "isClosed": false,
+                        "capacityPercentage": 0
+                    },
+                    {
+                        "id": "62ac96d3-2d9f-43a3-a086-1bf2ba9edba3",
+                        "name": "Woodlands Swimming Complex",
+                        "type": "pool",
+                        "capacityInfo": 0,
+                        "isClosed": false,
+                        "capacityPercentage": 0
+                    },
+                    {
+                        "id": "63213a39-71b3-40b3-92d8-7086bc9744d7",
+                        "name": "Clementi Swimming Complex",
+                        "type": "pool",
+                        "capacityInfo": 18,
+                        "isClosed": false,
+                        "capacityPercentage": 18
+                    },
+                    {
+                        "id": "68a987e5-bd30-47b9-9b20-f081c5181fe0",
+                        "name": "Jurong Lake Gardens Pool",
+                        "type": "pool",
+                        "capacityInfo": 24,
+                        "isClosed": false,
+                        "capacityPercentage": 24
+                    },
+                    {
+                        "id": "74db9fca-6ef1-46a3-b96f-19331caea9d4",
+                        "name": "Delta Swimming Complex",
+                        "type": "pool",
+                        "capacityInfo": 11,
+                        "isClosed": false,
+                        "capacityPercentage": 11
+                    },
+                    {
+                        "id": "a33912fe-85fa-4bb6-801a-8bfa1df13465",
+                        "name": "Jurong West Swimming Complex",
+                        "type": "pool",
+                        "capacityInfo": 0,
+                        "isClosed": false,
+                        "capacityPercentage": 0
+                    },
+                    {
+                        "id": "a675a83b-2ee7-4320-a80f-dd375b70dfca",
+                        "name": "Choa Chu Kang Swimming Complex",
+                        "type": "pool",
+                        "capacityInfo": 7,
+                        "isClosed": false,
+                        "capacityPercentage": 7
+                    },
+                    {
+                        "id": "a6830cbb-e06d-4ae9-af3d-25af5111b083",
+                        "name": "Pasir Ris Swimming Complex",
+                        "type": "pool",
+                        "capacityInfo": 0,
+                        "isClosed": false,
+                        "capacityPercentage": 0
+                    },
+                    {
+                        "id": "a977819d-ae70-462c-bf63-339e2db06dbe",
+                        "name": "Senja-Cashew Swimming Complex",
+                        "type": "pool",
+                        "capacityInfo": 2,
+                        "isClosed": false,
+                        "capacityPercentage": 2
+                    },
+                    {
+                        "id": "af223da0-7e52-4de5-829b-fc37a6acdb26",
+                        "name": "Bukit Canberra Swimming Complex",
+                        "type": "pool",
+                        "capacityInfo": 1,
+                        "isClosed": false,
+                        "capacityPercentage": 1
+                    },
+                    {
+                        "id": "b629441d-203a-44e7-ba28-a828056649c6",
+                        "name": "Katong Swimming Complex",
+                        "type": "pool",
+                        "capacityInfo": 0,
+                        "isClosed": false,
+                        "capacityPercentage": 0
+                    },
+                    {
+                        "id": "be4dde8e-df3e-4c07-a5fd-bac2dc7dc990",
+                        "name": "Bukit Batok Swimming Complex",
+                        "type": "pool",
+                        "capacityInfo": 0,
+                        "isClosed": false,
+                        "capacityPercentage": 0
+                    },
+                    {
+                        "id": "c2c51dfe-38aa-4558-8e59-c848632b39a1",
+                        "name": "Serangoon Swimming Complex",
+                        "type": "pool",
+                        "capacityInfo": 1,
+                        "isClosed": false,
+                        "capacityPercentage": 1
+                    },
+                    {
+                        "id": "c7ec455f-5b73-4dfa-aa5c-9f145745b06c",
+                        "name": "Bishan Swimming Complex",
+                        "type": "pool",
+                        "capacityInfo": 8,
+                        "isClosed": false,
+                        "capacityPercentage": 8
+                    },
+                    {
+                        "id": "db245529-f03c-4498-8be3-7970e03b8fe8",
+                        "name": "Jurong East Swimming Complex",
+                        "type": "pool",
+                        "capacityInfo": 4,
+                        "isClosed": false,
+                        "capacityPercentage": 4
+                    },
+                    {
+                        "id": "e38522b8-9e05-4abf-a41b-e3b6ad8ee8bb",
+                        "name": "MOE (Evans) Swimming Complex",
+                        "type": "pool",
+                        "capacityInfo": 0,
+                        "isClosed": false,
+                        "capacityPercentage": 0
+                    },
+                    {
+                        "id": "f76ad953-5e5a-4384-b502-53062ec948fa",
+                        "name": "Yio Chu Kang Swimming Complex",
+                        "type": "pool",
+                        "capacityInfo": 18,
+                        "isClosed": false,
+                        "capacityPercentage": 18
+                    },
+                    {
+                        "id": "fc574d94-6eb4-4271-8efa-f3ab37595479",
+                        "name": "Kallang Basin Swimming Complex",
+                        "type": "pool",
+                        "capacityInfo": 1,
+                        "isClosed": false,
+                        "capacityPercentage": 1
+                    }
+                ],
+                "gymFacilities": [
+                    {
+                        "id": "044cb7b4-7fa8-4cb9-bf5a-ea3e226f6f5d",
+                        "name": "ActiveSG Gym @ Ang Mo Kio CC",
+                        "type": "gym",
+                        "capacityInfo": 23,
+                        "isClosed": false,
+                        "capacityPercentage": 23
+                    },
+                    {
+                        "id": "15036f7c-5f36-41ad-83a1-507572c73975",
+                        "name": "Bukit Gombak ActiveSG Gym",
+                        "type": "gym",
+                        "capacityInfo": 25,
+                        "isClosed": false,
+                        "capacityPercentage": 25
+                    },
+                    {
+                        "id": "19d5b007-82b8-4e91-bca8-d5f7c6c79f84",
+                        "name": "ActiveSG Hockey Village @ Boon Lay Gym",
+                        "type": "gym",
+                        "capacityInfo": 26,
+                        "isClosed": false,
+                        "capacityPercentage": 26
+                    },
+                    {
+                        "id": "1b354bea-166d-4772-8544-03f34153f3c0",
+                        "name": "Kallang Basin ActiveSG Gym",
+                        "type": "gym",
+                        "capacityInfo": 14,
+                        "isClosed": false,
+                        "capacityPercentage": 14
+                    },
+                    {
+                        "id": "241dccf1-6153-42c0-b817-b6b1a3bf4d64",
+                        "name": "Katong ActiveSG Gym",
+                        "type": "gym",
+                        "capacityInfo": 32,
+                        "isClosed": false,
+                        "capacityPercentage": 32
+                    },
+                    {
+                        "id": "27439147-fdeb-44de-a647-21ddd83f0d25",
+                        "name": "Bukit Canberra ActiveSG Gym",
+                        "type": "gym",
+                        "capacityInfo": 35,
+                        "isClosed": false,
+                        "capacityPercentage": 35
+                    },
+                    {
+                        "id": "3c731313-ce0f-4335-b1eb-ca9d77c67f5d",
+                        "name": "Bishan ActiveSG Gym",
+                        "type": "gym",
+                        "capacityInfo": 47,
+                        "isClosed": false,
+                        "capacityPercentage": 47
+                    },
+                    {
+                        "id": "683c77cd-d339-42f4-9c2b-7414308a6858",
+                        "name": "Bukit Batok ActiveSG Gym",
+                        "type": "gym",
+                        "capacityInfo": 22,
+                        "isClosed": false,
+                        "capacityPercentage": 22
+                    },
+                    {
+                        "id": "6df4f994-c637-4344-863d-67bf8adb57e7",
+                        "name": "Sengkang ActiveSG Gym",
+                        "type": "gym",
+                        "capacityInfo": 45,
+                        "isClosed": false,
+                        "capacityPercentage": 45
+                    },
+                    {
+                        "id": "76c7c669-ebd9-4da0-9174-02f5f6fc7cc5",
+                        "name": "ActiveSG Gym @ Fernvale Square",
+                        "type": "gym",
+                        "capacityInfo": 33,
+                        "isClosed": false,
+                        "capacityPercentage": 33
+                    },
+                    {
+                        "id": "7e231fbc-5d0f-4a13-b0ac-150a18c5c085",
+                        "name": "Pasir Ris ActiveSG Gym",
+                        "type": "gym",
+                        "capacityInfo": 29,
+                        "isClosed": false,
+                        "capacityPercentage": 29
+                    },
+                    {
+                        "id": "8e372638-d846-40ff-ae7b-e2e7cea58087",
+                        "name": "Enabling Village ActiveSG Gym",
+                        "type": "gym",
+                        "capacityInfo": 28,
+                        "isClosed": false,
+                        "capacityPercentage": 28
+                    },
+                    {
+                        "id": "8ea7ce3f-2e62-403a-a645-6a3781e28aff",
+                        "name": "Delta ActiveSG Gym",
+                        "type": "gym",
+                        "capacityInfo": 41,
+                        "isClosed": false,
+                        "capacityPercentage": 41
+                    },
+                    {
+                        "id": "8f750f9a-ddc9-427e-b8b5-92b13a828e3c",
+                        "name": "Clementi ActiveSG Gym",
+                        "type": "gym",
+                        "capacityInfo": 31,
+                        "isClosed": false,
+                        "capacityPercentage": 31
+                    },
+                    {
+                        "id": "95e91057-97de-47fc-9f22-2cde4acf5766",
+                        "name": "Jalan Besar ActiveSG Gym",
+                        "type": "gym",
+                        "capacityInfo": 24,
+                        "isClosed": false,
+                        "capacityPercentage": 24
+                    },
+                    {
+                        "id": "9a36e28b-7b15-47e6-a968-246e51f89587",
+                        "name": "ActiveSG Gym @ Serangoon Central",
+                        "type": "gym",
+                        "capacityInfo": 16,
+                        "isClosed": false,
+                        "capacityPercentage": 16
+                    },
+                    {
+                        "id": "ab8de576-55fd-43ef-91d0-b65d87c1a41f",
+                        "name": "ActiveSG Gym @ Toa Payoh West CC",
+                        "type": "gym",
+                        "capacityInfo": 2,
+                        "isClosed": false,
+                        "capacityPercentage": 2
+                    },
+                    {
+                        "id": "b1e99130-a5ec-4e71-9ba1-0b35d4892d6c",
+                        "name": "Yio Chu Kang ActiveSG Gym",
+                        "type": "gym",
+                        "capacityInfo": 18,
+                        "isClosed": false,
+                        "capacityPercentage": 18
+                    },
+                    {
+                        "id": "b698c982-e7a1-4f5c-bf32-c88a9c40e3c7",
+                        "name": "ActiveSG Gym @ Toa Payoh",
+                        "type": "gym",
+                        "capacityInfo": 26,
+                        "isClosed": false,
+                        "capacityPercentage": 26
+                    },
+                    {
+                        "id": "bfccf78b-6aed-4381-8992-1b8f94750e6c",
+                        "name": "Yishun ActiveSG Gym",
+                        "type": "gym",
+                        "capacityInfo": 24,
+                        "isClosed": false,
+                        "capacityPercentage": 24
+                    },
+                    {
+                        "id": "c5315f9d-9567-42d7-b0c2-0a072018104f",
+                        "name": "Tampines ActiveSG Gym",
+                        "type": "gym",
+                        "capacityInfo": 43,
+                        "isClosed": false,
+                        "capacityPercentage": 43
+                    },
+                    {
+                        "id": "c66b57fe-1223-46a2-bd17-a9e0a38e8305",
+                        "name": "Senja-Cashew Gym",
+                        "type": "gym",
+                        "capacityInfo": 32,
+                        "isClosed": false,
+                        "capacityPercentage": 32
+                    },
+                    {
+                        "id": "ca87bb68-d70f-43ae-bb37-4c6516d2b043",
+                        "name": "Heartbeat @ Bedok ActiveSG Gym",
+                        "type": "gym",
+                        "capacityInfo": 32,
+                        "isClosed": false,
+                        "capacityPercentage": 32
+                    },
+                    {
+                        "id": "d53655e3-d8ca-4a5d-a524-c992396f1885",
+                        "name": "Jurong Lake Gardens Gym",
+                        "type": "gym",
+                        "capacityInfo": 16,
+                        "isClosed": false,
+                        "capacityPercentage": 16
+                    },
+                    {
+                        "id": "d691b27c-6016-456b-8a39-123d8028c89a",
+                        "name": "Choa Chu Kang ActiveSG Gym",
+                        "type": "gym",
+                        "capacityInfo": 25,
+                        "isClosed": false,
+                        "capacityPercentage": 25
+                    },
+                    {
+                        "id": "e6e336d8-626d-4772-9a6b-a1e578308609",
+                        "name": "Woodlands ActiveSG Gym",
+                        "type": "gym",
+                        "capacityInfo": 18,
+                        "isClosed": false,
+                        "capacityPercentage": 18
+                    },
+                    {
+                        "id": "eac1e93e-b3ef-436b-b366-7101f1e12715",
+                        "name": "Jurong West ActiveSG Gym",
+                        "type": "gym",
+                        "capacityInfo": 12,
+                        "isClosed": false,
+                        "capacityPercentage": 12
+                    },
+                    {
+                        "id": "fc36d370-4f61-478e-a058-d2c84c9fde97",
+                        "name": "Jurong East ActiveSG Gym",
+                        "type": "gym",
+                        "capacityInfo": 15,
+                        "isClosed": false,
+                        "capacityPercentage": 15
+                    }
+                ]
+            }
+        }
+    }
+}
