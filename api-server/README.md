@@ -23,7 +23,7 @@ python main-local-dev.py
 - uWSGI
 - nginx (reverse-proxy)
 
-Both nginx and uWSGI have been considered as systemd services that run on startup.
+Both nginx and uWSGI have been configured as systemd services that run on startup.
 
 Config locations on the server (copied here for reference):
 - [/etc/systemd/system/api-server.service](config/api-server.service)
