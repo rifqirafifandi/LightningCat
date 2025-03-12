@@ -1,25 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Dropdown } from 'react-bootstrap';
 
-/**
- * Renders a responsive navigation bar using Bootstrap's navbar component. This navbar includes a brand logo
- * and a collapsible toggle for smaller screens. The navbar expands into a full horizontal menu on larger screens.
- *
- * Props:
- * @param {Function} onSearchClick - A callback function to handle search-related actions. Currently, this prop
- *                                   is accepted but not utilized in the component. Integrate it as needed for actions
- *                                   like clicking a search button.
- *
- * Note:
- * Ensure that Bootstrap's JavaScript and CSS files are included in your project to correctly display and
- * operate the collapsible navbar. This component is designed to work with Bootstrap 5.
- *
- * @returns {React.Element} A `nav` element containing the navbar content, styled with Bootstrap classes.
- */
 const Navbar = ({ onSearchClick }) => {
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
+
+  const toggleDropdown = () => {
+    setDropdownOpen(!isDropdownOpen);
+  };
+
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <div className="container-fluid">
-        <a className="navbar-brand" href="/">Hit the Jackpot!</a>
+        {/* User Greeting and Dropdown aligned to the left */}
+        <div className="d-flex align-items-center">
+          <span className="mr-2">Hello, Guest</span>
+          <Dropdown show={isDropdownOpen} onToggle={toggleDropdown}>
+            <Dropdown.Toggle variant="link" id="dropdown-user">
+              <i className="bi bi-person-circle" style={{ fontSize: '1.5em' }}></i>
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              <Dropdown.Item href="#/signup">Sign Up</Dropdown.Item>
+              <Dropdown.Item href="#/signin">Sign In</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+        </div>
+        
         <button 
           className="navbar-toggler"
           type="button"
@@ -32,7 +37,7 @@ const Navbar = ({ onSearchClick }) => {
           <span className="navbar-toggler-icon"></span>
         </button>
         <div className="collapse navbar-collapse" id="navbarNav">
-            <ul className="navbar-nav me-auto mb-2 mb-lg-0"></ul>
+          <ul className="navbar-nav me-auto mb-2 mb-lg-0"></ul>
         </div>
       </div>
     </nav>
