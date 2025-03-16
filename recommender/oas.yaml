@@ -37,6 +37,8 @@ components:
       type: object      
       required:
         - name
+        - gym
+        - swimming
       properties:
         name:
           type: string
@@ -56,6 +58,29 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Location"
+        swimming:
+          type: object
+          required: 
+            - available
+          properties:
+            available:
+              type: boolean
+            closed:
+              type: boolean
+            capacity:
+              type: number
+        gym:
+          type: object
+          required: 
+            - available
+          properties:
+            available:
+              type: boolean
+            closed:
+              type: boolean
+            capacity:
+              type: number
+
 
     Activity:
       type: array
