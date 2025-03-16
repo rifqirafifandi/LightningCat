@@ -99,6 +99,11 @@ class Searcher:
         user_vector = transform(self.transformer, user_dict)
         dis, indexes = self.indexer.search(user_vector, top_k)
 
+        """
+        Post filterings
+        """
+        
+
         results = [
             Facility(
                 name=res["name"],
