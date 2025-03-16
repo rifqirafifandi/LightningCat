@@ -13,9 +13,11 @@ import pandas as pd
 from numpy.typing import NDArray
 
 from .database import DB
-from .model import ActivityEnum, AgeRange, Facility, User
+from .model import ActivityEnum, AgeRange, Facility, User, Swimming, Gym
+from .realtime_database import RealtimeDB
 
 TOP_K = 20
+FACILITY_MAPPING = "mappedFacilities.json"
 
 
 def default_activities():
@@ -61,12 +63,61 @@ def transform(transformer, user: Dict) -> NDArray:
     return features
 
 
+def _is_swimming_facility(name: str) -> bool:
+    return "swim" in name.lower()
+
+
+def _is_gym_facility(name: str) -> bool:
+    return "gym" in name.lower()
+
+
 class Searcher:
-    def __init__(self, indexer, id_manager, transformer):
+    def __init__(
+        self,
+        facility_mapping,
+        indexer,
+        id_manager,
+        transformer,
+    ):
         self.db = DB()
         self.indexer = indexer
         self.id_manager = id_manager
         self.transformer = transformer
+        self.real_db = None
+
+        self.facility_mapping = facility_mapping
+
+    def set_realtime_db(self, db: RealtimeDB):
+        self.real_db = db
+
+    def _update_realtime_data(self, facility: Facility):
+        assert self.real_db is not None, "not set realtime db"
+        self._update_swimming_realtime_data(facility)
+        self._update_gym_realtime_data(facility)
+
+    def _update_swimming_realtime_data(self, facility: Facility):
+        swimmings = [
+            s for s in self.facility_mapping[facility.name] if _is_swimming_facility(s)
+        ]
+        facility.swimming.available = any(swimmings)
+        if not swimmings:
+            return
+        facility.swimming.closed = any(
+            self.real_db.is_closed(name) for name in swimmings
+        )
+        facility.swimming.capacity = min(
+            self.real_db.get_capacity(name) for name in swimmings
+        )
+
+    def _update_gym_realtime_data(self, facility: Facility):
+        gyms = [s for s in self.facility_mapping[facility.name] if _is_gym_facility(s)]
+        facility.gym.available = any(gyms)
+        if not gyms:
+            return
+        facility.gym.closed = any(self.real_db.is_closed(name) for name in gyms)
+        facility.gym.capacity = min(
+            self.real_db.get_capacity(name) for name in gyms
+        )
 
     def search_user(self, username: str) -> User:
         user = self.db.user.find_one({"username": username})
@@ -99,7 +150,7 @@ class Searcher:
         user_vector = transform(self.transformer, user_dict)
         dis, indexes = self.indexer.search(user_vector, top_k)
 
-        results = [
+        candidates = [
             Facility(
                 name=res["name"],
                 address=res["address"],
@@ -108,12 +159,20 @@ class Searcher:
                 activities=res["activities"],
                 coordinates=res["coordinates"],
                 location=res["location"],
+                swimming=Swimming(available=False),
+                gym=Gym(available=False)
             )
             for res in self.db.facility.find(
                 {"_id": {"$in": self.id_manager[indexes][0].tolist()}}
             )
         ]
-        return results
+        """
+        Post filterings
+        """
+        for facility in candidates:
+            self._update_realtime_data(facility)
+
+        return candidates
 
     def search_facilities_from_username(
         self, username: str, top_k: int = TOP_K
@@ -126,7 +185,7 @@ class Searcher:
         return self._search_facilities_from_dict(user_dict, top_k)
 
     @classmethod
-    def from_local_path(clz, index_folder: Path):
+    def from_local_path(clz, index_folder: Path, artifact_dir: Path):
         indexer_path = index_folder / "index.bin"
         id_manager_path = index_folder / "ids.npy"
         transformer_path = index_folder / "transformer.joblib"
@@ -134,5 +193,7 @@ class Searcher:
         indexer = faiss.read_index(str(indexer_path))
         id_manager = np.load(id_manager_path, allow_pickle=True)
         transformer = joblib.load(transformer_path)
+        mapped_json = artifact_dir / FACILITY_MAPPING
+        facility_mapping = json.load(open(mapped_json))
 
-        return clz(indexer, id_manager, transformer)
+        return clz(facility_mapping, indexer, id_manager, transformer)

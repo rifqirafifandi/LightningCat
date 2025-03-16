@@ -1,16 +1,20 @@
-from pathlib import Path
-
 from fastapi import FastAPI
+from path import Path
 
 from recommender.inference import Searcher
 
 from .model import Facility, User
+from .realtime_database import LocalRealTimeDB
 
 MODEL_PATH = Path("output_index")
+ARTIFACT_PATH = Path("./data/")
 
 
 app = FastAPI(debug=True)
-search_app: Searcher = Searcher.from_local_path(MODEL_PATH)
+real_db = LocalRealTimeDB("./data/facilityCapacities_sample.json")
+
+search_app: Searcher = Searcher.from_local_path(MODEL_PATH, ARTIFACT_PATH)
+search_app.set_realtime_db(real_db)
 db = search_app.db
 
 
