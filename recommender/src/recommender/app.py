@@ -29,11 +29,7 @@ def get_users() -> list[User]:
 
 @app.get("/facilities/")
 def get_facilities() -> list[Facility]:
-    facilities = []
-    for facility in db.facility.find():
-        del facility["_id"]
-        facilities.append(facility)
-    return facilities
+    return search_app.get_all_facilities()
 
 
 @app.get("/rec")
