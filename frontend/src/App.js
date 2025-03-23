@@ -28,8 +28,7 @@ const App = () => {
 
   const [customRecordsData, setCustomRecordsData] = useState(null);
 
-  // The following states store data for the various JSON files:
-  const [mappedFacilities, setMappedFacilities] = useState(null);
+  // States to store data for the various JSON files:
   const [facilitiesCapacities, setFacilitiesCapacities] = useState(null);
   const [townsGeoJson, setTownsGeoJson] = useState(null);
   const [sportFacilitiesGeoJson, setSportFacilitiesGeoJson] = useState(null);
@@ -43,11 +42,9 @@ const App = () => {
     Queries.GET_DISTINCT_FLAT_TYPES
   );
 
-  // 1) Fetch *all* required static files in one place.
-  //    We'll store each response in its respective state.
+  // 1) Fetch all required static files and store each response in its respective state.
   useEffect(() => {
     Promise.all([
-      fetch('/mappedFacilities.json'),
       fetch('/facilityCapacities_sample.json'),
       fetch('/MasterPlan2019PlanningAreaBoundaryNoSea.processed.geojson'),
       fetch('/SportSGSportFacilitiesGEOJSON.geojson'),
@@ -56,13 +53,11 @@ const App = () => {
       .then((responses) => Promise.all(responses.map((r) => r.json())))
       .then(
         ([
-          mappedFacilitiesData,
           facilityCapacitiesData,
           townsData,
           sportsData,
           weatherJsonData,
         ]) => {
-          setMappedFacilities(mappedFacilitiesData);
           setFacilitiesCapacities(facilityCapacitiesData);
           setTownsGeoJson(townsData);
           setSportFacilitiesGeoJson(sportsData);
@@ -95,18 +90,16 @@ const App = () => {
 
     setMap(mapInstance);
 
-    // Cleanup if component unmounts
+    // Cleanup on unmount
     return () => mapInstance.remove();
   }, [getListingsData, getDistinctTowns, getDistinctFlatTypes]);
 
-  // 3) Add layers (town polygons & sport facilities polygons) once *both* the map
-  //    and the corresponding GeoJSON data are available. Also attach click events.
+  // 3) Add layers (town polygons & sport facilities polygons) once both the map and corresponding GeoJSON data are available.
   useEffect(() => {
     if (!map) return;
 
-    // Make sure we have both towns and sport facilities data before adding layers
+    // --- Add Towns Layer ---
     if (townsGeoJson && !map.getSource('towns')) {
-      // Town polygon layers
       map.addSource('towns', { type: 'geojson', data: townsGeoJson });
       map.addLayer({
         id: 'townsFill',
@@ -124,7 +117,7 @@ const App = () => {
         paint: { 'line-color': '#000000', 'line-width': 2 },
       });
 
-      // Town polygon click
+      // Town polygon click event to show weather forecast
       map.on('click', 'townsFill', (e) => {
         const feature = e.features && e.features[0];
         if (!feature) return;
@@ -132,7 +125,6 @@ const App = () => {
         const clickedTown = feature.properties.PLN_AREA_N;
         const clickedTownLower = clickedTown.toLowerCase();
 
-        // Use the weatherData from state
         if (weatherData?.data?.items?.[0]?.forecasts) {
           const forecasts = weatherData.data.items[0].forecasts;
           const matchingForecast = forecasts.find(
@@ -155,8 +147,8 @@ const App = () => {
       });
     }
 
+    // --- Add Sport Facilities Layer ---
     if (sportFacilitiesGeoJson && !map.getSource('sportFacilities')) {
-      // Sport facilities polygons
       map.addSource('sportFacilities', {
         type: 'geojson',
         data: sportFacilitiesGeoJson,
@@ -197,52 +189,60 @@ const App = () => {
           }
         });
 
+        // Example: the property is "SPORTS_CEN" in the GEOJSON
         const sportsCen = feature.properties.SPORTS_CEN;
-        let facilityDetailsHtml = '';
+        // Alternatively if your property is named "SPORT_CEN", adjust accordingly
+        // const sportsCen = feature.properties.SPORT_CEN;  
 
-        if (mappedFacilities && facilitiesCapacities) {
-          // Our mapping and capacity info are already in state.
-          const facilityNames = mappedFacilities[sportsCen] || [];
-          if (facilityNames.length > 0) {
-            facilityNames.forEach((name) => {
-              const details = findFacilityByName(name, facilitiesCapacities);
-              if (details) {
-                facilityDetailsHtml += `
-                  <div style="border: 1px solid #ccc; padding: 5px; margin-bottom: 5px;">
-                    <h5>${details.name}</h5>
-                    <p><strong>Type:</strong> ${details.type}</p>
-                    <p><strong>Capacity Info:</strong> ${details.capacityInfo}</p>
-                    <p><strong>Capacity Percentage:</strong> ${details.capacityPercentage}%</p>
-                    <p><strong>Status:</strong> ${
-                      details.isClosed ? 'Closed' : 'Open'
-                    }</p>
-                  </div>
-                `;
-              }
-            });
-            if (!facilityDetailsHtml) {
-              facilityDetailsHtml = `<p>No capacity data available for the mapped facilities.</p>`;
-            }
+        // Attempt to find facility info based on matching "name"
+        let facilityDetailsHtml = '';
+        if (facilitiesCapacities) {
+          // If facilityCapacities_sample.json is an *array*, we'll search inside that array
+          const details = findFacilityByName(sportsCen, facilitiesCapacities);
+          if (details) {
+            facilityDetailsHtml = `
+              <div style="border: 1px solid #ccc; padding: 5px; margin-bottom: 5px;">
+                <h5>${details.name}</h5>
+                <p><strong>Address:</strong> ${details.address}</p>
+
+                <div>
+                  <h6>Swimming Facility</h6>
+                  <p><strong>Capacity:</strong> ${details.swimming.capacity}</p>
+                  <p><strong>Status:</strong> ${
+                    details.swimming.closed ? 'Closed' : 'Open'
+                  }</p>
+                </div>
+
+                <div>
+                  <h6>Gym Facility</h6>
+                  <p><strong>Capacity:</strong> ${
+                    details.gym.capacity !== null ? details.gym.capacity : 'N/A'
+                  }</p>
+                  <p><strong>Status:</strong> ${
+                    details.gym.closed === null
+                      ? 'Not Available'
+                      : details.gym.closed
+                      ? 'Closed'
+                      : 'Open'
+                  }</p>
+                </div>
+              </div>
+            `;
           } else {
-            facilityDetailsHtml = `<p>No facility mapping available for ${sportsCen}.</p>`;
+            facilityDetailsHtml = `<p>No matching facility found for ${sportsCen}.</p>`;
           }
         } else {
           facilityDetailsHtml = `<p>Loading facility details...</p>`;
         }
 
+        // Show popup with details
         new mapboxgl.Popup({ maxWidth: '600px' })
           .setLngLat(e.lngLat)
           .setHTML(`
             <div>
-              <h4>${
-                feature.properties.FacilityName || 'Facility Information'
-              }</h4>
-              <p><strong>Address:</strong> ${
-                feature.properties.Address || 'Not available'
-              }</p>
-              <p><strong>Type:</strong> ${
-                feature.properties.Type || 'Not specified'
-              }</p>
+              <h4>${feature.properties.FacilityName || 'Facility Information'}</h4>
+              <p><strong>Address:</strong> ${feature.properties.Address || 'Not available'}</p>
+              <p><strong>Type:</strong> ${feature.properties.Type || 'Not specified'}</p>
               <hr/>
               <h5>Facility Capacity Details</h5>
               ${facilityDetailsHtml}
@@ -250,7 +250,7 @@ const App = () => {
           `)
           .addTo(map);
 
-        // Update SidePanel data
+        // Update the side panel if desired
         setCustomRecordsData({ isCustom: true, getRecords: [recordObj] });
       });
     }
@@ -259,35 +259,29 @@ const App = () => {
     townsGeoJson,
     sportFacilitiesGeoJson,
     weatherData,
-    mappedFacilities,
     facilitiesCapacities,
   ]);
 
-  // Helper to find a facility by name inside facilitiesCapacities
+  // Helper to find a facility by name (SPORTS_CEN) inside facilitiesCapacities
+  // Adjust this if `facilitiesCapacities` is a single object or an array of objects.
   const findFacilityByName = (name, facilitiesData) => {
-    if (
-      !facilitiesData ||
-      !facilitiesData.result ||
-      !facilitiesData.result.data ||
-      !facilitiesData.result.data.json
-    )
-      return null;
+    if (!facilitiesData) return null;
 
-    const facilitiesJson = facilitiesData.result.data.json;
-    // Check in swimFacilities
-    const swimFacility =
-      facilitiesJson.swimFacilities?.find((facility) => facility.name === name);
-    if (swimFacility) return swimFacility;
+    // If facilitiesData is an array of facility objects:
+    // e.g. [ { name: "Clementi Stadium", ... }, { name: "XYZ", ... }, ... ]
+    if (Array.isArray(facilitiesData)) {
+      return facilitiesData.find((fac) => fac.name === name) || null;
+    }
 
-    // Check in gymFacilities
-    const gymFacility =
-      facilitiesJson.gymFacilities?.find((facility) => facility.name === name);
-    if (gymFacility) return gymFacility;
-
+    // If facilitiesData is not an array but just a single object
+    // with a "name" property, check directly:
+    if (facilitiesData.name === name) {
+      return facilitiesData;
+    }
     return null;
   };
 
-  // Update bounds in areaState so the GraphQL queries use the current viewport
+  // Update bounds in areaState so the GraphQL queries use the current viewport.
   const updateBounds = (bounds) => {
     const [lonMin, latMin, lonMax, latMax] = [
       bounds[0][0],
