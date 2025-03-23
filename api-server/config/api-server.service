@@ -3,11 +3,12 @@ Description=uWSGI instance to serve api-server
 After=network.target
 
 [Service]
-User=ec2-user
-Group=nginx
-WorkingDirectory=/home/ec2-user/api-server
-Environment="PATH=/home/ec2-user/api-server/api-server-venv/bin"
-ExecStart=/home/ec2-user/api-server/api-server-venv/bin/uwsgi --ini uwsgi-config.ini
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/api-server
+Environment="PATH=/opt/api-server/api-server-venv/bin"
+Environment="COGNITO_CLIENT_SECRET=1cp6epe1qqudf39a9sljb1d445c6359cgkh3trsm9eag3ligio6b"
+ExecStart=/opt/api-server/api-server-venv/bin/uwsgi --ini uwsgi-config.ini
 
 [Install]
 WantedBy=multi-user.target
