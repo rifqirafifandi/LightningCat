@@ -193,18 +193,15 @@ const App = () => {
           const details = findFacilityByName(sportsCen, facilitiesCapacities);
           if (details) {
             facilityDetailsHtml = `
-              <div style="border: 1px solid #ccc; padding: 5px; margin-bottom: 5px;">
-                <h5>${details.name}</h5>
-                <p><strong>Address:</strong> ${details.address}</p>
-
-                <div>
-                  <h6>Swimming Facility</h6>
-                  <p><strong>Capacity:</strong> ${details.swimming.capacity}</p>
-                  <p><strong>Status:</strong> ${
-                    details.swimming.closed ? 'Closed' : 'Open'
-                  }</p>
-                </div>
-
+            <h5>${details.name}</h5>
+            <div>
+              <h6>Swimming Facility</h6>
+              <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                <p><strong>Capacity:</strong> ${details.swimming.capacity}</p>
+                <p><strong>Status:</strong> ${details.swimming.closed ? 'Closed' : 'Open'}</p>
+              </div>
+            </div>
+          
                 <div>
                   <h6>Gym Facility</h6>
                   <p><strong>Capacity:</strong> ${
@@ -232,11 +229,6 @@ const App = () => {
           .setLngLat(e.lngLat)
           .setHTML(`
             <div>
-              <h4>${feature.properties.FacilityName || 'Facility Information'}</h4>
-              <p><strong>Address:</strong> ${feature.properties.Address || 'Not available'}</p>
-              <p><strong>Type:</strong> ${feature.properties.Type || 'Not specified'}</p>
-              <hr/>
-              <h5>Facility Capacity Details</h5>
               ${facilityDetailsHtml}
             </div>
           `)

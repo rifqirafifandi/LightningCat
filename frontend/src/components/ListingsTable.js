@@ -1,7 +1,6 @@
 import React from 'react';
 
 const ListingsTable = (props) => {
-  // Update to handle the direct array structure instead of expecting getListings property
   const listings = props.listingsData || [];
   
   if (!listings.length) return <p>No data found.</p>;
