@@ -1,0 +1,22 @@
+[{
+    "id": 1,
+    "sport": "BADMINTON",
+    "SPORTS_CEN": "Clementi Sports Centre",
+    "venue": "Court 2",
+    "date": "2025-05-01",
+    "time": "1000",
+    "duration": "2",
+    "fee": "10",
+    "pax": "4"
+},
+{
+    "id": 1,
+    "sport": "TABLE TENNIS",
+    "SPORTS_CEN": "Bishan Sports Centre",
+    "venue": "Court 2",
+    "date": "2025-05-01",
+    "time": "1000",
+    "duration": "2",
+    "fee": "10",
+    "pax": "4"
+}]

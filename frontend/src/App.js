@@ -7,8 +7,6 @@ import Navbar from './components/Navbar';
 import FilterPanel from './components/FilterPanel';
 import SidePanel from './components/SidePanel';
 import SearchInputBox from './components/SearchInputBox';
-import Queries from './queries/Queries';
-import { useLazyQuery } from '@apollo/client';
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
@@ -30,17 +28,10 @@ const App = () => {
 
   // States to store data for the various JSON files:
   const [facilitiesCapacities, setFacilitiesCapacities] = useState(null);
+  const [bookingListingsData, setBookingsListings] = useState(null);
   const [townsGeoJson, setTownsGeoJson] = useState(null);
   const [sportFacilitiesGeoJson, setSportFacilitiesGeoJson] = useState(null);
   const [weatherData, setWeatherData] = useState(null);
-
-  // GraphQL lazy queries
-  const [getListingsData, { error: listingsError, loading: listingsLoading, data: listingsData }] =
-    useLazyQuery(Queries.GET_LISTINGS, { variables: areaState });
-  const [getDistinctTowns, { data: townsData }] = useLazyQuery(Queries.GET_DISTINCT_TOWNS);
-  const [getDistinctFlatTypes, { data: flatTypesData }] = useLazyQuery(
-    Queries.GET_DISTINCT_FLAT_TYPES
-  );
 
   // 1) Fetch all required static files and store each response in its respective state.
   useEffect(() => {
@@ -50,6 +41,7 @@ const App = () => {
       fetch('/MasterPlan2019PlanningAreaBoundaryNoSea.processed.geojson'),
       fetch('/SportSGSportFacilitiesGEOJSON.geojson'),
       fetch('/twoHourWeatherData_sample.json'),
+      fetch('/bookingsListings_sample.json')
     ])
       .then((responses) => Promise.all(responses.map((r) => r.json())))
       .then(
@@ -58,12 +50,14 @@ const App = () => {
           townsData,
           sportsData,
           weatherJsonData,
+          bookingListingsData
         ]) => {
           setFacilitiesCapacities(facilityCapacitiesData);
           setTownsGeoJson(townsData);
           setSportFacilitiesGeoJson(sportsData);
           setWeatherData(weatherJsonData)
-        } //this is line 66
+          setBookingsListings(bookingListingsData)
+        }
       )
       .catch((err) => console.error('Error fetching data:', err));
   }, []);
@@ -76,24 +70,21 @@ const App = () => {
       center: [103.8198, 1.3521],
       zoom: 11,
     });
-
+  
     mapInstance.on('load', () => {
       updateBounds(mapInstance.getBounds().toArray());
-      getListingsData();
-      getDistinctTowns();
-      getDistinctFlatTypes();
     });
-
+  
     mapInstance.on('moveend', () => {
       updateBounds(mapInstance.getBounds().toArray());
-      getListingsData();
     });
-
+  
     setMap(mapInstance);
-
+  
     // Cleanup on unmount
     return () => mapInstance.remove();
-  }, [getListingsData, getDistinctTowns, getDistinctFlatTypes]);
+  }, []
+);
 
   // 3) Add layers (town polygons & sport facilities polygons) once both the map and corresponding GeoJSON data are available.
   useEffect(() => {
@@ -318,8 +309,8 @@ const App = () => {
                 <FilterPanel
                   areaState={areaState}
                   setAreaState={setAreaState}
-                  towns={townsData}
-                  flatTypes={flatTypesData}
+                  //towns={townsData}
+                  //flatTypes={flatTypesData}
                 />
               </div>
             </div>
@@ -335,10 +326,8 @@ const App = () => {
           {/* The Right Side Panel */}
           <div className="col-md-6">
             <SidePanel
-              listingsLoading={listingsLoading}
               recordsData={customRecordsData}
-              listingsData={listingsData}
-            />
+              listingsData={bookingListingsData}            />
           </div>
         </div>
       </div>
