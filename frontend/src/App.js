@@ -45,6 +45,7 @@ const App = () => {
   // 1) Fetch all required static files and store each response in its respective state.
   useEffect(() => {
     Promise.all([
+      //fetch('http://ec2-47-129-39-107.ap-southeast-1.compute.amazonaws.com:8000/facilities/'),
       fetch('/facilityCapacities_sample.json'),
       fetch('/MasterPlan2019PlanningAreaBoundaryNoSea.processed.geojson'),
       fetch('/SportSGSportFacilitiesGEOJSON.geojson'),
@@ -61,8 +62,8 @@ const App = () => {
           setFacilitiesCapacities(facilityCapacitiesData);
           setTownsGeoJson(townsData);
           setSportFacilitiesGeoJson(sportsData);
-          setWeatherData(weatherJsonData);
-        }
+          setWeatherData(weatherJsonData)
+        } //this is line 66
       )
       .catch((err) => console.error('Error fetching data:', err));
   }, []);
