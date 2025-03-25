@@ -4,9 +4,19 @@
 
 Server is at [https://api.chucklenuts.party](https://api.chucklenuts.party)
 
-- [https://api.chucklenuts.party/login](https://api.chucklenuts.party/login)
-- [https://api.chucklenuts.party/logout](https://api.chucklenuts.party/logout)
+### Auth
+
+#### Cognito
+- [https://api.chucklenuts.party/auth/cognito/login](https://api.chucklenuts.party/auth/cognito/login)
 - [https://api.chucklenuts.party/refresh](https://api.chucklenuts.party/refresh)
+
+#### Google OAuth
+- [https://api.chucklenuts.party/auth/google/login](https://api.chucklenuts.party/auth/google/login)
+
+#### Unified logout
+- [https://api.chucklenuts.party/logout](https://api.chucklenuts.party/logout)
+
+### Application routes
 
 -----
 
@@ -36,9 +46,9 @@ pip install flask uwsgi authlib requests flask-session redis
 All components have been configured as systemd services that run on startup.
 
 Config locations on the server (copied here for reference):
-- [/etc/systemd/system/api-server.service](config/api-server.service)
-- [/etc/nginx/nginx.conf](config/nginx.conf)
-- [/etc/redis/redis.conf](config/redis.conf)
+- [/etc/systemd/system/api-server.service](systemd-config/api-server.service)
+- [/etc/nginx/nginx.conf](systemd-config/nginx.conf)
+- [/etc/redis/redis.conf](systemd-config/redis.conf)
 
 ## Logging
 
