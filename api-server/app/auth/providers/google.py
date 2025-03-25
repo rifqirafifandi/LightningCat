@@ -11,16 +11,6 @@ def login():
     nonce, state = generate_security_tokens()
     store_tokens_in_session('google', nonce, state)
 
-    # Register Google OAuth client if not already registered
-    if 'google' not in oauth.clients:
-      oauth.register(
-        name='google',
-        client_id=current_app.config['GOOGLE_CLIENT_ID'],
-        client_secret=current_app.config['GOOGLE_CLIENT_SECRET'],
-        server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
-        client_kwargs={'scope': 'openid email'},
-      )
-
     return oauth.google.authorize_redirect(
       redirect_uri=current_app.config['GOOGLE_REDIRECT_URI'],
       state=state

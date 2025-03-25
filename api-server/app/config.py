@@ -24,7 +24,7 @@ class Config:
   COGNITO_CLIENT_ID = os.environ.get('COGNITO_CLIENT_ID', '3s5teo690r892rfp9pg22q77ob')
   COGNITO_CLIENT_SECRET = os.environ.get('COGNITO_CLIENT_SECRET')
   BASE_URL = os.environ.get('BASE_URL', 'https://api.chucklenuts.party')
-  REDIRECT_URI = f"{BASE_URL}/auth/cognito/callback"
+  COGNITO_REDIRECT_URI = f"{BASE_URL}/auth/cognito/callback"
   COGNITO_DOMAIN = f"https://cognito-idp.{AWS_REGION}.amazonaws.com/{COGNITO_USER_POOL_ID}"
   COGNITO_HOSTED_DOMAIN = f"{COGNITO_USER_POOL_ID}.auth.{AWS_REGION}.amazoncognito.com"
 
