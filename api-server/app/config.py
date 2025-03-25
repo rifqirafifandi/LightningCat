@@ -3,6 +3,10 @@ from datetime import timedelta
 
 class Config:
   SECRET_KEY = os.urandom(24)
+  
+  # Database configuration
+  SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+  SQLALCHEMY_TRACK_MODIFICATIONS = False
 
   # Session configuration
   SESSION_TYPE = 'redis'
@@ -28,6 +32,9 @@ class Config:
   GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
   GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
   GOOGLE_REDIRECT_URI = f"{BASE_URL}/auth/google/callback"
+
+  # App config
+  MAX_PROFILE_IMAGE_FILE_SIZE = 2 * 1024 * 1024  # 2MB
 
 class DevelopmentConfig(Config):
   DEBUG = True

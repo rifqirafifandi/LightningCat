@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, redirect, url_for, session, current_app, request
-from app.extensions import oauth
+from app.models.user import User, Profile, OAuthAccount
+from app.extensions import oauth, db
 from app.auth.utils import generate_security_tokens, store_tokens_in_session, get_tokens_from_session, store_user_in_session
 
 cognito_bp = Blueprint('cognito', __name__, url_prefix='/auth/cognito')
@@ -46,7 +47,27 @@ def callback():
     token = oauth.cognito.authorize_access_token()
     userinfo = oauth.cognito.parse_id_token(token, nonce=nonce)
 
+    provider_user_id = userinfo['sub']
+    email = userinfo['email']
+    name = userinfo.get('name', 'User')
+
+    user = OAuthAccount.get_user_by_provider_details('cognito', provider_user_id)
+
+    if not user:
+      user = User.get_or_create(email)
+      oauth_account = OAuthAccount(
+        user_id=user.id,
+        provider='cognito',
+        provider_user_id=provider_user_id
+      )
+      db.session.add(oauth_account)
+
+      profile = Profile.get_or_create(user.id, name)
+
+      db.session.commit()
+
     store_user_in_session(userinfo, token, 'cognito')
+    session['internal_user_id'] = user.id
 
     return redirect(url_for('api.profile'))
   except ValueError as e:

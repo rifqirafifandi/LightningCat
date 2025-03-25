@@ -16,7 +16,41 @@ Server is at [https://api.chucklenuts.party](https://api.chucklenuts.party)
 #### Unified logout
 - [https://api.chucklenuts.party/logout](https://api.chucklenuts.party/logout)
 
-### Application routes
+### API
+
+- GET [https://api.chucklenuts.party/health](https://api.chucklenuts.party/health)
+- GET [https://api.chucklenuts.party/profile](https://api.chucklenuts.party/profile)
+- POST [https://api.chucklenuts.party/profile/image](https://api.chucklenuts.party/profile/image)
+- PUT [https://api.chucklenuts.party/profile/name](https://api.chucklenuts.party/profile/name)
+- PUT [https://api.chucklenuts.party/profile/preferences](https://api.chucklenuts.party/profile/preferences)
+
+-----
+
+## Data Model
+Reference: [app/models/user.py](app/models/user.py)
+
+### users
+| key | type |
+| ------------- | ------------- |
+| `id` | SERIAL PRIMARY KEY |
+| `email` | VARCHAR(255) NOT NULL UNIQUE |
+
+### profiles
+| key | type |
+| ------------- | ------------- |
+| `id` | INTEGER PRIMARY KEY REFERENCES users(id) |
+| `name` | VARCHAR(255) NOT NULL |
+| `profile_image` | TEXT |
+| `preferences` | JSONB DEFAULT '{}'::jsonb |
+
+### oauth_accounts
+| key | type |
+| ------------- | ------------- |
+| `id` | SERIAL PRIMARY KEY |
+| `user_id` | INTEGER NOT NULL REFERENCES users(id) |
+| `provider` | VARCHAR(50) NOT NULL |
+| `provider_user_id` | VARCHAR(255) NOT NULL |
+|| UNIQUE(provider, provider_user_id) |
 
 -----
 

@@ -13,6 +13,7 @@ Environment="COGNITO_CLIENT_SECRET={...}"
 Environment="BASE_URL=https://api.chucklenuts.party"
 Environment="GOOGLE_CLIENT_ID=587289828458-opk65opdcq4cdf1htcurcd4bnrapfpgu.apps.googleusercontent.com"
 Environment="GOOGLE_CLIENT_SECRET={...}"
+Environment="DATABASE_URL={...}"
 ExecStart=/opt/api-server/api-server-venv/bin/uwsgi --ini uwsgi-config.ini
 
 [Install]

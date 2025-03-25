@@ -1,7 +1,7 @@
 from flask import Flask
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-from app.extensions import oauth, session
+from app.extensions import oauth, session, db, migrate
 from app.config import config_by_env
 from app.auth import auth_bp
 from app.auth.providers.cognito import cognito_bp
@@ -23,6 +23,8 @@ def create_app(config_name=None):
   # Initialize extensions
   session.init_app(app)
   oauth.init_app(app)
+  db.init_app(app)
+  migrate.init_app(app, db)
 
   # Apply middleware
   app.wsgi_app = ProxyFix(
