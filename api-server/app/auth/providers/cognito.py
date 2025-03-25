@@ -11,24 +11,10 @@ def login():
     nonce, state = generate_security_tokens()
     store_tokens_in_session('cognito', nonce, state)
 
-    # Register Cognito OAuth client if not already registered
-    if 'cognito' not in oauth.clients:
-      oauth.register(
-        name='cognito',
-        client_id=current_app.config['COGNITO_CLIENT_ID'],
-        client_secret=current_app.config['COGNITO_CLIENT_SECRET'],
-        server_metadata_url=f"{current_app.config['COGNITO_DOMAIN']}/.well-known/openid-configuration",
-        client_kwargs={'scope': 'email openid'},
-        authorize_params={
-          'response_type': 'code',
-          'redirect_uri': current_app.config['COGNITO_REDIRECT_URI']
-        }
-      )
-
     return oauth.cognito.authorize_redirect(
-        redirect_uri=current_app.config['COGNITO_REDIRECT_URI'],
-        nonce=nonce,
-        state=state
+      redirect_uri=current_app.config['COGNITO_REDIRECT_URI'],
+      nonce=nonce,
+      state=state
     )
   except Exception as e:
     current_app.logger.error(f"Cognito login error: {str(e)}")

@@ -26,6 +26,34 @@ def create_app(config_name=None):
   db.init_app(app)
   migrate.init_app(app, db)
 
+  with app.app_context():
+    # Register Cognito client
+    oauth.register(
+      name='cognito',
+      authority=app.config['COGNITO_DOMAIN'],
+      client_id=app.config['COGNITO_CLIENT_ID'],
+      client_secret=app.config['COGNITO_CLIENT_SECRET'],
+      server_metadata_url=f"{app.config['COGNITO_DOMAIN']}/.well-known/openid-configuration",
+      client_kwargs={
+        'scope': 'openid email profile',
+        'redirect_uri': app.config['COGNITO_REDIRECT_URI']
+      }
+    )
+
+    # Register Google client
+    oauth.register(
+      name='google',
+      client_id=app.config['GOOGLE_CLIENT_ID'],
+      client_secret=app.config['GOOGLE_CLIENT_SECRET'],
+      server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
+      client_kwargs={
+        'scope': 'openid email profile',
+        'redirect_uri': app.config['GOOGLE_REDIRECT_URI']
+      }
+    )
+
+    app.logger.debug(f"Registered OAuth clients: {list(oauth._clients.keys())}")
+
   # Apply middleware
   app.wsgi_app = ProxyFix(
     app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
