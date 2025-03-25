@@ -1,6 +1,6 @@
 import secrets
 from functools import wraps
-from flask import session, jsonify, current_app
+from flask import session, jsonify
 
 def login_required(f):
   @wraps(f)
