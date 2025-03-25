@@ -7,6 +7,7 @@ import Navbar from './components/Navbar';
 import FilterPanel from './components/FilterPanel';
 import SidePanel from './components/SidePanel';
 import SearchInputBox from './components/SearchInputBox';
+import * as turf from '@turf/turf';
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
@@ -32,6 +33,17 @@ const App = () => {
   const [townsGeoJson, setTownsGeoJson] = useState(null);
   const [sportFacilitiesGeoJson, setSportFacilitiesGeoJson] = useState(null);
   const [weatherData, setWeatherData] = useState(null);
+  const [lightningData, setLightningData] = useState(null);
+
+  // Function to check if a point is within 8 km of any lightning strike
+  const isWithinLightningRadius = (facility, lightningStrikes) => {
+    const facilityCoords = [parseFloat(facility.longitude), parseFloat(facility.latitude)];
+    return lightningStrikes.some((strike) => {
+      const strikeCoords = [parseFloat(strike.location.longitude), parseFloat(strike.location.latitude)];
+      const distance = turf.distance(facilityCoords, strikeCoords, { units: 'kilometers' });
+      return distance <= 8;
+    });
+  };
 
   // 1) Fetch all required static files and store each response in its respective state.
   useEffect(() => {
@@ -41,7 +53,8 @@ const App = () => {
       fetch('/MasterPlan2019PlanningAreaBoundaryNoSea.processed.geojson'),
       fetch('/SportSGSportFacilitiesGEOJSON.geojson'),
       fetch('/twoHourWeatherData_sample.json'),
-      fetch('/bookingsListings_sample.json')
+      fetch('/bookingsListings_sample.json'),
+      fetch('/lightningData_sample.json')
     ])
       .then((responses) => Promise.all(responses.map((r) => r.json())))
       .then(
@@ -50,13 +63,15 @@ const App = () => {
           townsData,
           sportsData,
           weatherJsonData,
-          bookingListingsData
+          bookingListingsData,
+          lightningData,
         ]) => {
           setFacilitiesCapacities(facilityCapacitiesData);
           setTownsGeoJson(townsData);
           setSportFacilitiesGeoJson(sportsData);
-          setWeatherData(weatherJsonData)
-          setBookingsListings(bookingListingsData)
+          setWeatherData(weatherJsonData);
+          setBookingsListings(bookingListingsData);
+          setLightningData(lightningData);
         }
       )
       .catch((err) => console.error('Error fetching data:', err));
@@ -71,7 +86,7 @@ const App = () => {
       zoom: 11,
     });
   
-    mapInstance.on('load', () => {
+    mapInstance.on('style.load', () => {
       updateBounds(mapInstance.getBounds().toArray());
     });
   
@@ -89,7 +104,7 @@ const App = () => {
   // 3) Add layers (town polygons & sport facilities polygons) once both the map and corresponding GeoJSON data are available.
   useEffect(() => {
     if (!map) return;
-
+    
     // --- Add Towns Layer ---
     if (townsGeoJson && !map.getSource('towns')) {
       map.addSource('towns', { type: 'geojson', data: townsGeoJson });
@@ -191,6 +206,7 @@ const App = () => {
         if (facilitiesCapacities) {
           // If facilityCapacities_sample.json is an *array*, we'll search inside that array
           const details = findFacilityByName(sportsCen, facilitiesCapacities);
+          const lightningReadings = lightningData.data.records[0].item.readings;
           if (details) {
             facilityDetailsHtml = `
             <h5>${details.name}</h5>
@@ -217,6 +233,19 @@ const App = () => {
                 </div>
               </div>
             `;
+
+            // Check if the facility is within 8 km of any lightning strike
+            let facilityLoc = {
+              latitude: details.location[0],
+              longitude: details.location[1],
+            }
+            if (isWithinLightningRadius(facilityLoc, lightningReadings)) {
+              facilityDetailsHtml += `
+                <div style="color: red;">
+                  <strong>Lightning Risk:</strong> This facility is within 8 km of a recent lightning strike.
+                </div>
+              `;
+            }
           } else {
             facilityDetailsHtml = `<p>No matching facility found for ${sportsCen}.</p>`;
           }
@@ -238,12 +267,96 @@ const App = () => {
         setCustomRecordsData({ isCustom: true, getRecords: [recordObj] });
       });
     }
-  }, [
+
+    // --- Add Lightning Layer ---
+    // Load the lightning icon image
+  map.loadImage('lightning-icon.png', (error, image) => {
+    if (error) throw error;
+
+    // Add the image to the map
+    if (!map.hasImage('lightning-icon')) {
+      map.addImage('lightning-icon', image);
+    }
+
+    // --- Add Lightning Strikes Layer ---
+    if (lightningData && !map.getSource('lightningStrikes')) {
+      const lightningReadings = lightningData.data.records[0].item.readings;
+      const lightningGeoJson = {
+        type: 'FeatureCollection',
+        features: lightningReadings.map((strike) => ({
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [parseFloat(strike.location.longitude), parseFloat(strike.location.latitude)],
+          },
+          properties: {
+            type: strike.type,
+            text: strike.text,
+            datetime: strike.datetime,
+          },
+        })),
+      };
+
+      map.addSource('lightningStrikes', {
+        type: 'geojson',
+        data: lightningGeoJson,
+      });
+
+      map.addLayer({
+        id: 'lightningStrikesLayer',
+        type: 'symbol',
+        source: 'lightningStrikes',
+        layout: {
+          'icon-image': 'lightning-icon',
+          'icon-size': 0.1, // Adjust the size as needed
+        },
+      });
+
+      // Add a circle layer for the 8-km radius around each lightning strike
+      map.addLayer({
+        id: 'lightningRadiusLayer',
+        type: 'circle',
+        source: 'lightningStrikes',
+        paint: {
+          'circle-radius': {
+            stops: [
+              [0, 0],
+              [20, 8000 / 0.075], // 8 km in meters, adjust for zoom level
+            ],
+            base: 2,
+          },
+          'circle-color': '#ff0000',
+          'circle-opacity': 0.2,
+        },
+      });
+
+      map.on('click', 'lightningStrikesLayer', (e) => {
+        const feature = e.features && e.features[0];
+        if (!feature) return;
+
+        const { text, datetime } = feature.properties;
+        const popupContent = `
+          <div>
+            <h5>Lightning Strike</h5>
+            <p><strong>Type:</strong> ${text}</p>
+            <p><strong>Time:</strong> ${new Date(datetime).toLocaleString()}</p>
+          </div>
+        `;
+
+        new mapboxgl.Popup({ maxWidth: '300px' })
+          .setLngLat(feature.geometry.coordinates)
+          .setHTML(popupContent)
+          .addTo(map);
+      });
+    }
+  });
+}, [
     map,
     townsGeoJson,
     sportFacilitiesGeoJson,
     weatherData,
     facilitiesCapacities,
+    lightningData,
   ]);
 
   // Helper to find a facility by name (SPORTS_CEN) inside facilitiesCapacities

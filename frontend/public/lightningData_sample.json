@@ -1,0 +1,64 @@
+{
+    "code": 0,
+    "data": {
+      "records": [
+        {
+          "datetime": "2025-02-22T16:26:00+08:00",
+          "item": {
+            "isStationData": false,
+            "readings": [
+              {
+                "location": {
+                  "latitude": "1.4904",
+                  "longitude": "103.5237"
+                },
+                "type": "C",
+                "text": "Cloud to Cloud",
+                "datetime": "2025-02-22T16:24:20.659+08:00"
+              },
+              {
+                "location": {
+                  "latitude": "1.3414",
+                  "longitude": "103.5449"
+                },
+                "type": "C",
+                "text": "Cloud to Cloud",
+                "datetime": "2025-02-22T16:24:28.204+08:00"
+              },
+              {
+                "location": {
+                  "latitude": "1.3375",
+                  "longitude": "103.5591"
+                },
+                "type": "G",
+                "text": "Cloud to Ground",
+                "datetime": "2025-02-22T16:24:28.204+08:00"
+              },
+              {
+                "location": {
+                  "latitude": "1.3399",
+                  "longitude": "103.5324"
+                },
+                "type": "C",
+                "text": "Cloud to Cloud",
+                "datetime": "2025-02-22T16:24:28.204+08:00"
+              },
+              {
+                "location": {
+                  "latitude": "1.3345675801415693",
+                  "longitude": "103.74288819947832"
+                },
+                "type": "C",
+                "text": "Cloud to Cloud",
+                "datetime": "2025-02-22T16:24:28.204+08:00"
+              }
+            ],
+            "type": "observation",
+            "isCompressed": true
+          },
+          "updatedTimestamp": "2025-02-22T16:26:00+08:00"
+        }
+      ]
+    }
+  }
+  
