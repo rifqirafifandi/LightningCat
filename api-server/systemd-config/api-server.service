@@ -1,0 +1,20 @@
+[Unit]
+Description=uWSGI instance to serve api-server
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/api-server
+Environment="PATH=/opt/api-server/api-server-venv/bin"
+Environment="AWS_REGION=ap-southeast-1"
+Environment="COGNITO_USER_POOL_ID=ap-southeast-1_gizY1x2zX"
+Environment="COGNITO_CLIENT_SECRET={...}"
+Environment="BASE_URL=https://api.chucklenuts.party"
+Environment="GOOGLE_CLIENT_ID=587289828458-opk65opdcq4cdf1htcurcd4bnrapfpgu.apps.googleusercontent.com"
+Environment="GOOGLE_CLIENT_SECRET={...}"
+Environment="DATABASE_URL={...}"
+ExecStart=/opt/api-server/api-server-venv/bin/uwsgi --ini uwsgi-config.ini
+
+[Install]
+WantedBy=multi-user.target

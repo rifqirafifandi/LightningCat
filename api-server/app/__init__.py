@@ -1,0 +1,68 @@
+from flask import Flask
+from werkzeug.middleware.proxy_fix import ProxyFix
+
+from app.extensions import oauth, session, db, migrate
+from app.config import config_by_env
+from app.auth import auth_bp
+from app.auth.providers.cognito import cognito_bp
+from app.auth.providers.google import google_bp
+from app.api import api_bp
+
+def create_app(config_name=None):
+  app = Flask(__name__)
+
+  # Load configuration
+  if config_name is None:
+    config_name = 'production'
+  app.config.from_object(config_by_env[config_name])
+
+  # Configure logging
+  import logging
+  app.logger.setLevel(logging.DEBUG)
+
+  # Initialize extensions
+  session.init_app(app)
+  oauth.init_app(app)
+  db.init_app(app)
+  migrate.init_app(app, db)
+
+  with app.app_context():
+    # Register Cognito client
+    oauth.register(
+      name='cognito',
+      authority=app.config['COGNITO_DOMAIN'],
+      client_id=app.config['COGNITO_CLIENT_ID'],
+      client_secret=app.config['COGNITO_CLIENT_SECRET'],
+      server_metadata_url=f"{app.config['COGNITO_DOMAIN']}/.well-known/openid-configuration",
+      client_kwargs={
+        'scope': 'openid email profile',
+        'redirect_uri': app.config['COGNITO_REDIRECT_URI']
+      }
+    )
+
+    # Register Google client
+    oauth.register(
+      name='google',
+      client_id=app.config['GOOGLE_CLIENT_ID'],
+      client_secret=app.config['GOOGLE_CLIENT_SECRET'],
+      server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
+      client_kwargs={
+        'scope': 'openid email profile',
+        'redirect_uri': app.config['GOOGLE_REDIRECT_URI']
+      }
+    )
+
+    app.logger.debug(f"Registered OAuth clients: {list(oauth._clients.keys())}")
+
+  # Apply middleware
+  app.wsgi_app = ProxyFix(
+    app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
+  )
+
+  # Register blueprints
+  app.register_blueprint(auth_bp)
+  app.register_blueprint(cognito_bp)
+  app.register_blueprint(google_bp)
+  app.register_blueprint(api_bp)
+
+  return app
