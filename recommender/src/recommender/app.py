@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from path import Path
 
 from recommender.inference import Searcher
@@ -11,6 +12,15 @@ ARTIFACT_PATH = Path("./data/")
 
 
 app = FastAPI(debug=True)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
+
+
 real_db = LocalRealTimeDB("./data/facilityCapacities_sample.json")
 
 search_app: Searcher = Searcher.from_local_path(MODEL_PATH, ARTIFACT_PATH)
