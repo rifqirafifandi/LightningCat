@@ -79,9 +79,9 @@ const App = () => {
 
     mapInstance.on('load', () => {
       updateBounds(mapInstance.getBounds().toArray());
-      getListingsData();
-      getDistinctTowns();
-      getDistinctFlatTypes();
+      // getListingsData();
+      // getDistinctTowns();
+      // getDistinctFlatTypes();
     });
 
     mapInstance.on('moveend', () => {
@@ -98,163 +98,164 @@ const App = () => {
   // 3) Add layers (town polygons & sport facilities polygons) once both the map and corresponding GeoJSON data are available.
   useEffect(() => {
     if (!map) return;
-
-    // --- Add Towns Layer ---
-    if (townsGeoJson && !map.getSource('towns')) {
-      map.addSource('towns', { type: 'geojson', data: townsGeoJson });
-      map.addLayer({
-        id: 'townsFill',
-        type: 'fill',
-        source: 'towns',
-        paint: {
-          'fill-color': 'lightblue',
-          'fill-opacity': 0.5,
-        },
-      });
-      map.addLayer({
-        id: 'townsBorder',
-        type: 'line',
-        source: 'towns',
-        paint: { 'line-color': '#000000', 'line-width': 2 },
-      });
-
-      // Town polygon click event to show weather forecast
-      map.on('click', 'townsFill', (e) => {
-        const feature = e.features && e.features[0];
-        if (!feature) return;
-
-        const clickedTown = feature.properties.PLN_AREA_N;
-        const clickedTownLower = clickedTown.toLowerCase();
-
-        if (weatherData?.data?.items?.[0]?.forecasts) {
-          const forecasts = weatherData.data.items[0].forecasts;
-          const matchingForecast = forecasts.find(
-            (f) => f.area.toLowerCase() === clickedTownLower
-          );
-
-          let popupContent = `<div><h4>${clickedTown}</h4>`;
-          if (matchingForecast) {
-            popupContent += `<p><strong>Forecast:</strong> ${matchingForecast.forecast}</p>`;
-          } else {
-            popupContent += `<p>No forecast available</p>`;
-          }
-          popupContent += `</div>`;
-
-          new mapboxgl.Popup({ maxWidth: '400px' })
-            .setLngLat(e.lngLat)
-            .setHTML(popupContent)
-            .addTo(map);
-        }
-      });
-    }
-
-    // --- Add Sport Facilities Layer ---
-    if (sportFacilitiesGeoJson && !map.getSource('sportFacilities')) {
-      map.addSource('sportFacilities', {
-        type: 'geojson',
-        data: sportFacilitiesGeoJson,
-      });
-
-      map.addLayer({
-        id: 'sportFacilitiesFill',
-        type: 'fill',
-        source: 'sportFacilities',
-        paint: { 'fill-color': '#800080', 'fill-opacity': 0.9 },
-      });
-
-      map.addLayer({
-        id: 'sportFacilitiesBorder',
-        type: 'line',
-        source: 'sportFacilities',
-        paint: { 'line-color': '#000000', 'line-width': 2 },
-      });
-
-      map.on('mouseenter', 'sportFacilitiesFill', () => {
-        map.getCanvas().style.cursor = 'pointer';
-      });
-
-      map.on('mouseleave', 'sportFacilitiesFill', () => {
-        map.getCanvas().style.cursor = '';
-      });
-
-      // Click event for sport facilities polygons
-      map.on('click', 'sportFacilitiesFill', (e) => {
-        const feature = e.features && e.features[0];
-        if (!feature) return;
-
-        // Build a record object for the side panel
-        let recordObj = {};
-        Object.entries(feature.properties).forEach(([key, value]) => {
-          if (key !== 'Description' && value) {
-            recordObj[key] = value;
+    
+    map.on('load', () => {
+      // --- Add Towns Layer ---
+      if (townsGeoJson && !map.getSource('towns')) {
+        map.addSource('towns', { type: 'geojson', data: townsGeoJson });
+        map.addLayer({
+          id: 'townsFill',
+          type: 'fill',
+          source: 'towns',
+          paint: {
+            'fill-color': 'lightblue',
+            'fill-opacity': 0.5,
+          },
+        });
+        map.addLayer({
+          id: 'townsBorder',
+          type: 'line',
+          source: 'towns',
+          paint: { 'line-color': '#000000', 'line-width': 2 },
+        });
+  
+        // Town polygon click event to show weather forecast
+        map.on('click', 'townsFill', (e) => {
+          const feature = e.features && e.features[0];
+          if (!feature) return;
+  
+          const clickedTown = feature.properties.PLN_AREA_N;
+          const clickedTownLower = clickedTown.toLowerCase();
+  
+          if (weatherData?.data?.items?.[0]?.forecasts) {
+            const forecasts = weatherData.data.items[0].forecasts;
+            const matchingForecast = forecasts.find(
+              (f) => f.area.toLowerCase() === clickedTownLower
+            );
+  
+            let popupContent = `<div><h4>${clickedTown}</h4>`;
+            if (matchingForecast) {
+              popupContent += `<p><strong>Forecast:</strong> ${matchingForecast.forecast}</p>`;
+            } else {
+              popupContent += `<p>No forecast available</p>`;
+            }
+            popupContent += `</div>`;
+  
+            new mapboxgl.Popup({ maxWidth: '400px' })
+              .setLngLat(e.lngLat)
+              .setHTML(popupContent)
+              .addTo(map);
           }
         });
+      }
+      // --- Add Sport Facilities Layer ---
+      if (sportFacilitiesGeoJson && !map.getSource('sportFacilities')) {
+        map.addSource('sportFacilities', {
+          type: 'geojson',
+          data: sportFacilitiesGeoJson,
+        });
 
-        // Example: the property is "SPORTS_CEN" in the GEOJSON
-        const sportsCen = feature.properties.SPORTS_CEN;
-        // Alternatively if your property is named "SPORT_CEN", adjust accordingly
-        // const sportsCen = feature.properties.SPORT_CEN;  
+        map.addLayer({
+          id: 'sportFacilitiesFill',
+          type: 'fill',
+          source: 'sportFacilities',
+          paint: { 'fill-color': '#800080', 'fill-opacity': 0.9 },
+        });
 
-        // Attempt to find facility info based on matching "name"
-        let facilityDetailsHtml = '';
-        if (facilitiesCapacities) {
-          // If facilityCapacities_sample.json is an *array*, we'll search inside that array
-          const details = findFacilityByName(sportsCen, facilitiesCapacities);
-          if (details) {
-            facilityDetailsHtml = `
-              <div style="border: 1px solid #ccc; padding: 5px; margin-bottom: 5px;">
-                <h5>${details.name}</h5>
-                <p><strong>Address:</strong> ${details.address}</p>
+        map.addLayer({
+          id: 'sportFacilitiesBorder',
+          type: 'line',
+          source: 'sportFacilities',
+          paint: { 'line-color': '#000000', 'line-width': 2 },
+        });
 
-                <div>
-                  <h6>Swimming Facility</h6>
-                  <p><strong>Capacity:</strong> ${details.swimming.capacity}</p>
-                  <p><strong>Status:</strong> ${
-                    details.swimming.closed ? 'Closed' : 'Open'
-                  }</p>
+        map.on('mouseenter', 'sportFacilitiesFill', () => {
+          map.getCanvas().style.cursor = 'pointer';
+        });
+
+        map.on('mouseleave', 'sportFacilitiesFill', () => {
+          map.getCanvas().style.cursor = '';
+        });
+
+        // Click event for sport facilities polygons
+        map.on('click', 'sportFacilitiesFill', (e) => {
+          const feature = e.features && e.features[0];
+          if (!feature) return;
+
+          // Build a record object for the side panel
+          let recordObj = {};
+          Object.entries(feature.properties).forEach(([key, value]) => {
+            if (key !== 'Description' && value) {
+              recordObj[key] = value;
+            }
+          });
+
+          // Example: the property is "SPORTS_CEN" in the GEOJSON
+          const sportsCen = feature.properties.SPORTS_CEN;
+          // Alternatively if your property is named "SPORT_CEN", adjust accordingly
+          // const sportsCen = feature.properties.SPORT_CEN;  
+
+          // Attempt to find facility info based on matching "name"
+          let facilityDetailsHtml = '';
+          if (facilitiesCapacities) {
+            // If facilityCapacities_sample.json is an *array*, we'll search inside that array
+            const details = findFacilityByName(sportsCen, facilitiesCapacities);
+            if (details) {
+              facilityDetailsHtml = `
+                <div style="border: 1px solid #ccc; padding: 5px; margin-bottom: 5px;">
+                  <h5>${details.name}</h5>
+                  <p><strong>Address:</strong> ${details.address}</p>
+
+                  <div>
+                    <h6>Swimming Facility</h6>
+                    <p><strong>Capacity:</strong> ${details.swimming.capacity}</p>
+                    <p><strong>Status:</strong> ${
+                      details.swimming.closed ? 'Closed' : 'Open'
+                    }</p>
+                  </div>
+
+                  <div>
+                    <h6>Gym Facility</h6>
+                    <p><strong>Capacity:</strong> ${
+                      details.gym.capacity !== null ? details.gym.capacity : 'N/A'
+                    }</p>
+                    <p><strong>Status:</strong> ${
+                      details.gym.closed === null
+                        ? 'Not Available'
+                        : details.gym.closed
+                        ? 'Closed'
+                        : 'Open'
+                    }</p>
+                  </div>
                 </div>
-
-                <div>
-                  <h6>Gym Facility</h6>
-                  <p><strong>Capacity:</strong> ${
-                    details.gym.capacity !== null ? details.gym.capacity : 'N/A'
-                  }</p>
-                  <p><strong>Status:</strong> ${
-                    details.gym.closed === null
-                      ? 'Not Available'
-                      : details.gym.closed
-                      ? 'Closed'
-                      : 'Open'
-                  }</p>
-                </div>
-              </div>
-            `;
+              `;
+            } else {
+              facilityDetailsHtml = `<p>No matching facility found for ${sportsCen}.</p>`;
+            }
           } else {
-            facilityDetailsHtml = `<p>No matching facility found for ${sportsCen}.</p>`;
+            facilityDetailsHtml = `<p>Loading facility details...</p>`;
           }
-        } else {
-          facilityDetailsHtml = `<p>Loading facility details...</p>`;
-        }
 
-        // Show popup with details
-        new mapboxgl.Popup({ maxWidth: '600px' })
-          .setLngLat(e.lngLat)
-          .setHTML(`
-            <div>
-              <h4>${feature.properties.FacilityName || 'Facility Information'}</h4>
-              <p><strong>Address:</strong> ${feature.properties.Address || 'Not available'}</p>
-              <p><strong>Type:</strong> ${feature.properties.Type || 'Not specified'}</p>
-              <hr/>
-              <h5>Facility Capacity Details</h5>
-              ${facilityDetailsHtml}
-            </div>
-          `)
-          .addTo(map);
+          // Show popup with details
+          new mapboxgl.Popup({ maxWidth: '600px' })
+            .setLngLat(e.lngLat)
+            .setHTML(`
+              <div>
+                <h4>${feature.properties.FacilityName || 'Facility Information'}</h4>
+                <p><strong>Address:</strong> ${feature.properties.Address || 'Not available'}</p>
+                <p><strong>Type:</strong> ${feature.properties.Type || 'Not specified'}</p>
+                <hr/>
+                <h5>Facility Capacity Details</h5>
+                ${facilityDetailsHtml}
+              </div>
+            `)
+            .addTo(map);
 
-        // Update the side panel if desired
-        setCustomRecordsData({ isCustom: true, getRecords: [recordObj] });
-      });
-    }
+          // Update the side panel if desired
+          setCustomRecordsData({ isCustom: true, getRecords: [recordObj] });
+        });
+      }
+    })
   }, [
     map,
     townsGeoJson,

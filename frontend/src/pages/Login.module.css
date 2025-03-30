@@ -1,0 +1,24 @@
+.container {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loginButton {
+  background-color: #FFFFFF;
+  border: 1px solid #666666;
+  border-radius: 0.5rem;
+  color: #333333;
+  padding: 0.75rem 2rem;
+  text-align: center;
+  text-decoration: none;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+}

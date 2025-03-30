@@ -1,19 +1,26 @@
 import React, { useState } from 'react';
-import { Dropdown } from 'react-bootstrap';
+import { Button, Dropdown } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import styles from './NavBar.module.css';
 
 const Navbar = ({ onSearchClick }) => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const navigate = useNavigate();
 
   const toggleDropdown = () => {
     setDropdownOpen(!isDropdownOpen);
   };
 
+  const handleClick = () => {
+    navigate("/login");
+  }
+
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light">
+    <nav className="navbar shadow navbar-expand-lg navbar-light bg-light">
       <div className="container-fluid">
+        <div>LightningCat</div>
         {/* User Greeting and Dropdown aligned to the left */}
-        <div className="d-flex align-items-center">
-          <span className="mr-2">Hello, Guest</span>
+        {/* <div className="d-flex align-items-center">
           <Dropdown show={isDropdownOpen} onToggle={toggleDropdown}>
             <Dropdown.Toggle variant="link" id="dropdown-user">
               <i className="bi bi-person-circle" style={{ fontSize: '1.5em' }}></i>
@@ -23,22 +30,11 @@ const Navbar = ({ onSearchClick }) => {
               <Dropdown.Item href="#/signin">Sign In</Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
-        </div>
-        
-        <button 
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
-        <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav me-auto mb-2 mb-lg-0"></ul>
-        </div>
+        </div> */}
+      </div>
+      <div className={`${styles['navbar-right']}`}>
+        <span>Hello, Guest</span>
+        <Button variant="primary" onClick={handleClick}>Login</Button>
       </div>
     </nav>
   );

@@ -22,6 +22,7 @@
     "react-bootstrap": "^2.10.1",
     "react-dom": "^18.2.0",
     "react-map-gl": "^7.1.7",
+    "react-router-dom": "^7.4.1",
     "react-scripts": "^5.0.1",
     "recharts": "^2.12.6",
     "simple-statistics": "^7.8.3",

@@ -1,9 +1,10 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client'; // Correct import for React 18
-import './index.css';
-import App from './App';
+import { RouterProvider } from 'react-router-dom';
+import router from './routes';
 import reportWebVitals from './reportWebVitals';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+import './index.css';
 
 // Ensure your URI includes the protocol (http:// or https://)
 const client = new ApolloClient({
@@ -19,7 +20,7 @@ const root = container ? createRoot(container) : null;
 root?.render(
   <React.StrictMode>
     <ApolloProvider client={client}>
-      <App />
+      <RouterProvider router={router} />
     </ApolloProvider>
   </React.StrictMode>
 );
