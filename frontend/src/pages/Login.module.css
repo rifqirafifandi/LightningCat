@@ -5,6 +5,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  background: #f9f9f9;
+}
+
+.title {
+  margin-bottom: 2rem;
 }
 
 .loginButton {
@@ -21,4 +26,34 @@
   gap: 0.5rem;
   font-size: 1rem;
   cursor: pointer;
+  transition: all 150ms ease-in-out;
+}
+
+.loginButton:hover {
+  background-color: #F0F0F0;
+}
+
+.signUpLink {
+  color: blue;
+  text-decoration: underline;
+  font-size: 0.875rem;
+}
+
+.signUpDivider {
+  position: relative;
+  height: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0.5rem 0 0.25rem 0;
+  hr {
+    width: 100%;
+  }
+  span {
+    background: #f9f9f9;
+    position: absolute;
+    width: 4rem;
+    display: flex;
+    justify-content: center;
+  }
 }
