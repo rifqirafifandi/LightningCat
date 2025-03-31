@@ -14,15 +14,29 @@ Server is at [https://api.chucklenuts.party](https://api.chucklenuts.party)
 - [https://api.chucklenuts.party/auth/google/login](https://api.chucklenuts.party/auth/google/login)
 
 #### Unified logout
-- [https://api.chucklenuts.party/logout](https://api.chucklenuts.party/logout)
+- [https://api.chucklenuts.party/auth/logout](https://api.chucklenuts.party/auth/logout)
 
 ### API
 
-- GET [https://api.chucklenuts.party/health](https://api.chucklenuts.party/health)
-- GET [https://api.chucklenuts.party/profile](https://api.chucklenuts.party/profile)
-- POST [https://api.chucklenuts.party/profile/image](https://api.chucklenuts.party/profile/image)
-- PUT [https://api.chucklenuts.party/profile/name](https://api.chucklenuts.party/profile/name)
-- PUT [https://api.chucklenuts.party/profile/preferences](https://api.chucklenuts.party/profile/preferences)
+#### Testing & debugging
+- GET `https://api.chucklenuts.party/health` - check if API is alive
+- GET `https://api.chucklenuts.party` - check if you're authenticated
+
+#### User & profile
+- GET `https://api.chucklenuts.party/profile` - get profile with session cookie
+- POST `https://api.chucklenuts.party/profile` - Update profile with formData
+
+##### Listing
+- GET `https://api.chucklenuts.party/listing/:listingId` - get single listing by listing_id
+- GET `https://api.chucklenuts.party/listings/:userId` - get user_id's listings
+- GET `https://api.chucklenuts.party/listings` - get all listings
+- POST `https://api.chucklenuts.party/listing` - create listing
+
+##### Booking
+- GET `https://api.chucklenuts.party/booking/:bookingId` - get single booking by booking_id
+- GET `https://api.chucklenuts.party/bookings/:userId` - get user_id's bookings
+- GET `https://api.chucklenuts.party/bookings` - get all bookings
+- POST `https://api.chucklenuts.party/booking` - create booking
 
 -----
 
@@ -52,6 +66,8 @@ Reference: [app/models/user.py](app/models/user.py)
 | `provider_user_id` | VARCHAR(255) NOT NULL |
 || UNIQUE(provider, provider_user_id) |
 
+Reference: [app/models/listing.py](app/models/listing.py)
+
 ### listings
 | key | type |
 | ------------- | ------------- |
@@ -65,6 +81,8 @@ Reference: [app/models/user.py](app/models/user.py)
 | `price` | DECIMAL(10,2) |
 | `status` | listing_status DEFAULT 'open' |
 | `created_at` | TIMESTAMP DEFAULT CURRENT_TIMESTAMP |
+
+Reference: [app/models/booking.py](app/models/booking.py)
 
 ### bookings
 | key | type |
