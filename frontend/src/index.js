@@ -2,6 +2,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client'; // Correct import for React 18
 import { RouterProvider } from 'react-router-dom';
 import AuthProvider from './contexts/auth';
+import NotificationProvider from './contexts/notification';
 import router from './routes';
 import reportWebVitals from './reportWebVitals';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
@@ -22,7 +23,9 @@ root?.render(
   <React.StrictMode>
     <ApolloProvider client={client}>
       <AuthProvider>
-        <RouterProvider router={router} />
+        <NotificationProvider>
+          <RouterProvider router={router} />
+        </NotificationProvider>
       </AuthProvider>
     </ApolloProvider>
   </React.StrictMode>

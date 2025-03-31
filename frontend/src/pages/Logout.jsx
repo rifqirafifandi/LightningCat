@@ -1,15 +1,13 @@
 import { NavLink } from 'react-router-dom';
 import sharedStyles from './Shared.module.css';
-import EmptyStateImage from '../assets/images/empty-state-search.svg'
 
-const ErrorPage = () => {
+const Logout = () => {
   return (
     <div className={sharedStyles.pageContainer}>
       <div className={sharedStyles.contentContainer}>
-        <img src={EmptyStateImage} alt="Error" className={sharedStyles.errorImage} />
         <div className={sharedStyles.textContainer}>
-          <h2>404</h2>
-          <p>Sorry, the page you're looking for does not exist.</p>
+          <h2>Goodbye</h2>
+          <p>You have been logged out successfully.</p>
           <NavLink to="/"><span>Return to home page</span></NavLink>
         </div>
       </div>
@@ -17,4 +15,4 @@ const ErrorPage = () => {
   );
 }
 
-export default ErrorPage;
+export default Logout;

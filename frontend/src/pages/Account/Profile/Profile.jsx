@@ -1,13 +1,15 @@
 import React from 'react';
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
-import { Pencil } from 'react-bootstrap-icons';
+import { PersonCircle, Pencil } from 'react-bootstrap-icons';
 import { useAuth } from "../../../contexts/auth";
+import { useNotification } from '../../../contexts/notification';
 import styles from './Profile.module.css';
 
 const Profile = () => {
   const inputFileRef = React.useRef(null);
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
+  const { addNotification, removeNotification } = useNotification();
   const [name, setName] = React.useState(user.name);
   const [profileImage, setProfileImage] = React.useState(user.profile_image);
   const [preferences, setPreferences] = React.useState({
@@ -49,21 +51,50 @@ const Profile = () => {
     formData.append('name', name);
     formData.append('profile_image', profileImage);
     formData.append('preferences', JSON.stringify(preferences));
-    console.log(formData)
-    const response = await fetch('https://api.chucklenuts.part/profile', {
+    const response = await fetch('https://api.chucklenuts.party/profile', {
       method: 'POST',
       body: formData,
       credentials: 'include',
     });
     const data = await response.json();
-    console.log(`Form submitted: ${ data }`);
+    if (data.ok) {
+      addNotification({
+        id: Date.now(),
+        title: "LightningCat",
+        message: "Profile updated successfully.",
+        time: new Date().toLocaleTimeString(),
+        removeNotification: removeNotification,
+        type: "success",
+        show: true,
+      })
+      setUser((prevUser) => ({
+        ...prevUser,
+        name: data.name,
+        profile_image: data.profile_image,
+        preferences: data.preferences,
+      }));
+    } else {
+      addNotification({
+        id: new Date.now(),
+        title: "LightningCat",
+        message: "Error updating profile.",
+        time: new Date().toLocaleTimeString(),
+        removeNotification: removeNotification,
+        type: "danger",
+        show: true,
+      })
+    }
   }
 
   return (
     <div>
       <h1>Profile</h1>
       <div className={styles.profileImageContainer} onClick={() => inputFileRef.current.click()}>
-        <img src={profileImage} alt="Profile" className={styles.profileImage}/>
+        {
+          profileImage 
+          ? <img src={profileImage} alt="Profile" className={styles.profileImage}/> 
+          : <PersonCircle className={styles.profileImagePlaceholder}/>
+        }
         <span className={styles.editProfileImageOverlay}>
           <Pencil />
         </span>

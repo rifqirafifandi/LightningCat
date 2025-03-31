@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, redirect, url_for, session, current_app, request
+from flask import Blueprint, jsonify, redirect, session, current_app, request
 from app.models.user import User, Profile, OAuthAccount
 from app.extensions import oauth, db
 from app.auth.utils import generate_security_tokens, store_tokens_in_session, get_tokens_from_session, store_user_in_session
@@ -53,6 +53,7 @@ def callback():
 
     store_user_in_session(userinfo, token, 'cognito')
     session['internal_user_id'] = user.id
+    session.modified = True
 
     return redirect(current_app.config['WEB_REDIRECT_URI'])
   except ValueError as e:

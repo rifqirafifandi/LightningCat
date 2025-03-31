@@ -18,7 +18,7 @@ class Config:
   SESSION_COOKIE_NAME = 'session'
   SESSION_COOKIE_SECURE = True
   SESSION_COOKIE_HTTPONLY = True
-  SESSION_COOKIE_SAMESITE = 'Lax'
+  SESSION_COOKIE_SAMESITE = 'None'
 
   # AWS Cognito configuration
   AWS_REGION = os.environ.get('AWS_REGION', 'ap-southeast-1')
@@ -28,7 +28,8 @@ class Config:
   BASE_URL = os.environ.get('BASE_URL', 'https://api.chucklenuts.party')
   COGNITO_REDIRECT_URI = f"{BASE_URL}/auth/cognito/callback"
   COGNITO_DOMAIN = f"https://cognito-idp.{AWS_REGION}.amazonaws.com/{COGNITO_USER_POOL_ID}"
-  COGNITO_HOSTED_DOMAIN = f"{COGNITO_USER_POOL_ID}.auth.{AWS_REGION}.amazoncognito.com"
+  COGNITO_HOSTED_DOMAIN = os.environ.get('COGNITO_HOSTED_DOMAIN', 'ap-southeast-1gizy1x2zx.auth.ap-southeast-1.amazoncognito.com')
+  COGNITO_LOGOUT_URI = os.environ.get('COGNITO_LOGOUT_URI', 'https://web.chucklenuts.party/logout')
 
   # Google Auth configuration
   GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')

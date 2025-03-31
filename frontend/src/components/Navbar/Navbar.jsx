@@ -8,7 +8,7 @@ import styles from './Navbar.module.css';
 const Navbar = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
-  const{ user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuth();
 
   const toggleDropdown = () => {
     setDropdownOpen(!isDropdownOpen);
@@ -28,10 +28,16 @@ const Navbar = () => {
           isAuthenticated
           ? <>
               <Dropdown show={isDropdownOpen} onToggle={toggleDropdown}>
-                <Dropdown.Toggle variant="link" id="dropdown-user" className={styles.dropdownToggle}>
-                  <PersonCircle />
-                  <span>{ user.name }</span>
-                </Dropdown.Toggle>
+                <div className={styles.dropdownToggle}>
+                  <Dropdown.Toggle variant="link" id="dropdown-user">
+                      {
+                        user.profile_image
+                        ? <img src={user.profile_image} alt="Profile" className={styles.profileImage}/> 
+                        : <PersonCircle />
+                      }
+                      <span>{ user.name }</span>
+                  </Dropdown.Toggle>
+                </div>
                 <Dropdown.Menu>
                   <Dropdown.Item onClick={e => {
                     e.preventDefault();

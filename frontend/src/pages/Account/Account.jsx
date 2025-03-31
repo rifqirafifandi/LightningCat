@@ -2,7 +2,6 @@ import React from 'react';
 import { Outlet, NavLink } from 'react-router-dom';
 import { Container, Row, Col } from 'react-bootstrap';
 import { useAuth } from '../../contexts/auth';
-import Navbar from '../../components/Navbar/Navbar';
 import styles from './Account.module.css';
 
 const Account = () => {
@@ -19,7 +18,6 @@ const Account = () => {
 
   return (
     <>
-      <Navbar />
       <Container fluid className={styles.container}>
         <Row>
           <Col md={2}>

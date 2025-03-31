@@ -12,7 +12,7 @@ const AuthProvider = ({ children }) => {
         credentials: 'include',
       })
       const json = await resp.json()
-      if (json) {
+      if (resp.status === 200 && json) {
         setUser(json);
         setIsAuthenticated(true);
       } else {
@@ -27,6 +27,7 @@ const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         user,
+        setUser,
         isAuthenticated,
         login
       }}

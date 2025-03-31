@@ -4,21 +4,21 @@
   padding-right: 0.5rem;
 }
 
-.dropdownToggle {
+.dropdownToggle button {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0.5rem;
   gap: 0.5rem;
   cursor: pointer;
+  
   svg {
     width: 1.5rem;
     height: 1.5rem; 
     margin-top: 6px;
   }
 }
-
-.dropdownToggle::after {
+.dropdownToggle button::after {
   display: none;
 }
 
@@ -29,4 +29,12 @@
   padding: 0.5rem;
   gap: 0.5rem;
   cursor: pointer;
+}
+
+.profileImage {
+  border-radius: 50%;
+  overflow: hidden;
+  width: 1.5rem;
+  height: 1.5rem; 
+  margin-top: 6px;
 }

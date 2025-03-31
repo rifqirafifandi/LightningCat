@@ -3,7 +3,6 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import Navbar from './components/Navbar/Navbar';
 import FilterPanel from './components/FilterPanel';
 import SidePanel from './components/SidePanel';
 import SearchInputBox from './components/SearchInputBox';
@@ -309,38 +308,35 @@ const App = () => {
 
   return (
     <>
-      <Navbar />
-      <div className="container-fluid">
-        <div className="row">
-          <div className="col-md-6">
-            <div className="row mt-1 mb-1">
-              <div className="col-md-6">{map && <SearchInputBox onFlyTo={onFlyTo} />}</div>
-              <div className="col-md-6">
-                <FilterPanel
-                  areaState={areaState}
-                  setAreaState={setAreaState}
-                  towns={townsData}
-                  flatTypes={flatTypesData}
-                />
-              </div>
+      <div className="row">
+        <div className="col-md-6">
+          <div className="row mt-1 mb-1">
+            <div className="col-md-6">{map && <SearchInputBox onFlyTo={onFlyTo} />}</div>
+            <div className="col-md-6">
+              <FilterPanel
+                areaState={areaState}
+                setAreaState={setAreaState}
+                towns={townsData}
+                flatTypes={flatTypesData}
+              />
             </div>
-
-            {/* The Map */}
-            <div
-              className="map-container"
-              ref={mapContainerRef}
-              style={{ width: '100%', height: 'calc(100vh - 110px)' }}
-            ></div>
           </div>
 
-          {/* The Right Side Panel */}
-          <div className="col-md-6">
-            <SidePanel
-              listingsLoading={listingsLoading}
-              recordsData={customRecordsData}
-              listingsData={listingsData}
-            />
-          </div>
+          {/* The Map */}
+          <div
+            className="map-container"
+            ref={mapContainerRef}
+            style={{ width: '100%', height: 'calc(100vh - 110px)' }}
+          ></div>
+        </div>
+
+        {/* The Right Side Panel */}
+        <div className="col-md-6">
+          <SidePanel
+            listingsLoading={listingsLoading}
+            recordsData={customRecordsData}
+            listingsData={listingsData}
+          />
         </div>
       </div>
     </>

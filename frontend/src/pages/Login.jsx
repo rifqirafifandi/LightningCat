@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './Login.module.css';
+import sharedStyles from './Shared.module.css';
 import { useAuth } from '../contexts/auth';
 import { useNavigate } from 'react-router-dom';
 
@@ -23,16 +24,16 @@ const Login = () => {
 
   if (authenticating) {
     return (
-      <div className={styles.container}>
-        <div className={styles.card}>
+      <div className={sharedStyles.pageContainer}>
+        <div className={sharedStyles.card}>
           <h2 className={styles.title}>Logging you in to LightningCat...</h2>
         </div>
       </div>
     );
   } else {
     return (
-      <div className={styles.container}>
-        <div className={styles.card}>
+      <div className={sharedStyles.pageContainer}>
+        <div className={sharedStyles.card}>
           <h2 className={styles.title}>Login to LightningCat</h2>
           <div className={`d-flex flex-column align-items-flex-start gap-2`}>
             <a role="button" className={styles.loginButton} href="https://api.chucklenuts.party/auth/google/login">
