@@ -1,6 +1,7 @@
 import React from 'react';
 import { Outlet, NavLink } from 'react-router-dom';
 import { Container, Row, Col } from 'react-bootstrap';
+import { PersonSquare, ListTask, CalendarEvent, CashCoin } from 'react-bootstrap-icons';
 import { useAuth } from '../../contexts/auth';
 import styles from './Account.module.css';
 
@@ -21,11 +22,28 @@ const Account = () => {
       <Container fluid className={styles.container}>
         <Row>
           <Col md={2}>
-            <h2>My account</h2>
+            <h2 className={styles.sidebarTitle}>My account</h2>
             <ul className={styles.sidebarList}>
-              <li className={styles.sidebarListItem}><NavLink to="profile">Profile</NavLink></li>
-              <li className={styles.sidebarListItem}><NavLink to="listings">Listings</NavLink></li>
-              <li className={styles.sidebarListItem}><NavLink to="bookings">Bookings</NavLink></li>
+              <li className={styles.sidebarListItem}>
+                <NavLink to="profile">
+                  <PersonSquare /><span>Profile</span>
+                </NavLink>
+              </li>
+              <li className={styles.sidebarListItem}>
+                <NavLink to="listings">
+                  <ListTask /><span>Listings</span>
+                </NavLink>
+              </li>
+              <li className={styles.sidebarListItem}>
+                <NavLink to="bookings">
+                  <CalendarEvent /><span>Bookings</span>
+                </NavLink>
+              </li>
+              <li className={styles.sidebarListItem}>
+                <NavLink to="payment">
+                  <CashCoin /><span>Payment</span>
+                </NavLink>
+              </li>
             </ul>
           </Col>
           <Col md={10}>

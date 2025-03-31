@@ -7,6 +7,7 @@ import Account from './pages/Account/Account';
 import Profile from "./pages/Account/Profile/Profile";
 import Listings from "./pages/Account/Listings/Listings";
 import Bookings from "./pages/Account/Bookings/Bookings";
+import Payment from "./pages/Account/Payment/Payment";
 import ErrorPage from "./pages/404";
 
 const router = createBrowserRouter([
@@ -37,6 +38,10 @@ const router = createBrowserRouter([
           {
             path: "bookings",
             element: <Bookings />,
+          },
+          {
+            path: "payment",
+            element: <Payment />,
           }
         ]
       },
