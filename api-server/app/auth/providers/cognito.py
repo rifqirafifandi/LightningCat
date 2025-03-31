@@ -35,7 +35,6 @@ def callback():
 
     provider_user_id = userinfo['sub']
     email = userinfo['email']
-    name = userinfo.get('name', 'User')
 
     user = OAuthAccount.get_user_by_provider_details('cognito', provider_user_id)
 
@@ -48,7 +47,7 @@ def callback():
       )
       db.session.add(oauth_account)
 
-      profile = Profile.get_or_create(user.id, name)
+      profile = Profile.get_or_create(user.id, email) # default name in profile to email address
 
       db.session.commit()
 
