@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import sharedStyles from './Shared.module.css';
-import EmptyStateImage from '../assets/images/empty-state-search.svg'
+import EmptyStateImage from '../assets/images/empty-state-data.svg'
 
 const ErrorPage = () => {
   return (

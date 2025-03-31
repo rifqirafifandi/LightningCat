@@ -31,8 +31,8 @@ def callback():
 
     token = oauth.google.authorize_access_token()
 
-    # Get user info from userinfo endpoint
-    resp = oauth.google.get('userinfo')
+    # TODO: Check https://accounts.google.com/.well-known/openid-configuration
+    resp = oauth.google.get('https://openidconnect.googleapis.com/v1/userinfo', token=token)
     userinfo = resp.json()
     provider_user_id = userinfo['sub']
     email = userinfo['email']
