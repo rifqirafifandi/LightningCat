@@ -1,3 +1,9 @@
+html, body, #root {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
 .chart-icon{
   background-image: url('./icons/bar-chart-2.svg');
   background-size: 70%; 

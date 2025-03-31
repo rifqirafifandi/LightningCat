@@ -1,0 +1,17 @@
+.container {
+  padding-top: 2rem;
+}
+
+.sidebarList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sidebarListItem {
+  a[aria-current="page"] {
+    color: #000;
+    text-decoration: none;
+    cursor: default;
+  }
+}

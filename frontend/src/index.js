@@ -1,6 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client'; // Correct import for React 18
 import { RouterProvider } from 'react-router-dom';
+import AuthProvider from './contexts/auth';
 import router from './routes';
 import reportWebVitals from './reportWebVitals';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
@@ -20,7 +21,9 @@ const root = container ? createRoot(container) : null;
 root?.render(
   <React.StrictMode>
     <ApolloProvider client={client}>
-      <RouterProvider router={router} />
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
     </ApolloProvider>
   </React.StrictMode>
 );

@@ -3,7 +3,7 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import Navbar from './components/Navbar';
+import Navbar from './components/Navbar/Navbar';
 import FilterPanel from './components/FilterPanel';
 import SidePanel from './components/SidePanel';
 import SearchInputBox from './components/SearchInputBox';
@@ -308,7 +308,7 @@ const App = () => {
   };
 
   return (
-    <div>
+    <>
       <Navbar />
       <div className="container-fluid">
         <div className="row">
@@ -343,7 +343,7 @@ const App = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
