@@ -1,5 +1,7 @@
 from PIL import Image
 import io
+import re
+import base64
 from flask import jsonify, session, request, current_app
 from app.api import api_bp
 from app.auth.utils import login_required
@@ -14,7 +16,7 @@ def index():
     return jsonify({"message": "You are logged in", "user": user})
   return jsonify({"message": "You are not logged in"})
 
-@api_bp.route('/profile')
+@api_bp.route('/profile', methods=['GET'])
 @login_required
 def profile():
   user_id = session.get('internal_user_id')
@@ -40,117 +42,75 @@ def profile():
 
   return jsonify(response)
 
-@api_bp.route('/profile/image', methods=['POST'])
+@api_bp.route('/profile', methods=['POST'])
 @login_required
-def update_profile_image():
+def update_profile():
   user_id = session.get('internal_user_id')
 
   if not user_id:
     return jsonify({"error": "User not found in session"}), 401
 
+  user = User.query.get(user_id)
+
+  if not user:
+    return jsonify({"error": "User not found"}), 404
+
   profile = Profile.query.get(user_id)
   if not profile:
     return jsonify({"error": "Profile not found"}), 404
 
-  if 'image' not in request.files:
-    return jsonify({"error": "No image provided"}), 400
-
-  file = request.files['image']
-  if file.filename == '':
-    return jsonify({"error": "No image selected"}), 400
-
-  allowed_extensions = {'png', 'jpg', 'jpeg'}
-  filename = file.filename
-
-  if '.' not in filename or filename.rsplit('.', 1)[1].lower() not in allowed_extensions:
-    return jsonify({
-      "error": "Invalid file extension",
-      "message": "Only PNG, JPG, JPEG, and GIF files are allowed"
-    }), 415
-
-  if not file.content_type.startswith('image/'):
-    return jsonify({
-      "error": "Invalid file type",
-      "message": "Only image files are allowed"
-    }), 415
-
-  file_content = file.read()
-
-  if len(file_content) > current_app.config.get('MAX_PROFILE_IMAGE_FILE_SIZE', 2 * 1024 * 1024): # 2MB
-    return jsonify({
-      "error": "File too large", 
-      "message": "Image size exceeds the 2MB limit"
-  }), 413
+  # finally get data
   try:
-    image = Image.open(io.BytesIO(file_content))
-    output = io.BytesIO()
+    data = request.json
 
-    # Convert to JPEG and optimize
-    if image.mode != 'RGB':
-      image = image.convert('RGB')
+    if not data:
+      return jsonify({"error": "No data provided"}), 400
+    
+    base64_string = data.get('profile_image')
+    name = data.get('name')
+    preferences = data.get('preferences')
 
-    image.save(output, format='JPEG', optimize=True, quality=85)
-    processed_image = output.getvalue()
+    # validate base64 image
+    if base64_string:
+      try:
+        # extract the base64 part of the image data
+        base64_data = re.sub('^data:image/.+;base64,', '', base64_string)
+        # Decode the base64 image
+        image_data = base64.b64decode(base64_data)
+        # Check if the image is valid by trying to open it with PIL
+        image = Image.open(io.BytesIO(image_data))
+        image.verify()  # Verify that it is an image
+      except Exception as e:
+        current_app.logger.error(f"Invalid image data: {str(e)}")
+        return jsonify({"error": "Invalid image data"}), 400
 
-    image_data = base64.b64encode(processed_image).decode('utf-8')
+      profile.profile_image = base64_data
+    
+    # validate name VARCHAR(255)
+    if name:
+      if len(name) > 255:
+        return jsonify({"error": "Name is too long"}), 400
+      profile.name = name
+    
+    # validate preferences JSON
+    if preferences:
+      if not isinstance(preferences, dict):
+        return jsonify({"error": "Preferences must be a JSON object"}), 400
+      profile.preferences = preferences
 
-  except Exception as e:
-    current_app.logger.error(f"Image processing error: {str(e)}")
+    # commit changes to the database
+    db.session.commit()
+    
     return jsonify({
-      "error": "Invalid image",
-      "message": "The uploaded file could not be processed as an image"
-    }), 400
-
-  profile.profile_image = image_data
-  db.session.commit()
-
-  return jsonify({"message": "Profile image updated successfully"})
-
-@api_bp.route('/profile/name', methods=['PUT'])
-@login_required
-def update_name():
-  user_id = session.get('internal_user_id')
-
-  if not user_id:
-    return jsonify({"error": "User not found in session"}), 401
-
-  profile = Profile.query.get(user_id)
-  if not profile:
-    return jsonify({"error": "Profile not found"}), 404
-
-  if not request.is_json:
-    return jsonify({"error": "Request must be JSON"}), 400
-
-  data = request.get_json()
-  if 'name' not in data:
-    return jsonify({"error": "Name is required"}), 400
-
-  profile.name = data['name']
-  db.session.commit()
-
-  return jsonify({"message": "Name updated successfully"})
-
-@api_bp.route('/profile/preferences', methods=['PUT'])
-@login_required
-def update_preferences():
-  user_id = session.get('internal_user_id')
-
-  if not user_id:
-    return jsonify({"error": "User not found in session"}), 401
-
-  profile = Profile.query.get(user_id)
-  if not profile:
-    return jsonify({"error": "Profile not found"}), 404
-
-  if not request.is_json:
-    return jsonify({"error": "Request must be JSON"}), 400
-
-  preferences = request.get_json()
-
-  profile.preferences = preferences
-  db.session.commit()
-
-  return jsonify({"message": "Preferences updated successfully"})
+      "message": "Profile updated successfully",
+      "profile_image": profile.profile_image,
+      "name": profile.name,
+      "email": user.email,
+      "preferences": profile.preferences or {}
+    })
+  except Exception as e:
+    current_app.logger.error(f"Error updating profile: {str(e)}")
+    return jsonify({"error": "An error occurred while updating the profile"}), 500
 
 @api_bp.route('/health')
 def health_check():

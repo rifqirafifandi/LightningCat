@@ -14,4 +14,4 @@ def logout():
     )
     return redirect(logout_url)
   else:
-    return redirect(url_for('api.index'))
+    return redirect(current_app.config['WEB_REDIRECT_URI'])
