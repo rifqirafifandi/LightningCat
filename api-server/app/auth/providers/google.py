@@ -55,7 +55,7 @@ def callback():
     store_user_in_session(userinfo, token, 'google')
     session['internal_user_id'] = user.id
 
-    return redirect(url_for('api.profile'))
+    return redirect(current_app.config['WEB_REDIRECT_URI'])
   except ValueError as e:
     current_app.logger.error(f"Google security validation error: {str(e)}")
     return jsonify({"error": "Security validation failed"}), 403

@@ -14,7 +14,8 @@ class Config:
   SESSION_USE_SIGNER = True
   SESSION_PERMANENT_LIFETIME = timedelta(days=1)
   SESSION_REDIS = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
-  SESSION_COOKIE_DOMAIN = ".chucklenuts.party"
+  SESSION_COOKIE_DOMAIN = '.chucklenuts.party'
+  SESSION_COOKIE_NAME = 'session'
   SESSION_COOKIE_SECURE = True
   SESSION_COOKIE_HTTPONLY = True
   SESSION_COOKIE_SAMESITE = 'Lax'
@@ -36,6 +37,7 @@ class Config:
 
   # App config
   MAX_PROFILE_IMAGE_FILE_SIZE = 2 * 1024 * 1024  # 2MB
+  WEB_REDIRECT_URI = os.environ.get('WEB_REDIRECT_URI', 'https://web.chucklenuts.party')
 
 class DevelopmentConfig(Config):
   DEBUG = True
