@@ -1,3 +1,5 @@
+
+
 .navbar-right {
   display: flex;
   flex-direction: row;
@@ -22,13 +24,26 @@
   display: none;
 }
 
-.logotype {
+.logoContainer {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5rem;
-  gap: 0.5rem;
+  gap: 0.125rem;
   cursor: pointer;
+  text-decoration: none;
+}
+
+.logo {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.logotype {
+  color: #000000;
+  font-style: italic;
+  font-weight: 900;
+  font-size: 1.5rem;
+  letter-spacing: -0.05rem;
 }
 
 .profileImage {

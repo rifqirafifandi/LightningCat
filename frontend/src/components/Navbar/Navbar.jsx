@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Button, Dropdown } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, NavLink } from 'react-router-dom';
 import { PersonCircle } from 'react-bootstrap-icons';
 import { useAuth } from '../../contexts/auth';
 import styles from './Navbar.module.css';
+import Logo from '../../assets/images/logo.png';
 
 const Navbar = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
@@ -21,7 +22,10 @@ const Navbar = () => {
   return (
     <nav className="navbar shadow navbar-expand-lg navbar-light bg-light">
       <div className="container-fluid">
-        <span className={styles.logotype} onClick={() => navigate('/')}>LightningCat</span>
+        <NavLink className={styles.logoContainer} to={'/'}>
+          <img src={Logo} alt="Logo" className={styles.logo} />
+          <span className={styles.logotype}>LightningCat</span>
+        </NavLink>
       </div>
       <div className={`${styles['navbar-right']}`}>
         {
