@@ -34,7 +34,7 @@ import ListingsTable from './ListingsTable';
  * @returns {React.Element} A styled side panel that displays various data visualizations and tables.
  */
 const SidePanel = (props) => (
-  <div className="col-md-6 position-fixed bottom-0 end-0 vh-100" style={{
+  <div className="bottom-0 end-0 vh-100" style={{
     display: 'flex',
     flexDirection: 'column',
     backgroundColor: 'white',
