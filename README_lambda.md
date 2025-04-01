@@ -53,14 +53,14 @@ e.g.
 ```
 {
   "api_url": "https://api-open.data.gov.sg/v2/real-time/api/twenty-four-hr-forecast",
-  "s3_key": "apidata/weather2h.json"
+  "s3_key": "apidata/weather24h.json"
 } 
 ```
 3. 4d weather data 
 ```
 {
   "api_url": "https://api-open.data.gov.sg/v2/real-time/api/four-day-outlook",
-  "s3_key": "apidata/weather2h.json"
+  "s3_key": "apidata/weather4d.json"
 } 
 ```
 4. capacity data 
