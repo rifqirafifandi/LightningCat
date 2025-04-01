@@ -70,4 +70,11 @@ e.g.
   "s3_key": "apidata/capacity_api_30min.json"
 }
 ```
+5. lightning data 
+```
+{
+  "api_url": "https://api-open.data.gov.sg/v2/real-time/api/weather?api=lightning",
+  "s3_key": "apidata/lightning_current.json"
+}
+```
 
