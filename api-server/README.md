@@ -28,12 +28,14 @@ Server is at [https://api.chucklenuts.party](https://api.chucklenuts.party)
 
 ##### Listing
 - GET `https://api.chucklenuts.party/listing/:listingId` - get single listing by listing_id
+- PUT `https://api.chucklenuts.party/listing/:listingId` - update single listing by listing_id
 - GET `https://api.chucklenuts.party/listings/:userId` - get user_id's listings
 - GET `https://api.chucklenuts.party/listings` - get all listings
 - POST `https://api.chucklenuts.party/listing` - create listing
 
 ##### Booking
 - GET `https://api.chucklenuts.party/booking/:bookingId` - get single booking by booking_id
+- PUT `https://api.chucklenuts.party/booking/:bookingId` - update single booking by booking_id
 - GET `https://api.chucklenuts.party/bookings/:userId` - get user_id's bookings
 - GET `https://api.chucklenuts.party/bookings` - get all bookings
 - POST `https://api.chucklenuts.party/booking` - create booking
@@ -73,12 +75,13 @@ Reference: [app/models/listing.py](app/models/listing.py)
 | ------------- | ------------- |
 | `id` | SERIAL PRIMARY KEY |
 | `owner_id` | INTEGER NOT NULL REFERENCES users(id) |
-| `facility_name` | VARCHAR(255) NOT NULL |
 | `activity` | activity_type NOT NULL |
-| `start_time` | TIMESTAMP NOT NULL |
-| `end_time` | TIMESTAMP NOT NULL |
+| `facility_name` | facility_name NOT NULL |
+| `venue` | VARCHAR(255) NOT NULL |
+| `date` | DATE NOT NULL |
+| `duration` | INTEGER NOT NULL |
 | `capacity` | INTEGER NOT NULL |
-| `price` | DECIMAL(10,2) |
+| `fee` | INTEGER NOT NULL |
 | `status` | listing_status DEFAULT 'open' |
 | `created_at` | TIMESTAMP DEFAULT CURRENT_TIMESTAMP |
 
@@ -92,7 +95,7 @@ Reference: [app/models/booking.py](app/models/booking.py)
 | `user_id` | INTEGER NOT NULL REFERENCES users(id) |
 | `booking_status` | booking_status DEFAULT 'pending' |
 | `payment_status` | payment_status DEFAULT 'unpaid' |
-| `amount` | DECIMAL(10,2) |
+| `fee` | INTEGER NOT NULL |
 | `created_at` | TIMESTAMP DEFAULT CURRENT_TIMESTAMP |
 || UNIQUE(listing_id, user_id) |
 

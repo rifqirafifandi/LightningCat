@@ -15,11 +15,12 @@ def get_booking(booking_id):
     return jsonify({'error': 'Booking ID is required'}), 400
 
   booking = Booking.get_single_booking(booking_id)
+
+  if booking.owner_id != session['internal_user_id']:
+    return jsonify({'error': 'Unauthorized access to listing'}), 403
+  
   if not booking:
     return jsonify({}), 204
-
-  if booking.user_id != session['internal_user_id']:
-    return jsonify({'error': 'Unauthorized access to booking'}), 403
 
   return jsonify(booking.to_dict()), 200
 
@@ -37,13 +38,22 @@ def create_booking():
   listing = Listing.get_single_listing(data['listing_id'])
   if not listing:
     return jsonify({'error': 'Listing not found'}), 404
+  
+  # Check if listing is available
+  if listing.status != 'open':
+    return jsonify({'error': 'This listing is not available for booking'}), 400
+
+  # Check if listing is at capacity
+  if hasattr(listing, 'bookings') and len(listing.bookings) >= listing.capacity:
+    return jsonify({'error': 'This listing is already at full capacity'}), 400
 
   # Create the booking
   try:
+    fee = int(data.get('fee', listing.fee)) if data.get('fee') else listing.fee // listing.capacity
     new_booking = Booking.create_booking(
-      user_id=data['user_id'],
+      user_id=session['internal_user_id'],
       listing_id=data['listing_id'],
-      amount=data.get('amount'),
+      fee=fee,
       booking_status=data.get('booking_status', 'pending'),
       payment_status=data.get('payment_status', 'unpaid')
     )
@@ -62,6 +72,10 @@ def get_user_bookings(user_id):
   # Check if user_id is provided
   if not user_id:
     return jsonify({'error': 'User ID is required'}), 400
+  
+  # Check if the user_id matches the logged-in user
+  if int(user_id) != session['internal_user_id']:
+    return jsonify({'error': 'Unauthorized access to user bookings'}), 403
 
   # Get bookings for the user
   user_bookings = Booking.get_user_bookings(user_id)
