@@ -73,12 +73,13 @@ Reference: [app/models/listing.py](app/models/listing.py)
 | ------------- | ------------- |
 | `id` | SERIAL PRIMARY KEY |
 | `owner_id` | INTEGER NOT NULL REFERENCES users(id) |
-| `facility_name` | VARCHAR(255) NOT NULL |
 | `activity` | activity_type NOT NULL |
-| `start_time` | TIMESTAMP NOT NULL |
-| `end_time` | TIMESTAMP NOT NULL |
+| `facility_name` | facility_name NOT NULL |
+| `venue` | VARCHAR(255) NOT NULL |
+| `date` | DATE NOT NULL |
+| `duration` | INTEGER NOT NULL |
 | `capacity` | INTEGER NOT NULL |
-| `price` | DECIMAL(10,2) |
+| `fee` | INTEGER NOT NULL |
 | `status` | listing_status DEFAULT 'open' |
 | `created_at` | TIMESTAMP DEFAULT CURRENT_TIMESTAMP |
 
@@ -92,7 +93,7 @@ Reference: [app/models/booking.py](app/models/booking.py)
 | `user_id` | INTEGER NOT NULL REFERENCES users(id) |
 | `booking_status` | booking_status DEFAULT 'pending' |
 | `payment_status` | payment_status DEFAULT 'unpaid' |
-| `amount` | DECIMAL(10,2) |
+| `fee` | INTEGER NOT NULL |
 | `created_at` | TIMESTAMP DEFAULT CURRENT_TIMESTAMP |
 || UNIQUE(listing_id, user_id) |
 

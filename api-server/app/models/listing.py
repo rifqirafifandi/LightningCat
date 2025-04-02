@@ -1,33 +1,43 @@
 from app.extensions import db
 from datetime import datetime
+from sqlalchemy.dialects.postgresql import ENUM
+
+FACILITY_NAMES = ['Queenstown Sports Centre', 'Choa Chu Kang Sports Centre', 'Yishun Swimming Complex', 'Jurong West Sports Centre', 'Jalan Besar Sports Centre', 'Bedok Stadium', 'Burghley Squash and Tennis Centre', 'Toa Payoh Sports Centre', 'Sengkang Sports Centre', 'Geylang Field', 'Heartbeat@Bedok', 'Katong Swimming Complex', 'Bukit Gombak Sports Centre', 'Enabling Village Gym', 'Serangoon Sports Centre', 'Woodlands Sports Centre', 'Jurong Stadium', 'Yio Chu Kang Sports Centre', 'Kallang Sports Centre', 'Kallang Basin Swimming Complex', 'Clementi Sports Centre', 'Jurong East Sports Centre', 'Delta Sports Centre', 'Geylang East Swimming Complex', 'Pasir Ris Sports Centre', 'AMK Swimming Complex', 'Bishan Sports Centre', 'Farrer Park Field and Tennis Centre', 'Co Curricular Activities Branch', 'Hougang Sports Centre', 'Bukit Batok Swimming Complex', 'St Wilfrid Sports Centre', 'Clementi Stadium', 'Our Tampines Hub - Community Auditorium', 'Yishun Sports Centre']
+ACTIVITY_TYPES = ['Football', 'Badminton', 'Athletics', 'Table_tennis', 'Hockey', 'Volleyball', 'Soccer', 'Petanque', 'Basketball', 'Swimming', 'Pickleball', 'Lawn_bowl', 'Gym', 'Tennis', 'Indoor', 'Gateball', 'Wading', 'Netball', 'Squash', 'Rugby']
+LISTING_STATUS = ['open', 'full', 'cancelled', 'completed']
 
 class Listing(db.Model):
   __tablename__ = 'listings'
 
   id = db.Column(db.Integer, primary_key=True)
   owner_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-  facility_name = db.Column(db.Enum('facility_name'), nullable=False)
-  activity = db.Column(db.Enum('activity_type'), nullable=False)
-  start_time = db.Column(db.DateTime, nullable=False)
-  end_time = db.Column(db.DateTime, nullable=False)
+  activity = db.Column(ENUM(*ACTIVITY_TYPES, name='activity_type', create_type=False), nullable=False)
+  facility_name = db.Column(ENUM(*FACILITY_NAMES, name='facility_name', create_type=False), nullable=False)
+  venue = db.Column(db.String(255), nullable=False)
+  date = db.Column(db.Date, nullable=False)
+  duration = db.Column(db.Integer, nullable=False)
   capacity = db.Column(db.Integer, nullable=False)
-  price = db.Column(db.Numeric(10, 2))
-  status = db.Column(db.Enum('listing_status'), default='open')
+  fee = db.Column(db.Integer, nullable=False)
+  status = db.Column(ENUM(*LISTING_STATUS, name='listing_status', create_type=False), default='open')
   created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
   # Relationship with User model
   owner = db.relationship('User', backref=db.backref('listings', lazy=True))
 
+  # Relationship with Booking model
+  bookings = db.relationship('Booking', backref='listing', lazy=True)
+
   def to_dict(self):
     return {
       'id': self.id,
       'owner_id': self.owner_id,
-      'facility_name': self.facility_name,
       'activity': self.activity,
-      'start_time': self.start_time.isoformat() if self.start_time else None,
-      'end_time': self.end_time.isoformat() if self.end_time else None,
+      'facility_name': self.facility_name,
+      'venue': self.venue,  # This was missing
+      'date': self.date.isoformat() if self.date else None,
+      'duration': self.duration,
       'capacity': self.capacity,
-      'price': float(self.price) if self.price else None,
+      'fee': self.fee,
       'status': self.status,
       'created_at': self.created_at.isoformat() if self.created_at else None,
       'bookings_count': len(self.bookings) if hasattr(self, 'bookings') else 0
@@ -46,16 +56,17 @@ class Listing(db.Model):
     return cls.query.all()
 
   @classmethod
-  def create_listing(cls, user_id, facility_name, activity, start_time, end_time, 
-                    capacity, price, status='open'):
+  def create_listing(cls, user_id, activity, facility_name, venue, date, duration, 
+                    capacity, fee, status='open'):
     listing = cls(
       owner_id=user_id,
-      facility_name=facility_name,
       activity=activity,
-      start_time=start_time,
-      end_time=end_time,
+      facility_name=facility_name,
+      vanue=venue,
+      date=datetime.fromisoformat(date) if isinstance(date, str) else date,
+      duration=duration,
       capacity=capacity,
-      price=price,
+      fee=fee,
       status=status
     )
 

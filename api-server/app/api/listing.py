@@ -28,23 +28,35 @@ def get_listing(listing_id):
 @api_bp.route('/listing', methods=['POST'])
 @login_required
 def create_listing():
-  data = request.json
+  data = {}
+  data['activity'] = request.form.get('activity')
+  data['facility_name'] = request.form.get('facility_name')
+  data['venue'] = request.form.get('venue')
+  data['date'] = request.form.get('date')
+  data['duration'] = request.form.get('duration')
+  data['capacity'] = request.form.get('capacity')
+  data['fee'] = request.form.get('fee')
 
   # Validation
-  required_fields = ['facility_name', 'activity', 'start_time', 'end_time', 'capacity']
-  for field in required_fields:
-    if field not in data:
-      return jsonify({'error': f'Missing required field: {field}'}), 400
+  required_fields = ['activity', 'facility_name', 'venue', 'date', 'duration', 'capacity', 'fee']
+  missing_fields = [field for field in required_fields if field not in data or not data[field]]
+  if missing_fields:
+    return jsonify({'error': f'Missing required fields: {", ".join(missing_fields)}'}), 400
 
   try:
+    duration = int(data['duration']) if data['duration'] else None
+    capacity = int(data['capacity']) if data['capacity'] else None
+    fee = int(data['fee']) if data['fee'] else None
+    
     new_listing = Listing.create_listing(
-      user_id=data['user_id'],
-      facility_name=data['facility_name'],
+      user_id=session['internal_user_id'],
       activity=data['activity'],
-      start_time=data['start_time'],
-      end_time=data['end_time'],
-      capacity=data['capacity'],
-      price=data.get('price'),
+      facility_name=data['facility_name'],
+      venue=data['venue'],
+      date=data['date'],
+      duration=duration,
+      capacity=capacity,
+      fee=fee,
       status=data.get('status', 'open')
     )
 
