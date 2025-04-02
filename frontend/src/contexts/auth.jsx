@@ -16,24 +16,11 @@ const AuthProvider = ({ children }) => {
         setUser(json);
         setIsAuthenticated(true);
       } else {
-        setUser({
-          name: "guest",
-          email: "guest@gmail.com",
-          profile_image: "",
-          preferences: {}
-        })
-        setIsAuthenticated(true);
+        setIsAuthenticated(false);
       }
     } catch (error) {
       console.error("Login failed:", error);
-      
-      setUser({
-        name: "guest",
-        email: "guest@gmail.com",
-        profile_image: "",
-        preferences: {}
-      })
-      setIsAuthenticated(true);
+      setIsAuthenticated(false);
     }
   }
 

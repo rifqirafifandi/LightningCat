@@ -15,11 +15,12 @@ def get_booking(booking_id):
     return jsonify({'error': 'Booking ID is required'}), 400
 
   booking = Booking.get_single_booking(booking_id)
+
+  if booking.owner_id != session['internal_user_id']:
+    return jsonify({'error': 'Unauthorized access to listing'}), 403
+  
   if not booking:
     return jsonify({}), 204
-
-  if booking.user_id != session['internal_user_id']:
-    return jsonify({'error': 'Unauthorized access to booking'}), 403
 
   return jsonify(booking.to_dict()), 200
 
@@ -71,6 +72,10 @@ def get_user_bookings(user_id):
   # Check if user_id is provided
   if not user_id:
     return jsonify({'error': 'User ID is required'}), 400
+  
+  # Check if the user_id matches the logged-in user
+  if int(user_id) != session['internal_user_id']:
+    return jsonify({'error': 'Unauthorized access to user bookings'}), 403
 
   # Get bookings for the user
   user_bookings = Booking.get_user_bookings(user_id)

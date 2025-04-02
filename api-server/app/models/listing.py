@@ -24,9 +24,6 @@ class Listing(db.Model):
   # Relationship with User model
   owner = db.relationship('User', backref=db.backref('listings', lazy=True))
 
-  # Relationship with Booking model
-  bookings = db.relationship('Booking', backref='listing', lazy=True)
-
   def to_dict(self):
     return {
       'id': self.id,
@@ -62,7 +59,7 @@ class Listing(db.Model):
       owner_id=user_id,
       activity=activity,
       facility_name=facility_name,
-      vanue=venue,
+      venue=venue,
       date=datetime.fromisoformat(date) if isinstance(date, str) else date,
       duration=duration,
       capacity=capacity,

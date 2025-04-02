@@ -15,8 +15,8 @@ const Profile = () => {
   const [name, setName] = React.useState(user.name);
   const [profileImage, setProfileImage] = React.useState(user.profile_image);
   const [preferences, setPreferences] = React.useState(user.preferences || {
-    activity: [],
-    facility: [],
+    activities: [],
+    facilities: [],
   });
   const [dirty, setDirty] = React.useState(false);
 
@@ -24,8 +24,8 @@ const Profile = () => {
     setDirty(
       name !== user.name ||
       profileImage !== user.profile_image ||
-      preferences.activity.length > 0 ||
-      preferences.facility.length > 0
+      preferences.activities.length > 0 ||
+      preferences.facilities.length > 0
     );
   }, [name, profileImage, preferences, user.name, user.profile_image]);
 
@@ -52,10 +52,10 @@ const Profile = () => {
     const { id, checked } = e.target;
     setPreferences((prevPreferences) => {
       const nextPreferences = {
-        facility: prevPreferences.facility,
-        activity: checked
-          ? [...prevPreferences.activity, id]
-          : prevPreferences.activity.filter((activity) => activity !== id),
+        facilities: prevPreferences.facilities,
+        activities: checked
+          ? [...prevPreferences.activities, id]
+          : prevPreferences.activities.filter((activity) => activity !== id),
       }
       return nextPreferences;
     });
@@ -65,10 +65,10 @@ const Profile = () => {
     const { id, checked } = e.target;
     setPreferences((prevPreferences) => {
       const nextPreferences = {
-        activity: prevPreferences.activity,
-        facility: checked
-          ? [...prevPreferences.facility, id]
-          : prevPreferences.facility.filter((facility) => facility !== id),
+        activities: prevPreferences.activities,
+        facilities: checked
+          ? [...prevPreferences.facilities, id]
+          : prevPreferences.facilities.filter((facility) => facility !== id),
       }
       return nextPreferences;
     });
@@ -171,7 +171,7 @@ const Profile = () => {
                     label={activityType}
                     key={activityType}
                     onChange={handleActivityPreferencesChange}
-                    checked={preferences.activity.includes(activityType)}
+                    checked={preferences.activities.includes(activityType)}
                   />
                 ))
               }
@@ -189,7 +189,7 @@ const Profile = () => {
                     label={facilityName}
                     key={facilityName}
                     onChange={handleFacilityPreferencesChange}
-                    checked={preferences.facility.includes(facilityName)}
+                    checked={preferences.facilities.includes(facilityName)}
                   />
                 ))
               }

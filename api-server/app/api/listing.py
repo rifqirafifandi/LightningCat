@@ -10,17 +10,17 @@ def listing_options():
 @api_bp.route('/listing/<listing_id>', methods=['GET', 'PUT'])
 @login_required
 def get_listing(listing_id):
-  # Check if listing ID is provided
   if not listing_id:
     return jsonify({'error': 'Listing ID is required'}), 400
 
   listing = Listing.get_single_listing(listing_id)
+
+  if listing.owner_id != session['internal_user_id']:
+    return jsonify({'error': 'Unauthorized access to listing'}), 403
+
   if not listing:
     return jsonify({}), 204
   
-  # Check if the listing belongs to the current user
-  if listing.user_id != session['internal_user_id']:
-    return jsonify({'error': 'Unauthorized access to listing'}), 403
   
   if request.method == 'GET':
     return jsonify(listing.to_dict()), 200
@@ -78,6 +78,10 @@ def get_user_listings(user_id):
   # Check if user ID is provided
   if not user_id:
     return jsonify({'error': 'User ID is required'}), 400
+  
+  # Check if the user ID matches the logged-in user
+  if int(user_id) != session['internal_user_id']:
+    return jsonify({'error': 'Unauthorized access to user listings'}), 403
 
   # Get the listings for the user
   user_listings = Listing.get_user_listings(user_id)

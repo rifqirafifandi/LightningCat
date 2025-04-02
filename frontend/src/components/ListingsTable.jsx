@@ -13,10 +13,10 @@ const ListingsTable = (props) => {
             <th>Sports Center</th>
             <th>Venue</th>
             <th>Date</th>
-            <th>Time</th>
             <th>Duration (hrs)</th>
+            <th>Capacity</th>
             <th>Fee</th>
-            <th>status</th>
+            <th>Status</th>
           </tr>
         </thead>
         <tbody>
@@ -27,8 +27,9 @@ const ListingsTable = (props) => {
                 <td>{ listing.facility_name }</td>
                 <td>{ listing.venue }</td>
                 <td>{ listing.date }</td>
+                <td>{ listing.duration }</td>
                 <td>{ listing.capacity }</td>
-                <td>{ listing.fee }</td>
+                <td>${ listing.fee }</td>
                 <td>{ listing.status }</td>
               </tr>
             ))

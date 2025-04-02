@@ -27,11 +27,11 @@ def profile():
   
   if request.method == 'GET':
     response = {
-      "id": session['internal_user_id'],
+      "id": user.id,
       "profile_image": profile.profile_image,
       "name": profile.name,
       "email": user.email,
-      "preferences": profile.preferences or {}
+      "preferences": profile.preferences or { 'activities': [], 'facilities': [] }
     }
 
     return jsonify(response)

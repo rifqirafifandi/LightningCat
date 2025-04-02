@@ -1,7 +1,6 @@
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Dropdown, Form, InputGroup } from "react-bootstrap";
-import { useAuth } from "../../../../contexts/auth";
 import { useNotification } from "../../../../contexts/notification";
 import { useUserData } from "../../../../contexts/userData";
 import styles from "./CreateListing.module.css";
@@ -27,6 +26,24 @@ const CreateListing = () => {
   const [duration, setDuration] = React.useState("");
   const [capacity, setCapacity] = React.useState("");
   const [fee, setFee] = React.useState(0);
+
+  const currentLocaleDate = new Date(new Date().setMinutes(new Date().getMinutes() - new Date().getTimezoneOffset())).toISOString().split("T")[0]
+
+  const validateDate = (value) => {
+    const dateValue = new Date(value);
+    if (dateValue < new Date().setHours(0, 0, 0, 0)) {
+      return false;
+    }
+    return true;
+  };
+
+  const handleDateChange = (e) => {
+    if (validateDate(e.target.value)) {
+      setDate(e.target.value);
+    } else {
+      setDate(currentLocaleDate);
+    }
+  };
 
   const validateDuration = (value) => {
     const numberValue = parseInt(value);
@@ -229,16 +246,20 @@ const CreateListing = () => {
 
         <Form.Group className="mb-3" controlId="venue">
           <Form.Label>Venue</Form.Label>
-          <Form.Control type="text" onChange={(e) => setVenue(e.target.value)} />
+          <Form.Control type="text" maxLength={255} onChange={(e) => setVenue(e.target.value)} />
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="date">
           <Form.Label>Date</Form.Label>
-          <Form.Control type="date" onChange={(e) => setDate(e.target.value)} />
+          <Form.Control
+            type="date"
+            min={currentLocaleDate}
+            onChange={handleDateChange}
+          />
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="duration">
-          <Form.Label>Duration</Form.Label>
+          <Form.Label>Duration (hours)</Form.Label>
           <Form.Control type="number" step="1" placeholder="Enter fee" min={1} onChange={handleDurationChange} />
         </Form.Group>
 
