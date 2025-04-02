@@ -1,52 +1,36 @@
 import React from 'react';
 import { Button, Table } from 'react-bootstrap';
-import { useAuth } from '../../../contexts/auth';
+import { useNavigate } from 'react-router-dom';
+import { useUserData } from '../../../contexts/userData';
 import styles from './Listings.module.css';
 import EmptyStateGenericImage from '../../../assets/images/empty-state-generic.svg';
 
 const Listings = () => {
-  const { user } = useAuth();
-  const [listings, setListings] = React.useState([]);
+  const navigate = useNavigate();
+  const { listings, fetchUserListings } = useUserData();
 
   React.useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`https://api.chucklenuts.party/listings/${user.id}`, {
-          method: 'GET',
-          credentials: 'include',
-        });
-
-        if (response.status > 204) {
-          throw new Error(`Error: ${response.status} ${response.statusText}`);
-        }
-
-        const data = await response.json();
-        setListings(data);
-      } catch (error) {
-        console.error('Error fetching listings:', error);
-      }
-    };
-
-    fetchData();
-  });
+    fetchUserListings();
+  }, [fetchUserListings]);
 
   return (
-    <div>
+    <>
       <div className={styles.headerContainer}>
       <h1>My Listings</h1>
-      <Button>Post listing</Button>
+      <Button onClick={() => navigate('create')}>Post listing</Button>
       </div>
       {
         listings.length
         ? <Table striped bordered hover>
             <thead>
               <tr>
-                <th>#</th>
-                <th>Facility name</th>
-                <th>Activity</th>
+                <th>Sport</th>
+                <th>Sports Center</th>
+                <th>Venue</th>
+                <th>Date</th>
                 <th>Time</th>
-                <th>Capacity</th>
-                <th>Price</th>
+                <th>Duration (hrs)</th>
+                <th>Fee</th>
                 <th>status</th>
               </tr>
             </thead>
@@ -54,12 +38,12 @@ const Listings = () => {
               {
                 listings.map((listing) => (
                   <tr>
-                    <td>{ listing.id }</td>
-                    <td>{ listing.facility_name }</td>
                     <td>{ listing.activity }</td>
-                    <td>{ listing.start_time } - { listing.end_time }</td>
+                    <td>{ listing.facility_name }</td>
+                    <td>{ listing.venue }</td>
+                    <td>{ listing.date }</td>
                     <td>{ listing.capacity }</td>
-                    <td>{ listing.price }</td>
+                    <td>{ listing.fee }</td>
                     <td>{ listing.status }</td>
                   </tr>
                 ))
@@ -71,7 +55,7 @@ const Listings = () => {
             <p>You have no listings.</p>
           </div>
       }
-    </div>
+    </>
   );
 }
 
