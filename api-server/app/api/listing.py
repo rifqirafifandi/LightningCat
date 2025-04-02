@@ -7,23 +7,30 @@ from app.models.listing import Listing
 def listing_options():
   return '', 200
 
-@api_bp.route('/listing/<listing_id>', methods=['GET'])
+@api_bp.route('/listing/<listing_id>', methods=['GET', 'PUT'])
 @login_required
 def get_listing(listing_id):
   # Check if listing ID is provided
   if not listing_id:
     return jsonify({'error': 'Listing ID is required'}), 400
 
-  # Get the listing
   listing = Listing.get_single_listing(listing_id)
   if not listing:
     return jsonify({}), 204
-
+  
   # Check if the listing belongs to the current user
   if listing.user_id != session['internal_user_id']:
     return jsonify({'error': 'Unauthorized access to listing'}), 403
+  
+  if request.method == 'GET':
+    return jsonify(listing.to_dict()), 200
 
-  return jsonify(listing.to_dict()), 200
+  if request.method == 'PUT':
+    updated_listing = Listing.update_listing(listing_id, request.json.get('status'))
+    if not updated_listing:
+      return jsonify({'error': 'Listing not found'}), 404
+    
+    return jsonify(updated_listing.to_dict()), 200
 
 @api_bp.route('/listing', methods=['POST'])
 @login_required

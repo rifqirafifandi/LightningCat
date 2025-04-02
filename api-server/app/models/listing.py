@@ -73,6 +73,17 @@ class Listing(db.Model):
     db.session.add(listing)
     db.session.commit()
     return listing
+  
+  @classmethod
+  def update_listing(cls, listing_id, status):
+    listing = cls.query.get(listing_id)
+    if not listing:
+      return None
 
+    setattr(listing, 'status', status)
+
+    db.session.commit()
+    return listing
+  
   def __repr__(self):
     return f'<Listing {self.id}: {self.facility_name}>'

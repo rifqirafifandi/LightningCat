@@ -28,12 +28,14 @@ Server is at [https://api.chucklenuts.party](https://api.chucklenuts.party)
 
 ##### Listing
 - GET `https://api.chucklenuts.party/listing/:listingId` - get single listing by listing_id
+- PUT `https://api.chucklenuts.party/listing/:listingId` - update single listing by listing_id
 - GET `https://api.chucklenuts.party/listings/:userId` - get user_id's listings
 - GET `https://api.chucklenuts.party/listings` - get all listings
 - POST `https://api.chucklenuts.party/listing` - create listing
 
 ##### Booking
 - GET `https://api.chucklenuts.party/booking/:bookingId` - get single booking by booking_id
+- PUT `https://api.chucklenuts.party/booking/:bookingId` - update single booking by booking_id
 - GET `https://api.chucklenuts.party/bookings/:userId` - get user_id's bookings
 - GET `https://api.chucklenuts.party/bookings` - get all bookings
 - POST `https://api.chucklenuts.party/booking` - create booking
