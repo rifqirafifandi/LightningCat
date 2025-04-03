@@ -40,8 +40,8 @@ const Account = () => {
                 </NavLink>
               </li>
               <li className={styles.sidebarListItem}>
-                <NavLink to="payment">
-                  <CashCoin /><span>Payment</span>
+                <NavLink to="wallet">
+                  <CashCoin /><span>Wallet</span>
                 </NavLink>
               </li>
             </ul>

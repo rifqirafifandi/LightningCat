@@ -1,7 +1,6 @@
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Dropdown, Form, InputGroup } from "react-bootstrap";
-import { useNotification } from "../../../../contexts/notification";
 import { useUserData } from "../../../../contexts/userData";
 import styles from "./CreateListing.module.css";
 import facilityNames from "../../../../types/facilityNames.json";
@@ -9,8 +8,7 @@ import facilityActivities from "../../../../assets/data/facilityActivities.json"
 
 const CreateListing = () => {
   const navigate = useNavigate();
-  const { addNotification, removeNotification } = useNotification();
-  const { setListings } = useUserData();
+  const { createListing } = useUserData();
 
   const facilityDropdownRef = React.useRef(null);
   const activityDropdownRef = React.useRef(null);
@@ -109,53 +107,8 @@ const CreateListing = () => {
     formData.append('duration', duration);
     formData.append('capacity', capacity);
     formData.append('fee', fee);
-    try {
-      const response = await fetch('https://api.chucklenuts.party/listing', {
-        method: 'POST',
-        body: formData,
-        credentials: 'include',
-      });
-
-      if (response.status > 204) {
-        throw new Error(`Error: ${response.status} ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      if (response.status === 201 && data) {
-        addNotification({
-          id: Date.now(),
-          title: "LightningCat",
-          message: "Listing posted successfully.",
-          time: new Date().toLocaleTimeString(),
-          removeNotification: removeNotification,
-          type: "success",
-          show: true,
-        })
-        setListings((prevListings) => [...prevListings, data]);
-        navigate("/account/listings");
-      } else {
-        addNotification({
-          id: Date.now(),
-          title: "LightningCat",
-          message: "Error posting listing.",
-          time: new Date().toLocaleTimeString(),
-          removeNotification: removeNotification,
-          type: "danger",
-          show: true,
-        })
-      }
-    } catch (error) {
-      console.error("Error posting listing:", error);
-      addNotification({
-        id: Date.now(),
-        title: "LightningCat",
-        message: "Error posting listing.",
-        time: new Date().toLocaleTimeString(),
-        removeNotification: removeNotification,
-        type: "danger",
-        show: true,
-      })
-    }
+    await createListing(formData);
+    navigate("/account/listings");
   }
 
   return (

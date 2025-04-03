@@ -88,11 +88,11 @@ const SidePanel = (props) => {
         <h5>Available Listings</h5>
       </div>
       <div style={{ flex: '1' }}>
-        {loading ? (
-          <LoadingSpinner/>
-        ) : (
-          <ListingsTable listings={listings} />
-        )}
+        {
+          loading 
+          ? <LoadingSpinner/>
+          : <ListingsTable listings={listings} />
+        }
       </div>
     </div>
   );

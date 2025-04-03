@@ -8,7 +8,7 @@ import Profile from "./pages/Account/Profile/Profile";
 import Listings from "./pages/Account/Listings/Listings";
 import CreateListing from "./pages/Account/Listings/CreateListing/CreateListing";
 import Bookings from "./pages/Account/Bookings/Bookings";
-import Payment from "./pages/Account/Payment/Payment";
+import Wallet from "./pages/Account/Wallet/Wallet";
 import ErrorPage from "./pages/404";
 
 const router = createBrowserRouter([
@@ -45,8 +45,8 @@ const router = createBrowserRouter([
             element: <Bookings />,
           },
           {
-            path: "payment",
-            element: <Payment />,
+            path: "wallet",
+            element: <Wallet />,
           }
         ]
       },
