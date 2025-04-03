@@ -11,6 +11,6 @@ for facility in data:
     unique_activities.add(activity)
 
 with open('frontend/src/types/activityTypes.json', 'w+') as f:
-  json.dump(list(unique_activities), f, indent=2)
+  json.dump(sorted(list(unique_activities)), f, indent=2)
 with open('frontend/src/types/facilityNames.json', 'w+') as f:
-  json.dump(list(unique_facilities), f, indent=2)
+  json.dump(sorted(list(unique_facilities)), f, indent=2)
