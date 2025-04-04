@@ -218,36 +218,37 @@ map.on('click', 'sportFacilitiesFill', (e) => {
       capacityDetailsHtml = `
         <hr/>
         <h5>Facility Capacity Details</h5>
-        <div style="border: 1px solid #ccc; padding: 5px; margin-bottom: 5px;">
+        <p></p>
           ${
             swimmingAvailable
               ? `
                 <div>
                   <h6>Swimming Facility</h6>
-                  <p><strong>Capacity:</strong> ${details.swimming.capacity}</p>
-                  <p><strong>Status:</strong> ${details.swimming.closed ? 'Closed' : 'Open'}</p>
+                  <strong>Capacity:</strong> ${details.swimming.capacity}
+                  <strong>Status:</strong> ${details.swimming.closed ? 'Closed' : 'Open'}
                 </div>
               `
               : ''
           }
+          <p></p>
           ${
             gymAvailable
               ? `
                 <div>
                   <h6>Gym Facility</h6>
-                  <p><strong>Capacity:</strong> ${
+                  <strong>Capacity:</strong> ${
                     details.gym.capacity !== null ? details.gym.capacity : 'N/A'
-                  }</p>
-                  <p><strong>Status:</strong> ${
+                  }
+                  <strong>Status:</strong> ${
                     details.gym.closed === null
                       ? 'Not Available'
                       : (details.gym.closed ? 'Closed' : 'Open')
-                  }</p>
+                  }
                 </div>
               `
               : ''
           }
-        </div>
+        
       `;
     }
   } else {
