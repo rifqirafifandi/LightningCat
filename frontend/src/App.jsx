@@ -176,83 +176,102 @@ const App = () => {
           map.getCanvas().style.cursor = '';
         });
 
-        // Click event for sport facilities polygons
-        map.on('click', 'sportFacilitiesFill', (e) => {
-          const feature = e.features && e.features[0];
-          if (!feature) return;
+// Click event for sport facilities polygons
+// Click event for sport facilities polygons
+map.on('click', 'sportFacilitiesFill', (e) => {
+  const feature = e.features && e.features[0];
+  if (!feature) return;
 
-          // Build a record object for the side panel
-          let recordObj = {};
-          Object.entries(feature.properties).forEach(([key, value]) => {
-            if (key !== 'Description' && value) {
-              recordObj[key] = value;
-            }
-          });
+  // Build a record object for the side panel
+  let recordObj = {};
+  Object.entries(feature.properties).forEach(([key, value]) => {
+    if (key !== 'Description' && value) {
+      recordObj[key] = value;
+    }
+  });
 
-          // Example: the property is "SPORTS_CEN" in the GEOJSON
-          const sportsCen = feature.properties.SPORTS_CEN;
-          // Alternatively if your property is named "SPORT_CEN", adjust accordingly
-          // const sportsCen = feature.properties.SPORT_CEN;  
+  // The property for facility name in the GEOJSON
+  const sportsCen = feature.properties.SPORTS_CEN;
 
-          // Attempt to find facility info based on matching "name"
-          let facilityDetailsHtml = '';
-          if (facilitiesCapacities) {
-            // If facilityCapacities_sample.json is an *array*, we'll search inside that array
-            const details = findFacilityByName(sportsCen, facilitiesCapacities);
-            if (details) {
-              facilityDetailsHtml = `
-                <div style="border: 1px solid #ccc; padding: 5px; margin-bottom: 5px;">
-                  <h5>${details.name}</h5>
-                  <p><strong>Address:</strong> ${details.address}</p>
+  // Find matching facility details from the external JSON (facilitiesCapacities)
+  const details = findFacilityByName(sportsCen, facilitiesCapacities);
 
-                  <div>
-                    <h6>Swimming Facility</h6>
-                    <p><strong>Capacity:</strong> ${details.swimming.capacity}</p>
-                    <p><strong>Status:</strong> ${
-                      details.swimming.closed ? 'Closed' : 'Open'
-                    }</p>
-                  </div>
+  // Fallback values from the feature if no matching details are found
+  let facilityName = feature.properties.FacilityName || 'Facility Information';
+  let facilityAddress = feature.properties.Address || 'Not available';
+  const facilityType = feature.properties.Type || 'Not specified';
 
-                  <div>
-                    <h6>Gym Facility</h6>
-                    <p><strong>Capacity:</strong> ${
-                      details.gym.capacity !== null ? details.gym.capacity : 'N/A'
-                    }</p>
-                    <p><strong>Status:</strong> ${
-                      details.gym.closed === null
-                        ? 'Not Available'
-                        : details.gym.closed
-                        ? 'Closed'
-                        : 'Open'
-                    }</p>
-                  </div>
+  // If details exist, override the name/address from the facility data
+  if (details) {
+    if (details.name) facilityName = details.name;
+    if (details.address) facilityAddress = details.address;
+  }
+
+  // Build the capacity details section only if details exist
+  // and at least one of swimming/gym is available
+  let capacityDetailsHtml = '';
+  if (details) {
+    const swimmingAvailable = details.swimming?.available;
+    const gymAvailable = details.gym?.available;
+
+    if (swimmingAvailable || gymAvailable) {
+      capacityDetailsHtml = `
+        <hr/>
+        <h5>Facility Capacity Details</h5>
+        <div style="border: 1px solid #ccc; padding: 5px; margin-bottom: 5px;">
+          ${
+            swimmingAvailable
+              ? `
+                <div>
+                  <h6>Swimming Facility</h6>
+                  <p><strong>Capacity:</strong> ${details.swimming.capacity}</p>
+                  <p><strong>Status:</strong> ${details.swimming.closed ? 'Closed' : 'Open'}</p>
                 </div>
-              `;
-            } else {
-              facilityDetailsHtml = `<p>No matching facility found for ${sportsCen}.</p>`;
-            }
-          } else {
-            facilityDetailsHtml = `<p>Loading facility details...</p>`;
+              `
+              : ''
           }
+          ${
+            gymAvailable
+              ? `
+                <div>
+                  <h6>Gym Facility</h6>
+                  <p><strong>Capacity:</strong> ${
+                    details.gym.capacity !== null ? details.gym.capacity : 'N/A'
+                  }</p>
+                  <p><strong>Status:</strong> ${
+                    details.gym.closed === null
+                      ? 'Not Available'
+                      : (details.gym.closed ? 'Closed' : 'Open')
+                  }</p>
+                </div>
+              `
+              : ''
+          }
+        </div>
+      `;
+    }
+  } else {
+    capacityDetailsHtml = `<p>No matching facility found for ${sportsCen}.</p>`;
+  }
 
-          // Show popup with details
-          new mapboxgl.Popup({ maxWidth: '600px' })
-            .setLngLat(e.lngLat)
-            .setHTML(`
-              <div>
-                <h4>${feature.properties.FacilityName || 'Facility Information'}</h4>
-                <p><strong>Address:</strong> ${feature.properties.Address || 'Not available'}</p>
-                <p><strong>Type:</strong> ${feature.properties.Type || 'Not specified'}</p>
-                <hr/>
-                <h5>Facility Capacity Details</h5>
-                ${facilityDetailsHtml}
-              </div>
-            `)
-            .addTo(map);
+  // Combine everything into the popup HTML
+  const popupHtml = `
+    <div>
+      <h4>${facilityName}</h4>
+      <p><strong>Address:</strong> ${facilityAddress}</p>
+      ${capacityDetailsHtml}
+    </div>
+  `;
 
-          // Update the side panel if desired
-          setCustomRecordsData({ isCustom: true, getRecords: [recordObj] });
-        });
+  // Show the popup
+  new mapboxgl.Popup({ maxWidth: '600px' })
+    .setLngLat(e.lngLat)
+    .setHTML(popupHtml)
+    .addTo(map);
+
+  // Update the side panel if desired
+  setCustomRecordsData({ isCustom: true, getRecords: [recordObj] });
+});
       }
     })
   }, [
