@@ -62,7 +62,7 @@ const App = () => {
           setTownsGeoJson(townsData);
           setSportFacilitiesGeoJson(sportsData);
           setWeatherData(weatherJsonData)
-        } //this is line 66
+        } 
       )
       .catch((err) => console.error('Error fetching data:', err));
   }, []);
@@ -94,12 +94,12 @@ const App = () => {
     return () => mapInstance.remove();
   }, [getListingsData, getDistinctTowns, getDistinctFlatTypes]);
 
-  // 3) Add layers (town polygons & sport facilities polygons) once both the map and corresponding GeoJSON data are available.
+  // Add layers (town polygons & sport facilities polygons) once both the map and corresponding GeoJSON data are available.
   useEffect(() => {
     if (!map) return;
     
     map.on('load', () => {
-      // --- Add Towns Layer ---
+      // Add Towns Layer
       if (townsGeoJson && !map.getSource('towns')) {
         map.addSource('towns', { type: 'geojson', data: townsGeoJson });
         map.addLayer({
@@ -120,6 +120,10 @@ const App = () => {
   
         // Town polygon click event to show weather forecast
         map.on('click', 'townsFill', (e) => {
+
+          const sportFeatures = map.queryRenderedFeatures(e.point, { layers: ['sportFacilitiesFill'] });
+          if (sportFeatures && sportFeatures.length > 0) return; // A sports facility was clicked, so skip the townsFill handler
+         
           const feature = e.features && e.features[0];
           if (!feature) return;
   
@@ -147,7 +151,7 @@ const App = () => {
           }
         });
       }
-      // --- Add Sport Facilities Layer ---
+      // Add Sport Facilities Layer
       if (sportFacilitiesGeoJson && !map.getSource('sportFacilities')) {
         map.addSource('sportFacilities', {
           type: 'geojson',
@@ -176,7 +180,6 @@ const App = () => {
           map.getCanvas().style.cursor = '';
         });
 
-// Click event for sport facilities polygons
 // Click event for sport facilities polygons
 map.on('click', 'sportFacilitiesFill', (e) => {
   const feature = e.features && e.features[0];
@@ -270,7 +273,7 @@ map.on('click', 'sportFacilitiesFill', (e) => {
     .setHTML(popupHtml)
     .addTo(map);
 
-  // Update the side panel if desired
+  // Update the side panel
   setCustomRecordsData({ isCustom: true, getRecords: [recordObj] });
 });
       }
