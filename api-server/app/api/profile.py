@@ -44,7 +44,7 @@ def profile():
       preferences = json.loads(preferences_str) if preferences_str else {}
 
       # validate base64 image
-      if base64_string:
+      if base64_string != "null":
         try:
           # extract the base64 part of the image data
           base64_data = re.sub('^data:image/.+;base64,', '', base64_string)
