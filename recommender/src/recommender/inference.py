@@ -1,5 +1,12 @@
 """
 Conduct the search on database
+
+TODO:
+
+1. Rerank using location distance.
+2. Facility to region.
+3. Use region to filter weather.
+
 """
 
 import json
@@ -199,8 +206,11 @@ class Searcher:
                     gym=Gym(available=False),
                 )
             )
+        # rerank based on the location
         for facility in facilities:
             self.update_realtime_data(facility)
+
+        # update with filter by weather data.
         return facilities
 
     @classmethod
