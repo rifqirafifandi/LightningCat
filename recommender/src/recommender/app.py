@@ -44,5 +44,5 @@ def get_facilities() -> list[Facility]:
 
 @app.get("/rec")
 def get_recs(user: User) -> list[Facility]:
-    res = search_app.search_facilities_from_user(user, 5)
+    res = search_app.search_facilities_from_user(user, 100)
     return res

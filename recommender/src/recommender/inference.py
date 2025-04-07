@@ -3,7 +3,7 @@ Conduct the search on database
 
 TODO:
 
-1. Rerank using location distance.
+1. [DONE] Rerank using location distance.
 2. Facility to region.
 3. Use region to filter weather.
 
@@ -22,6 +22,8 @@ from numpy.typing import NDArray
 from .database import DB
 from .model import ActivityEnum, AgeRange, Facility, Gym, Swimming, User
 from .realtime_database import RealtimeDB
+from .utils import haversine_distance
+from .weather import Weather
 
 TOP_K = 20
 FACILITY_MAPPING = "mappedFacilities.json"
@@ -78,6 +80,17 @@ def _is_gym_facility(name: str) -> bool:
     return "gym" in name.lower()
 
 
+def rank_by_distance(user_dict, candidates):
+    user_lat, user_lon = user_dict["location"]
+    sorted_candidates = sorted(
+        candidates,
+        key=lambda x: haversine_distance(
+            user_lat, user_lon, x.location[0], x.location[1]
+        ),
+    )
+    return sorted_candidates
+
+
 class Searcher:
     def __init__(
         self,
@@ -91,6 +104,7 @@ class Searcher:
         self.id_manager = id_manager
         self.transformer = transformer
         self.real_db = None
+        self.weather = Weather()
 
         self.facility_mapping = facility_mapping
 
@@ -174,6 +188,8 @@ class Searcher:
         """
         Post filterings
         """
+        candidates = rank_by_distance(user_dict, candidates)
+        candidates = self.weather.filter(candidates)
         for facility in candidates:
             self.update_realtime_data(facility)
 
@@ -206,7 +222,6 @@ class Searcher:
                     gym=Gym(available=False),
                 )
             )
-        # rerank based on the location
         for facility in facilities:
             self.update_realtime_data(facility)
 

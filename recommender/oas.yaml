@@ -43,6 +43,9 @@ components:
         name:
           type: string
           description: facility name
+        weather:
+          type: string
+          description: weather at facility
         address:
           type: string
           description: facility address
