@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, redirect, url_for, session, current_app, request
+from flask import Blueprint, jsonify, redirect, session, current_app, request
 from app.models.user import User, Profile, OAuthAccount
 from app.extensions import oauth, db
 from app.auth.utils import generate_security_tokens, store_tokens_in_session, get_tokens_from_session, store_user_in_session
@@ -31,12 +31,11 @@ def callback():
 
     token = oauth.google.authorize_access_token()
 
-    # Get user info from userinfo endpoint
-    resp = oauth.google.get('userinfo')
+    # TODO: Check https://accounts.google.com/.well-known/openid-configuration
+    resp = oauth.google.get('https://openidconnect.googleapis.com/v1/userinfo', token=token)
     userinfo = resp.json()
     provider_user_id = userinfo['sub']
     email = userinfo['email']
-    name = userinfo.get('name', 'User')
 
     user = OAuthAccount.get_user_by_provider_details('google', provider_user_id)
 
@@ -49,14 +48,15 @@ def callback():
       )
       db.session.add(oauth_account)
 
-      profile = Profile.get_or_create(user.id, name)
+      profile = Profile.get_or_create(user.id, email)
 
       db.session.commit()
 
     store_user_in_session(userinfo, token, 'google')
     session['internal_user_id'] = user.id
+    session.modified = True
 
-    return redirect(url_for('api.profile'))
+    return redirect(current_app.config['WEB_REDIRECT_URI'])
   except ValueError as e:
     current_app.logger.error(f"Google security validation error: {str(e)}")
     return jsonify({"error": "Security validation failed"}), 403

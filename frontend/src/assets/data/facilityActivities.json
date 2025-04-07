@@ -1,0 +1,327 @@
+[
+    {
+        "Clementi Stadium": [
+            "Athletics",
+            "Football"
+        ]
+    },
+    {
+        "Clementi Sports Centre": [
+            "Table_tennis",
+            "Gym",
+            "Badminton",
+            "Indoor",
+            "Pickleball",
+            "Swimming",
+            "Wading"
+        ]
+    },
+    {
+        "Jurong West Sports Centre": [
+            "Table_tennis",
+            "Gym",
+            "Badminton",
+            "Indoor",
+            "Athletics",
+            "Football",
+            "Tennis",
+            "Swimming",
+            "Wading"
+        ]
+    },
+    {
+        "Kallang Basin Swimming Complex": [
+            "Swimming",
+            "Wading"
+        ]
+    },
+    {
+        "Kallang Sports Centre": [
+            "Lawn_bowl",
+            "Netball",
+            "Squash",
+            "Tennis",
+            "Football",
+            "Athletics"
+        ]
+    },
+    {
+        "Katong Swimming Complex": [
+            "Swimming",
+            "Wading"
+        ]
+    },
+    {
+        "AMK Swimming Complex": [
+            "Swimming",
+            "Wading"
+        ]
+    },
+    {
+        "Bishan Sports Centre": [
+            "Table_tennis",
+            "Gym",
+            "Badminton",
+            "Indoor",
+            "Football",
+            "Athletics",
+            "Swimming",
+            "Wading"
+        ]
+    },
+    {
+        "Bukit Batok Swimming Complex": [
+            "Swimming",
+            "Wading"
+        ]
+    },
+    {
+        "Farrer Park Field and Tennis Centre": [
+            "Tennis",
+            "Football",
+            "Rugby"
+        ]
+    },
+    {
+        "Jalan Besar Sports Centre": [
+            "Football",
+            "Swimming",
+            "Wading"
+        ]
+    },
+    {
+        "Jurong East Sports Centre": [
+            "Table_tennis",
+            "Gym",
+            "Badminton",
+            "Indoor",
+            "Petanque",
+            "Football",
+            "Gateball",
+            "Pickleball",
+            "Swimming",
+            "Wading"
+        ]
+    },
+    {
+        "Heartbeat@Bedok": [
+            "Gym",
+            "Badminton",
+            "Indoor",
+            "Tennis",
+            "Swimming",
+            "Wading"
+        ]
+    },
+    {
+        "Hougang Sports Centre": [
+            "Gym",
+            "Badminton",
+            "Indoor",
+            "Football",
+            "Athletics",
+            "Swimming",
+            "Wading"
+        ]
+    },
+    {
+        "Bukit Gombak Sports Centre": [
+            "Gym",
+            "Badminton",
+            "Indoor",
+            "Football",
+            "Athletics"
+        ]
+    },
+    {
+        "Bedok Stadium": [
+            "Athletics",
+            "Football"
+        ]
+    },
+    {
+        "Burghley Squash and Tennis Centre": [
+            "Tennis",
+            "Squash"
+        ]
+    },
+    {
+        "Choa Chu Kang Sports Centre": [
+            "Table_tennis",
+            "Gym",
+            "Badminton",
+            "Soccer",
+            "Indoor",
+            "Football",
+            "Athletics",
+            "Tennis",
+            "Swimming",
+            "Wading"
+        ]
+    },
+    {
+        "Jurong Stadium": [
+            "Athletics",
+            "Football"
+        ]
+    },
+    {
+        "Our Tampines Hub - Community Auditorium": [
+            "Table_tennis",
+            "Gym",
+            "Badminton",
+            "Indoor",
+            "Swimming",
+            "Wading"
+        ]
+    },
+    {
+        "Pasir Ris Sports Centre": [
+            "Table_tennis",
+            "Gym",
+            "Badminton",
+            "Soccer",
+            "Indoor",
+            "Football",
+            "Tennis",
+            "Swimming",
+            "Wading"
+        ]
+    },
+    {
+        "Queenstown Sports Centre": [
+            "Athletics",
+            "Football",
+            "Swimming",
+            "Wading"
+        ]
+    },
+    {
+        "Sengkang Sports Centre": [
+            "Table_tennis",
+            "Hockey",
+            "Gym",
+            "Badminton",
+            "Indoor",
+            "Swimming",
+            "Wading"
+        ]
+    },
+    {
+        "Serangoon Sports Centre": [
+            "Athletics",
+            "Football",
+            "Swimming",
+            "Wading"
+        ]
+    },
+    {
+        "Toa Payoh Sports Centre": [
+            "Table_tennis",
+            "Gym",
+            "Badminton",
+            "Indoor",
+            "Petanque",
+            "Football",
+            "Athletics",
+            "Swimming",
+            "Wading"
+        ]
+    },
+    {
+        "Woodlands Sports Centre": [
+            "Gym",
+            "Badminton",
+            "Indoor",
+            "Football",
+            "Athletics",
+            "Swimming",
+            "Wading"
+        ]
+    },
+    {
+        "St Wilfrid Sports Centre": [
+            "Soccer",
+            "Tennis",
+            "Squash",
+            "Football"
+        ]
+    },
+    {
+        "Yio Chu Kang Sports Centre": [
+            "Table_tennis",
+            "Gym",
+            "Squash",
+            "Badminton",
+            "Indoor",
+            "Athletics",
+            "Tennis",
+            "Rugby",
+            "Swimming",
+            "Wading"
+        ]
+    },
+    {
+        "Yishun Sports Centre": [
+            "Basketball",
+            "Table_tennis",
+            "Gym",
+            "Netball",
+            "Badminton",
+            "Volleyball",
+            "Indoor",
+            "Soccer",
+            "Football",
+            "Athletics"
+        ]
+    },
+    {
+        "Yishun Swimming Complex": [
+            "Swimming",
+            "Wading"
+        ]
+    },
+    {
+        "Co Curricular Activities Branch": [
+            "Basketball",
+            "Table_tennis",
+            "Hockey",
+            "Netball",
+            "Squash",
+            "Badminton",
+            "Volleyball",
+            "Indoor",
+            "Soccer",
+            "Football",
+            "Athletics",
+            "Tennis",
+            "Swimming"
+        ]
+    },
+    {
+        "Delta Sports Centre": [
+            "Hockey",
+            "Gym",
+            "Badminton",
+            "Indoor",
+            "Swimming",
+            "Wading"
+        ]
+    },
+    {
+        "Enabling Village Gym": [
+            "Gym"
+        ]
+    },
+    {
+        "Geylang East Swimming Complex": [
+            "Swimming",
+            "Wading"
+        ]
+    },
+    {
+        "Geylang Field": [
+            "Football"
+        ]
+    }
+]

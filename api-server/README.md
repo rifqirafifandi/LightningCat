@@ -14,15 +14,31 @@ Server is at [https://api.chucklenuts.party](https://api.chucklenuts.party)
 - [https://api.chucklenuts.party/auth/google/login](https://api.chucklenuts.party/auth/google/login)
 
 #### Unified logout
-- [https://api.chucklenuts.party/logout](https://api.chucklenuts.party/logout)
+- [https://api.chucklenuts.party/auth/logout](https://api.chucklenuts.party/auth/logout)
 
 ### API
 
-- GET [https://api.chucklenuts.party/health](https://api.chucklenuts.party/health)
-- GET [https://api.chucklenuts.party/profile](https://api.chucklenuts.party/profile)
-- POST [https://api.chucklenuts.party/profile/image](https://api.chucklenuts.party/profile/image)
-- PUT [https://api.chucklenuts.party/profile/name](https://api.chucklenuts.party/profile/name)
-- PUT [https://api.chucklenuts.party/profile/preferences](https://api.chucklenuts.party/profile/preferences)
+#### Testing & debugging
+- GET `https://api.chucklenuts.party/health` - check if API is alive
+- GET `https://api.chucklenuts.party` - check if you're authenticated
+
+#### User & profile
+- GET `https://api.chucklenuts.party/profile` - get profile with session cookie
+- POST `https://api.chucklenuts.party/profile` - Update profile with formData
+
+##### Listing
+- GET `https://api.chucklenuts.party/listing/:listingId` - get single listing by listing_id
+- PUT `https://api.chucklenuts.party/listing/:listingId` - update single listing by listing_id
+- GET `https://api.chucklenuts.party/listings/:userId` - get user_id's listings
+- GET `https://api.chucklenuts.party/listings` - get all listings
+- POST `https://api.chucklenuts.party/listing` - create listing
+
+##### Booking
+- GET `https://api.chucklenuts.party/booking/:bookingId` - get single booking by booking_id
+- PUT `https://api.chucklenuts.party/booking/:bookingId` - update single booking by booking_id
+- GET `https://api.chucklenuts.party/bookings/:userId` - get user_id's bookings
+- GET `https://api.chucklenuts.party/bookings` - get all bookings
+- POST `https://api.chucklenuts.party/booking` - create booking
 
 -----
 
@@ -51,6 +67,47 @@ Reference: [app/models/user.py](app/models/user.py)
 | `provider` | VARCHAR(50) NOT NULL |
 | `provider_user_id` | VARCHAR(255) NOT NULL |
 || UNIQUE(provider, provider_user_id) |
+
+Reference: [app/models/listing.py](app/models/listing.py)
+
+### listings
+| key | type |
+| ------------- | ------------- |
+| `id` | SERIAL PRIMARY KEY |
+| `owner_id` | INTEGER NOT NULL REFERENCES users(id) |
+| `activity` | activity_type NOT NULL |
+| `facility_name` | facility_name NOT NULL |
+| `venue` | VARCHAR(255) NOT NULL |
+| `date` | DATE NOT NULL |
+| `duration` | INTEGER NOT NULL |
+| `capacity` | INTEGER NOT NULL |
+| `fee` | INTEGER NOT NULL |
+| `status` | listing_status DEFAULT 'open' |
+| `created_at` | TIMESTAMP DEFAULT CURRENT_TIMESTAMP |
+
+Reference: [app/models/booking.py](app/models/booking.py)
+
+### bookings
+| key | type |
+| ------------- | ------------- |
+| `id` | SERIAL PRIMARY KEY |
+| `listing_id` | INTEGER NOT NULL REFERENCES listings(id) |
+| `user_id` | INTEGER NOT NULL REFERENCES users(id) |
+| `booking_status` | booking_status DEFAULT 'pending' |
+| `payment_status` | payment_status DEFAULT 'unpaid' |
+| `fee` | INTEGER NOT NULL |
+| `created_at` | TIMESTAMP DEFAULT CURRENT_TIMESTAMP |
+|| UNIQUE(listing_id, user_id) |
+
+## postgresql ENUM types
+
+| enum | types |
+| ------------- | ------------- |
+| `facility_name` | `Queenstown Sports Centre`, `Choa Chu Kang Sports Centre`, `Yishun Swimming Complex`, `Jurong West Sports Centre`, `Jalan Besar Sports Centre`, `Bedok Stadium`, `Burghley Squash and Tennis Centre`, `Toa Payoh Sports Centre`, `Sengkang Sports Centre`, `Geylang Field`, `Heartbeat@Bedok`, `Katong Swimming Complex`, `Bukit Gombak Sports Centre`, `Enabling Village Gym`, `Serangoon Sports Centre`, `Woodlands Sports Centre`, `Jurong Stadium`, `Yio Chu Kang Sports Centre`, `Kallang Sports Centre`, `Kallang Basin Swimming Complex`, `Clementi Sports Centre`, `Jurong East Sports Centre`, `Delta Sports Centre`, `Geylang East Swimming Complex`, `Pasir Ris Sports Centre`, `AMK Swimming Complex`, `Bishan Sports Centre`, `Farrer Park Field and Tennis Centre`, `Co Curricular Activities Branch`, `Hougang Sports Centre`, `Bukit Batok Swimming Complex`, `St Wilfrid Sports Centre`, `Clementi Stadium`, `Our Tampines Hub - Community Auditorium`, `Yishun Sports Centre` |
+| `activity_type` | `Football`, `Badminton`, `Athletics`, `Table_tennis`, `Hockey`, `Volleyball`, `Soccer`, `Petanque`, `Basketball`, `Swimming`, `Pickleball`, `Lawn_bowl`, `Gym`, `Tennis`, `Indoor`, `Gateball`, `Wading`, `Netball`, `Squash`, `Rugby` |
+| `listing_status` | `open`, `full`, `cancelled`, `completed` |
+| `booking_status` | `pending`, `confirmed`, `rejected`, `cancelled` |
+| `payment_status` | `unpaid`, `paid`, `refunded` |
 
 -----
 
