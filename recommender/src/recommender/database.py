@@ -15,12 +15,10 @@ USER_COLLECTION = "user_collection"
 def get_db_client():
     load_dotenv(dotenv_path=".env_local")
 
-    MONGODB_USER = os.getenv("MONGODB_USER")
     MONGODB_PWD = os.getenv("MONGODB_PWD")
-    MONGODB_ADDRESS = os.getenv("MONGODB_ADDRESS")
-    MONGODB_APP = os.getenv("MONGODB_APP")
 
-    uri = f"mongodb+srv://{MONGODB_USER}:{MONGODB_PWD}@{MONGODB_ADDRESS}/?retryWrites=true&w=majority&appName={MONGODB_APP}"
+
+    uri = f"mongodb://khoa:{MONGODB_PWD}@ml-features.cp8e0gogko3z.ap-southeast-1.docdb.amazonaws.com:27017/?tls=true&tlsCAFile=global-bundle.pem&retryWrites=false"
 
     client = MongoClient(uri, server_api=ServerApi("1"))
     return client
