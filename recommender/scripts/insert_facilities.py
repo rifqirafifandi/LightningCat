@@ -7,7 +7,10 @@ import json
 from recommender import database
 from pathlib import Path
 
+app = typer.Typer(pretty_exceptions_show_locals=False)
 
+
+@app.command()
 def main(
     input_path: Path = typer.Argument(
         ...,
@@ -26,4 +29,4 @@ def main(
 
 
 if __name__ == "__main__":
-    typer.run(main)
+    app()
