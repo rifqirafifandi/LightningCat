@@ -1,13 +1,21 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from path import Path
+from dotenv import load_dotenv
 
 from recommender.inference import Searcher
 
 from .model import Facility, User
 from .realtime_database import LocalRealTimeDB
 
+load_dotenv(dotenv_path=".env_local")
+
+USE_DOCUMENT_DB = int(os.getenv("USE_DOCUMENT_DB"))
+
 MODEL_PATH = Path("output_index")
+if USE_DOCUMENT_DB == 1:
+    MODEL_PATH = Path("output_index_docdb")
 ARTIFACT_PATH = Path("./data/")
 
 
