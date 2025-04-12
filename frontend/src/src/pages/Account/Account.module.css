@@ -1,0 +1,72 @@
+.container {
+  height: calc(100% - 4rem);
+  overflow: hidden;
+  padding: 0 2rem;
+}
+
+.scrollContainer {
+  height: max-content;
+  padding-top: 2rem;
+  padding-bottom: 8rem;
+}
+
+.sidebarContainer {
+  height: 100%;
+  padding-top: 2rem;
+}
+
+.sidebarTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.sidebarList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  list-style-type: none;
+  padding: 0rem;
+  margin: 0rem;
+}
+
+.sidebarListItem {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+}
+
+.sidebarListItem a {
+  flex: 1;
+  font-size: 1.25rem;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  transition: all 150ms ease-in-out;
+  background: #ffffff;
+  color: #333333;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  svg {
+    color: #666666;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.sidebarListItem a:hover {
+  background: #f1f1f1;
+  color: #666;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 150ms ease-in-out;
+}
+
+.sidebarListItem a[aria-current="page"] {
+  color: #000;
+  background: #e5e5e5;
+  pointer-events: none;
+}

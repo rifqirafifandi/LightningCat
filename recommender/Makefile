@@ -8,7 +8,7 @@ fmt:
 	uvx ruff format
 
 serve:
-	uvicorn recommender.app:app 
+	uvicorn recommender.app:app --reload
 
 docker-build:
 	docker build --tag recommender .
