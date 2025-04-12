@@ -61,6 +61,8 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Location"
+        alternatives:
+          $ref: "#/components/schemas/Activity"
         swimming:
           type: object
           required: 

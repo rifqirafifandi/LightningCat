@@ -43,6 +43,12 @@ BAD_WEATHER_VALUES = [
     "Heavy Thundery Showers with Gusty Winds",
 ]
 
+ALTER_ACTIVITIES = [
+    "Gym",
+    "Table_tennis",
+    "Indoor",
+]
+
 
 class Weather:
     def __init__(self):
@@ -67,7 +73,7 @@ class Weather:
         # weather data
         self.area_weather = {}
         for item in data["items"][0]["forecasts"]:
-            self.area_weather[item['area']] = item['forecast']
+            self.area_weather[item["area"]] = item["forecast"]
 
     def update_weather_status(self, cand: Facility):
         cand_lat = cand.location[0]
@@ -89,6 +95,7 @@ class Weather:
         filtered_candidates = []
         for cand in candidates:
             new_cand = self.update_weather_status(cand)
-            if new_cand.weather not in BAD_WEATHER_VALUES:
-                filtered_candidates.append(new_cand)
+            if new_cand.weather in BAD_WEATHER_VALUES:
+                new_cand.alternatives = ALTER_ACTIVITIES
+            filtered_candidates.append(new_cand)
         return filtered_candidates
