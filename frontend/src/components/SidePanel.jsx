@@ -66,7 +66,6 @@ const SidePanel = (props) => {
       display: 'flex',
       flexDirection: 'column',
       backgroundColor: 'white',
-      boxShadow: '-1px 0 5px rgba(0,0,0,0.5)',
       padding: '20px',
       boxSizing: 'border-box',
       zIndex: 1050,

@@ -20,7 +20,7 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="navbar shadow navbar-expand-lg navbar-light bg-light">
+    <nav className="navbar shadow navbar-expand-lg navbar-light bg-light z-2">
       <div className="container-fluid">
         <NavLink className={styles.logoContainer} to={'/'}>
           <img src={Logo} alt="Logo" className={styles.logo} />

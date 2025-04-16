@@ -1,17 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './App.css';
-import FilterPanel from './components/FilterPanel';
+// import FilterPanel from './components/FilterPanel';
+import { useAuth } from './contexts/auth';
 import SidePanel from './components/SidePanel';
 import SearchInputBox from './components/SearchInputBox';
 import Queries from './queries/Queries';
 import { useLazyQuery } from '@apollo/client';
+import { Button } from 'react-bootstrap';
+import { Magic } from 'react-bootstrap-icons';
+
+import 'mapbox-gl/dist/mapbox-gl.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css';
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
 const App = () => {
+  const { isAuthenticated } = useAuth();
   const mapContainerRef = useRef(null);
   const [map, setMap] = useState(null);
 
@@ -44,11 +49,10 @@ const App = () => {
   // 1) Fetch all required static files and store each response in its respective state.
   useEffect(() => {
     Promise.all([
-      //fetch('http://ec2-47-129-39-107.ap-southeast-1.compute.amazonaws.com:8000/facilities/'),
-      fetch('/facilityCapacities_sample.json'),
+      fetch('https://api.chucklenuts.party/facilities'), // HTTP endpoint for facilities capacities proxied through API server
       fetch('/MasterPlan2019PlanningAreaBoundaryNoSea.processed.geojson'),
       fetch('/SportSGSportFacilitiesGEOJSON.geojson'),
-      fetch('/twoHourWeatherData_sample.json'),
+      fetch('https://cc5224-bucket1.s3.ap-southeast-1.amazonaws.com/apidata/weather2h.json'), // 2H weather data
     ])
       .then((responses) => Promise.all(responses.map((r) => r.json())))
       .then(
@@ -332,16 +336,21 @@ map.on('click', 'sportFacilitiesFill', (e) => {
   return (
     <>
       <div className="row">
-        <div className="col-md-6">
-          <div className="row mt-1 mb-1">
-            <div className="col-md-6">{map && <SearchInputBox onFlyTo={onFlyTo} />}</div>
-            <div className="col-md-6">
-              <FilterPanel
+        <div className="col-md-6 p-0 z-0">
+          <div className="row mt-1 mb-1 d-flex flex-row justify-content-between">
+            <div className="col-md-6 p-0">{map && <SearchInputBox onFlyTo={onFlyTo} />}</div>
+            <div className="col-md-6 py-2 px-0 me-4 w-auto">
+              {/* <FilterPanel
                 areaState={areaState}
                 setAreaState={setAreaState}
                 towns={townsData}
                 flatTypes={flatTypesData}
-              />
+              /> */}
+              {
+                isAuthenticated
+                ? <Button variant="primary">Recommend <Magic className="magic-icon"/></Button>
+                : ''
+              }
             </div>
           </div>
 
@@ -354,7 +363,7 @@ map.on('click', 'sportFacilitiesFill', (e) => {
         </div>
 
         {/* The Right Side Panel */}
-        <div className="col-md-6">
+        <div className="col-md-6 p-0 z-1 shadow">
           <SidePanel
             recordsData={customRecordsData}
           />
