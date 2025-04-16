@@ -3,6 +3,10 @@ from datetime import timedelta
 
 class Config:
   SECRET_KEY = os.urandom(24)
+
+  # Strike Secrets
+  STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
+  STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET')
   
   # Database configuration
   SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')

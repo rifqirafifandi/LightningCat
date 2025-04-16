@@ -17,6 +17,8 @@ Environment="GOOGLE_CLIENT_SECRET={...}"
 Environment="DATABASE_URL={...}"
 Environment="WEB_REDIRECT_URI=https://web.chucklenuts.party"
 Environment="COGNITO_LOGOUT_URI=https://web.chucklenuts.party"
+Environment="STRIPE_SECRET_KEY=[...]"
+Environment="STRIPE_WEBHOOK_SECRET=[...]"
 ExecStart=/opt/api-server/api-server-venv/bin/uwsgi --ini uwsgi-config.ini
 
 [Install]

@@ -8,6 +8,8 @@ from app.auth.providers.cognito import cognito_bp
 from app.auth.providers.google import google_bp
 from app.api import api_bp
 
+# import stripe
+
 def create_app(config_name=None):
   app = Flask(__name__)
 
@@ -25,6 +27,10 @@ def create_app(config_name=None):
   oauth.init_app(app)
   db.init_app(app)
   migrate.init_app(app, db)
+
+  # Initialize Stripe client
+  # stripe.api_key = app.config['STRIPE_SECRET_KEY']
+  # app.stripe = stripe
 
   with app.app_context():
     # Register Cognito client

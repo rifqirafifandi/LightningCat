@@ -93,6 +93,7 @@ def get_user_listings(user_id):
 @api_bp.route('/listings', methods=['GET'])
 def get_all_listings():
   all_listings = Listing.get_all_listings()
+
   if not all_listings:
     return jsonify([]), 204
 

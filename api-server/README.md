@@ -40,6 +40,20 @@ Server is at [https://api.chucklenuts.party](https://api.chucklenuts.party)
 - GET `https://api.chucklenuts.party/bookings` - get all bookings
 - POST `https://api.chucklenuts.party/booking` - create booking
 
+##### Wallet
+- GET `https://api.chucklenuts.party/wallet` - get wallet with session cookie
+
+##### Transaction
+- GET `https://api.chucklenuts.party/transaction/:transactionId` - get single transaction with transaction_id
+- POST `https://api.chucklenuts.party/transaction` - create transaction
+- GET `https://api.chucklenuts.party/transactions` - get all transactions with session cookie
+
+##### Webhook (Payments)
+- POST `https://api.chucklenuts.party/webhook/payment` - Confirmation of payment by provider
+
+[Stripe docs for webhooks](https://docs.stripe.com/webhooks?lang=python)
+[Types of Events](https://docs.stripe.com/api/events/types)
+
 -----
 
 ## Data Model
@@ -99,6 +113,37 @@ Reference: [app/models/booking.py](app/models/booking.py)
 | `created_at` | TIMESTAMP DEFAULT CURRENT_TIMESTAMP |
 || UNIQUE(listing_id, user_id) |
 
+Reference: [app/models/wallet.py](app/models/wallet.py)
+
+### wallet
+| key | type |
+| ------------- | ------------- |
+| `id` | SERIAL PRIMARY KEY |
+| `user_id` | INTEGER NOT NULL REFERENCES users(id) |
+| `balance` | DECIMAL(12,2) NOT NULL DEFAULT 0.00 |
+| `currency` | VARCHAR(3) NOT NULL DEFAULT 'SGD' |
+| `status` | wallet_status NOT NULL DEFAULT 'active' |
+| `created_at` | TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP |
+| `updated_at` | TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP |
+
+Reference: [app/models/transactions.py](app/models/transactions.py)
+
+### transactions
+| key | type |
+| ------------- | ------------- |
+| `id` | SERIAL PRIMARY KEY |
+| `wallet_id` | INTEGER NOT NULL REFERENCES wallet(id) |
+| `booking_id` | INTEGER REFERENCES bookings(id) |
+| `listing_id` | INTEGER REFERENCES listings(id) |
+| `amount` | DECIMAL(12,2) NOT NULL |
+| `transaction_type` | transaction_type NOT NULL |
+| `status` | transaction_status NOT NULL DEFAULT 'pending' |
+| `reference` | VARCHAR(255) |
+| `description` | TEXT |
+| `metadata` | JSONB DEFAULT '{}'::jsonb |
+| `created_at` | TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP |
+| `updated_at` | TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP |
+
 ## postgresql ENUM types
 
 | enum | types |
@@ -108,6 +153,9 @@ Reference: [app/models/booking.py](app/models/booking.py)
 | `listing_status` | `open`, `full`, `cancelled`, `completed` |
 | `booking_status` | `pending`, `confirmed`, `rejected`, `cancelled` |
 | `payment_status` | `unpaid`, `paid`, `refunded` |
+| `wallet_status` | `active`, `suspended`, `closed` |
+| `transaction_type` | `deposit`, `withdrawal`, `payment`, `refund`, `fee`, `commission` |
+| `transaction_status` | `pending`, `completed`, `failed`, `reversed`, `canceled` |
 
 -----
 
