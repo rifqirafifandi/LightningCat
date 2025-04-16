@@ -4,6 +4,7 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import styles from './SearchInputBox.module.css';
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
@@ -70,21 +71,25 @@ const SearchInputBox = ({ onFlyTo }) => {
   };
 
   return (
-    <div>
+    <div className={styles.searchContainer}>
       <FormControl
         type="text"
         value={searchQuery}
         onChange={handleSearchChange}
-        placeholder="Search for places..."
-        
+        placeholder="Search for a location near you..."
+        className={styles.searchInput}
       />
-      <Dropdown id="search-dropdown">
-        {suggestions.map(suggestion => (
-          <Dropdown.Item as="button" key={suggestion.id} onClick={() => handleSelectSuggestion(suggestion)}>
-            {suggestion.place_name}
-          </Dropdown.Item>
-        ))}
-      </Dropdown>
+      {
+        suggestions.length
+        ? <Dropdown id="search-dropdown" className={`${styles.searchDropdown} shadow`}>
+            {suggestions.map(suggestion => (
+              <Dropdown.Item as="button" key={suggestion.id} onClick={() => handleSelectSuggestion(suggestion)}>
+                {suggestion.place_name}
+              </Dropdown.Item>
+            ))}
+          </Dropdown>
+        : ''
+      }
     </div>
   );
 };

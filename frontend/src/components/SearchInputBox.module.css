@@ -1,0 +1,9 @@
+.searchContainer {
+  margin: 0.5rem 0 0.5rem 2rem;
+}
+
+.searchDropdown {
+  padding: 0.5rem 0.75rem;
+  border-bottom-left-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+}

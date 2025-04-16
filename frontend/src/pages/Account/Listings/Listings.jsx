@@ -13,6 +13,13 @@ const Listings = () => {
     fetchUserListings();
   }, [fetchUserListings]);
 
+  const renderAction = (listing) => {
+    if (listing.status === 'full' || listing.status === 'cancelled' || listing.status === 'completed') {
+      return ''
+    }
+    return <Button variant="priamry">Edit</Button>;
+  }
+
   return (
     <>
       <div className={styles.headerContainer}>
@@ -47,7 +54,7 @@ const Listings = () => {
                     <td>{ listing.capacity }</td>
                     <td>${ listing.fee }</td>
                     <td>{ listing.status }</td>
-                    <td><Button>Edit</Button></td>
+                    <td>{ renderAction(listing) }</td>
                   </tr>
                 ))
               }

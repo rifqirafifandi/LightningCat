@@ -1,3 +1,13 @@
 table tbody tr td {
   vertical-align: middle;;
 }
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.modal-body > p {
+  margin: 0;
+}

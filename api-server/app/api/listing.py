@@ -2,6 +2,7 @@ from flask import jsonify, session, request
 from app.api import api_bp
 from app.auth.utils import login_required
 from app.models.listing import Listing
+from datetime import datetime
 
 @api_bp.route('/listing', methods=['OPTIONS'])
 def listing_options():
@@ -93,7 +94,13 @@ def get_user_listings(user_id):
 @api_bp.route('/listings', methods=['GET'])
 def get_all_listings():
   all_listings = Listing.get_all_listings()
+
   if not all_listings:
     return jsonify([]), 204
+
+  for listing in all_listings:
+    if listing.date and listing.date < datetime.now().date():
+      listing.status = 'completed'
+      Listing.update_listing(listing.id, 'completed')
 
   return jsonify([listing.to_dict() for listing in all_listings]), 200

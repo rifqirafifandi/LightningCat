@@ -1,13 +1,20 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Button, Modal, Table } from 'react-bootstrap';
-import './ListingsTable.module.css';
 import { useUserData } from '../contexts/userData';
+import { useAuth } from '../contexts/auth';
+import './ListingsTable.module.css';
 
 const ListingsTable = (props) => {
-  const { bookings, createBooking } = useUserData();
+  const { isAuthenticated } = useAuth();
+  const { bookings, fetchUserBookings, createBooking } = useUserData();
   const [showConfirmationModal, setShowConfirmationModal] = React.useState(false);
   const [selectedListing, setSelectedListing] = React.useState(null);
+  
+  React.useEffect(() => {
+    fetchUserBookings();
+  }, [fetchUserBookings]);
+
   if (!props.listings.length) return <p>No data found.</p>;
 
   const toggleConfirmationModal = (listing) => {
@@ -26,6 +33,19 @@ const ListingsTable = (props) => {
     }
   }
 
+  const getFriendlyDate = (dateString) => (new Date(Date.parse(dateString))).toLocaleDateString("en-SG", { year: "numeric", month: "short", day: "numeric" })
+
+  const renderAction = (listing) => {
+    if (!isAuthenticated) return '';
+    if (listing.id === bookings.find(booking => booking.listing_id === listing.id)?.listing_id) {
+      return <NavLink to="account/bookings">View your booking</NavLink>;
+    }
+    if (listing.status === 'full' || listing.status === 'cancelled' || listing.status === 'completed') {
+      return ''
+    }
+    return <Button variant="primary" onClick={() => toggleConfirmationModal(listing)}>Book</Button>;
+  }
+
   return (
     <>
       <Modal
@@ -39,7 +59,8 @@ const ListingsTable = (props) => {
           <Modal.Title>Confirm booking</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          You are about to book a listing for {selectedListing?.activity} at {selectedListing?.facility_name} on {selectedListing?.date}. ${ (selectedListing?.fee / 4).toFixed(2) } in credits will be deducted from your wallet. Are you sure you want to proceed?
+          <p>You are about to book a listing for {selectedListing?.activity} at {selectedListing?.facility_name} on {getFriendlyDate(selectedListing?.date)}.</p>
+          <p><strong>${ (selectedListing?.fee / selectedListing?.capacity).toFixed(2) }</strong> in credits will be deducted from your wallet. Are you sure you want to proceed?</p>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={toggleConfirmationModal}>
@@ -70,18 +91,12 @@ const ListingsTable = (props) => {
                   <td>{ listing.activity }</td>
                   <td>{ listing.facility_name }</td>
                   <td>{ listing.venue }</td>
-                  <td>{ listing.date }</td>
+                  <td>{ getFriendlyDate(listing.date) }</td>
                   <td>{ listing.duration }</td>
                   <td>{ listing.bookings_count } / { listing.capacity }</td>
                   <td>${ listing.fee }</td>
                   <td>{ listing.status }</td>
-                  <td>
-                    {
-                      listing.id === bookings.find(booking => booking.listing_id === listing.id)?.listing_id
-                      ? <NavLink to="account/bookings">View your booking</NavLink>
-                      : <Button variant="primary" onClick={() => toggleConfirmationModal(listing)}>Book</Button>
-                    }
-                  </td>
+                  <td>{ renderAction(listing) }</td>
                 </tr>
               ))
             }

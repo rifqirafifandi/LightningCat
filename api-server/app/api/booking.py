@@ -60,6 +60,10 @@ def create_booking():
 
     if not new_booking:
       return jsonify({'error': 'Failed to create booking. You may already have a booking for this listing.'}), 400
+    
+    if hasattr(listing, 'bookings') and len(listing.bookings) >= listing.capacity:
+      listing.status = 'full'
+      listing.save()
 
     return jsonify(new_booking.to_dict()), 201
 
