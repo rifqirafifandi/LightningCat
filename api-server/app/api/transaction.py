@@ -73,7 +73,7 @@ def create_transaction():
     )
 
     transaction.reference = payment_intent.id
-    transaction.metadata = {
+    transaction.payment_metadata = {
       'payment_intent_id': payment_intent.id,
       'payment_intent_client_secret': payment_intent.client_secret,
     }

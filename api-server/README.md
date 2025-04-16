@@ -21,6 +21,7 @@ Server is at [https://api.chucklenuts.party](https://api.chucklenuts.party)
 #### Testing & debugging
 - GET `https://api.chucklenuts.party/health` - check if API is alive
 - GET `https://api.chucklenuts.party` - check if you're authenticated
+- GET `https://api.chucklenuts.party/facilities` - proxied URL to HTTP endpoint while SSL is not setup yet
 
 #### User & profile
 - GET `https://api.chucklenuts.party/profile` - get profile with session cookie
@@ -140,7 +141,7 @@ Reference: [app/models/transactions.py](app/models/transactions.py)
 | `status` | transaction_status NOT NULL DEFAULT 'pending' |
 | `reference` | VARCHAR(255) |
 | `description` | TEXT |
-| `metadata` | JSONB DEFAULT '{}'::jsonb |
+| `payment_metadata` | JSONB DEFAULT '{}'::jsonb |
 | `created_at` | TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP |
 | `updated_at` | TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP |
 

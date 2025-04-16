@@ -17,7 +17,7 @@ class Transaction(db.Model):
   status = db.Column(ENUM(*TRANSACTION_STATUS, name='transaction_status', create_type=False), nullable=False, default='pending')
   reference = db.Column(db.String(255), nullable=True)
   description = db.Column(db.Text, nullable=True)
-  metadata = db.Column(JSONB, default={})
+  payment_metadata = db.Column(JSONB, default={})
   created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
   updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -37,7 +37,7 @@ class Transaction(db.Model):
       'status': self.status,
       'reference': self.reference,
       'description': self.description,
-      'metadata': self.metadata,
+      'payment_metadata': self.payment_metadata,
       'created_at': self.created_at.isoformat() if self.created_at else None,
       'updated_at': self.updated_at.isoformat() if self.updated_at else None
     }
@@ -60,7 +60,7 @@ class Transaction(db.Model):
 
   @classmethod
   def create_transaction(cls, wallet_id, amount, transaction_type, booking_id=None, listing_id=None, 
-                        status='pending', reference=None, description=None, metadata=None):
+                        status='pending', reference=None, description=None, payment_metadata=None):
     transaction = cls(
       wallet_id=wallet_id,
       booking_id=booking_id,
@@ -70,7 +70,7 @@ class Transaction(db.Model):
       status=status,
       reference=reference,
       description=description,
-      metadata=metadata or {}
+      payment_metadata=payment_metadata or {}
     )
 
     db.session.add(transaction)
