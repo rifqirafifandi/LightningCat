@@ -1,4 +1,5 @@
 from app.extensions import db
+from app.models.wallet import Wallet
 
 class User(db.Model):
   __tablename__ = 'users'
@@ -26,6 +27,10 @@ class User(db.Model):
       user = cls(email=email)
       db.session.add(user)
       db.session.flush()
+
+      # Create a wallet for the user
+      wallet = Wallet(user_id=user.id, balance=0)
+      db.session.add(wallet)
 
     return user
 
