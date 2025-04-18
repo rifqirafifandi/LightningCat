@@ -25,53 +25,53 @@ class Gym(RecBaseModel):
 
 
 class ActivityEnum(str, Enum):
-    Swimming = 'Swimming'
-    Football = 'Football'
-    Gym = 'Gym'
-    Wading = 'Wading'
-    Indoor = 'Indoor'
-    Badminton = 'Badminton'
-    Table_tennis = 'Table_tennis'
-    Netball = 'Netball'
-    Volleyball = 'Volleyball'
-    Basketball = 'Basketball'
-    Athletics = 'Athletics'
-    Soccer = 'Soccer'
-    Rugby = 'Rugby'
-    Tennis = 'Tennis'
-    Squash = 'Squash'
-    Hockey = 'Hockey'
-    Petanque = 'Petanque'
-    Gateball = 'Gateball'
-    Lawn_bowl = 'Lawn_bowl'
-    Pickleball = 'Pickleball'
+    Swimming = "Swimming"
+    Football = "Football"
+    Gym = "Gym"
+    Wading = "Wading"
+    Indoor = "Indoor"
+    Badminton = "Badminton"
+    Table_tennis = "Table_tennis"
+    Netball = "Netball"
+    Volleyball = "Volleyball"
+    Basketball = "Basketball"
+    Athletics = "Athletics"
+    Soccer = "Soccer"
+    Rugby = "Rugby"
+    Tennis = "Tennis"
+    Squash = "Squash"
+    Hockey = "Hockey"
+    Petanque = "Petanque"
+    Gateball = "Gateball"
+    Lawn_bowl = "Lawn_bowl"
+    Pickleball = "Pickleball"
 
 
 class AgeRange(str, Enum):
-    Children = 'Children'
-    Adult = 'Adult'
-    Senior = 'Senior'
+    Children = "Children"
+    Adult = "Adult"
+    Senior = "Senior"
 
 
 class User(RecBaseModel):
     username: Optional[str] = Field(
-        None, description='unique user name', examples=['dangkhoa']
+        None, description="unique user name", examples=["dangkhoa"]
     )
     activities: Optional[List[ActivityEnum]] = None
     age_range: Optional[AgeRange] = None
     location: Optional[List[float]] = Field(
-        None, description='Location of entity (Lat, Lng)'
+        None, description="Location of entity (Lat, Lng)"
     )
 
 
 class Facility(RecBaseModel):
-    name: str = Field(..., description='facility name')
-    weather: Optional[str] = Field(None, description='weather at facility')
-    address: Optional[str] = Field(None, description='facility address')
+    name: str = Field(..., description="facility name")
+    weather: Optional[str] = Field(None, description="weather at facility")
+    address: Optional[str] = Field(None, description="facility address")
     activities: Optional[List[ActivityEnum]] = None
     age_range: Optional[List[AgeRange]] = None
     location: Optional[List[float]] = Field(
-        None, description='Location of entity (Lat, Lng)'
+        None, description="Location of entity (Lat, Lng)"
     )
     coordinates: Optional[List[List[float]]] = None
     alternatives: Optional[List[ActivityEnum]] = None
