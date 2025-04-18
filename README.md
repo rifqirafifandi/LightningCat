@@ -6,9 +6,9 @@ Contents of our README:
 
 ## Installing Lambda function on AWS 
 
-There are two lambda functions to deploy. One for the open government APIs and one for the API behind cloudflare. The setup requirements for both are the same. Repeat the setup for each instruction. 
+There are two lambda functions to deploy. One for the weather government APIs and one for the facility capacities API. Note that the libraries and code needed for both are different. Hence, they must be setup seperately on AWS. The steps to follow for both are the same and are as follows.  
 
-As our lambda function imports several libraries, you must first install these dependencies locally and zip them for upload before the function can be used on AWS. 
+As our lambda functions imports several libraries, you must first install these dependencies locally and zip them for upload before the function can be used on AWS. 
 
 1. Install dependencies locally 
 From the folder where the lambda function is saved, assuming the folder is my_lambda. Install requests and its dependencies into the current folder, creating subfolders like requests/ and possibly urllib3/, etc. 
@@ -42,9 +42,9 @@ e.g.
     } 
     ```
 
-6. Test function and deploy for the lambda_function_open
+6. Test function and deploy 
 
-## All other configurations needed for APIs used in event schedular/ lambda test variables
+### All other configurations needed for APIs used in event schedular/ lambda test variables
 
 1. 2h weather data
 ```
@@ -75,7 +75,7 @@ e.g.
 }
 ```
 
-7. Test function and deploy for lambda_function_closed
+5. facilities data
 ```
 {
   "api_url": "https://activesg.gov.sg/api/trpc/pass.getFacilityCapacities",
