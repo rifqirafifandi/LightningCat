@@ -2,3 +2,5 @@
 node_modules/
 build/
 frontend-server-key.pem
+#build files 
+dist/ 
