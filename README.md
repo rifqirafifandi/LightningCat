@@ -1,8 +1,57 @@
 # LightningCat
 
-Contents of our README:
-1. Executive Summary
-2. Installing Lambda function on AWS 
+Contents of our repo:
+1. frontend - code for frontend in react (Installation instructions below)
+2. api-sever - code for api-server 
+3. lambda_function_s3 and lambda_function_capacities - lambda functions to poll government APIs (Installation instructions below)  
+
+## Installing frontend onto ec2 
+Frontend is installed into its own EC2 server in AWS 
+
+1. spin up a new ec2 instance with amazon linux. Create key and save. Allow ssh into the instance. 
+2. ssh into instance
+```
+ssh -i frontend-server-key.pem ec2-user@<instance-public-ip>
+```
+4. update packages in ec2 server
+```
+sudo dnf update -y
+sudo dnf install -y gcc-c++ make
+```
+4. install node.js
+```
+sudo dnf module list nodejs # Check available versions
+sudo dnf module enable nodejs:20 # Enable Node.js v20
+sudo dnf install -y nodejs
+node -v # Verify install
+npm -v # Verify install
+```
+5. Copy Frontend Repository
+```
+scp -i <your-key.pem> -r ./frontend-folder ec2-user@<instance-public-ip>:/home/ec2-user/
+```
+6. Install and Build Frontend
+```
+cd frontend
+npm install
+npm run build
+```
+7. Serve Production Build
+```
+sudo npm install -g serve
+sudo serve -s build -l 80 # Serve on port 80
+```
+8. OR Use PM2 for persistence (alternative to 7)
+```
+sudo npm install -g pm2
+sudo pm2 serve build 80 --name frontend --spa  # Configure PM2 to serve the build
+sudo pm2 startup # Setup PM2 to start automatically on system boot
+sudo pm2 save # Save the current PM2 configuration
+```
+9. Verify Installation
+Access the frontend by visiting the EC2 instance's public IP address in a web browser.
+
+
 
 ## Installing Lambda function on AWS 
 
