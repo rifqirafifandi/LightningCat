@@ -25,7 +25,7 @@ app.add_middleware(
     allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"]
+    allow_headers=["*"],
 )
 
 
@@ -36,7 +36,7 @@ search_app.set_realtime_db(real_db)
 db = search_app.db
 
 
-@app.get("/users/")
+@app.post("/users/")
 def get_users() -> list[User]:
     users = []
     for user in db.user.find():
@@ -45,12 +45,12 @@ def get_users() -> list[User]:
     return users
 
 
-@app.get("/facilities/")
+@app.post("/facilities/")
 def get_facilities() -> list[Facility]:
-    return search_app.get_all_facilities()
+    return search_app.post_all_facilities()
 
 
-@app.get("/rec")
+@app.post("/rec")
 def get_recs(user: User) -> list[Facility]:
     res = search_app.search_facilities_from_user(user, 100)
     return res
