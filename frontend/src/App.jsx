@@ -270,6 +270,7 @@ map.on('click', 'sportFacilitiesFill', (e) => {
                       : (details.gym.closed ? 'Closed' : 'Open')
                   }
                 </div>
+                <p></p>
               `
               : ''
           }
@@ -284,7 +285,8 @@ map.on('click', 'sportFacilitiesFill', (e) => {
       if (isWithinLightningRadius(facilityLoc, lightningReadings)) {
         capacityDetailsHtml += `
           <div style="color: red;">
-            <strong>Lightning Risk:</strong> This facility is within 8 km of a recent lightning strike.
+            <h6>Lightning Risk</h6>
+            This facility is within 8 km of a recent lightning strike.
           </div>
         `;
       }
@@ -353,25 +355,7 @@ map.on('click', 'sportFacilitiesFill', (e) => {
         source: 'lightningStrikes',
         layout: {
           'icon-image': 'lightning-icon',
-          'icon-size': 0.1, // Adjust the size as needed
-        },
-      });
-
-      // Add a circle layer for the 8-km radius around each lightning strike
-      map.addLayer({
-        id: 'lightningRadiusLayer',
-        type: 'circle',
-        source: 'lightningStrikes',
-        paint: {
-          'circle-radius': {
-            stops: [
-              [0, 0],
-              [20, 8000 / 0.075], // 8 km in meters, adjust for zoom level
-            ],
-            base: 2,
-          },
-          'circle-color': '#ff0000',
-          'circle-opacity': 0.2,
+          'icon-size': 0.05, // Adjust the size as needed
         },
       });
 
