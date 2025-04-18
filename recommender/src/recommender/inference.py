@@ -168,7 +168,7 @@ class Searcher:
     ) -> list[Facility]:
         user_vector = transform(self.transformer, user_dict)
         dis, indexes = self.indexer.search(user_vector, top_k)
-        
+
         candidates = [
             Facility(
                 name=res["name"],
