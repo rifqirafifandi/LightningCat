@@ -12,22 +12,20 @@ import * as turf from '@turf/turf';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import { factorial } from 'simple-statistics';
-import { autofill } from '@mapbox/search-js-web';
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
 const App = () => {
+  const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
   const { facilities, setFacilities } = useAppData();
+  
   const mapContainerRef = useRef(null);
   const [map, setMap] = useState(null);
+  
   const popupRef = useRef(null);
   const [showRecommenderModal, setShowRecommenderModal] = useState(false);
-  const navigate = useNavigate();
-
-  const [areaState, setAreaState] = useState({});
-
+  
   const [customRecordsData, setCustomRecordsData] = useState(null);
   const [recommendedPolygons, setRecommendedPolygons] = useState([]);
   const recommendedPolygonsRef = useRef([]);
@@ -92,11 +90,11 @@ const App = () => {
     });
 
     mapInstance.on('load', () => {
-      updateBounds(mapInstance.getBounds().toArray());
+      //updateBounds(mapInstance.getBounds().toArray());
     });
 
     mapInstance.on('moveend', () => {
-      updateBounds(mapInstance.getBounds().toArray());
+      //updateBounds(mapInstance.getBounds().toArray());
     });
 
     setMap(mapInstance);
@@ -509,21 +507,21 @@ const App = () => {
   }, [map, recommendedPolygons]);
 
   // Update bounds in areaState so that queries can use the current viewport.
-  const updateBounds = (bounds) => {
-    const [lonMin, latMin, lonMax, latMax] = [
-      bounds[0][0],
-      bounds[0][1],
-      bounds[1][0],
-      bounds[1][1],
-    ];
-    setAreaState((prevState) => ({
-      ...prevState,
-      latRangeGte: latMin,
-      latRangeLte: latMax,
-      lonRangeGte: lonMin,
-      lonRangeLte: lonMax,
-    }));
-  };
+  // const updateBounds = (bounds) => {
+  //   const [lonMin, latMin, lonMax, latMax] = [
+  //     bounds[0][0],
+  //     bounds[0][1],
+  //     bounds[1][0],
+  //     bounds[1][1],
+  //   ];
+  //   setAreaState((prevState) => ({
+  //     ...prevState,
+  //     latRangeGte: latMin,
+  //     latRangeLte: latMax,
+  //     lonRangeGte: lonMin,
+  //     lonRangeLte: lonMax,
+  //   }));
+  // };
 
 // Fly the map to a specific coordinate (used by SearchInputBox)
 const onFlyTo = ({ lng, lat }) => {
@@ -553,6 +551,9 @@ const updateLayerVisibility = (layerId, visible) => {
     let payload = {};
     payload.activities = user.preferences.activities.length ? user.preferences.activities : [];
     payload.location = facilities.find(facility => facility.name === user.preferences.facilities[0])?.location;
+    if (payload.location && payload.location.length === 2) {
+      onFlyTo({ lat: payload.location[0], lng: payload.location[1] });
+    }
 
     if (Object.keys(payload).length === 0) {
       console.error('No preferences or location found');
