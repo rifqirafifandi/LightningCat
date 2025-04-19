@@ -17,7 +17,8 @@ const RecordsTable = (props) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  if (!data || !data.getRecords || !data.getRecords.length) return <p>No data found.</p>;
+  if (!data || !data.getRecords || !data.getRecords.length) return <p> Welcome to Lightning Cat! To see the details of a Sports Facility, click on any Sports Facility polygon (that's the purple shapes). Use the search bar at the pop of the page to zoom in on a location of your choice. Or, you can zoom in and out and click and drag the map around to explore the sporting facilities Singapore has to offer!</p>
+  ;
 
   // Render custom data if the flag is set
   if (data.isCustom) {

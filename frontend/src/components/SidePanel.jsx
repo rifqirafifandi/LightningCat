@@ -71,7 +71,6 @@ const SidePanel = (props) => {
       zIndex: 1050,
     }}>
       <div className="heading-container">
-        <div className="records-map-pins"></div>
         <h5>Facility Details</h5>
       </div>
       <div style={{ flex: '1' }}>
@@ -83,7 +82,6 @@ const SidePanel = (props) => {
       </div>
       <Separator />
       <div className="heading-container" >
-        <div className="listing-map-pins"></div>
         <h5>Available Listings</h5>
       </div>
       <div style={{ flex: '1' }}>
