@@ -210,6 +210,69 @@ const UserDataProvider = ({ children }) => {
   }
   , [addNotification, isAuthenticated, removeNotification, user]);
 
+  const createTransaction = React.useCallback(async (amount, transactionType, bookingId, listingId) => {
+    if (!isAuthenticated || !user) {
+      console.error("User is not authenticated");
+      return;
+    }
+
+    const payload = {
+      amount,
+      transaction_type: transactionType,
+    }
+
+    if (transactionType === "booking") {
+      payload.booking_id = bookingId;
+    } else if (transactionType === "listing") {
+      payload.listing_id = listingId;
+    }
+
+    try {
+      const response = await fetch(`https://api.chucklenuts.party/transaction`, {
+        method: 'POST',
+        credentials: 'include',
+        body: JSON.stringify(payload),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      const data = await response.json();
+      if (response.status === 201 && data) {
+        addNotification({
+          id: Date.now(),
+          title: "LightningCat",
+          message: "Transaction made successfully.",
+          time: new Date().toLocaleTimeString(),
+          removeNotification: removeNotification,
+          type: "success",
+          show: true,
+        })
+        setTransactions((prevTransactions) => [...prevTransactions, data]);
+      } else {
+        addNotification({
+          id: Date.now(),
+          title: "LightningCat",
+          message: "Error making transaction. Please try again later.",
+          time: new Date().toLocaleTimeString(),
+          removeNotification: removeNotification,
+          type: "danger",
+          show: true,
+        })
+      }
+    } catch (error) {
+      console.error("Error making transaction:", error);
+      addNotification({
+        id: Date.now(),
+        title: "LightningCat",
+        message: "Error making transaction. Please try again later.",
+        time: new Date().toLocaleTimeString(),
+        removeNotification: removeNotification,
+        type: "danger",
+        show: true,
+      })
+    }
+  }, [addNotification, isAuthenticated, removeNotification, user]);
+
   return (
     <UserDataContext.Provider
       value={{
@@ -226,6 +289,7 @@ const UserDataProvider = ({ children }) => {
         transactions,
         setTransactions,
         fetchTransactions,
+        createTransaction
       }}
     >
       {children}

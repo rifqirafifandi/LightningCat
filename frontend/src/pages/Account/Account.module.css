@@ -70,3 +70,17 @@
   background: #e5e5e5;
   pointer-events: none;
 }
+
+.emptyStateContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f9f9f9;
+  height: calc(100% - 56px);
+}
+
+.emptyStateContainer img {
+  width: 15rem;
+  height: 15rem;
+}

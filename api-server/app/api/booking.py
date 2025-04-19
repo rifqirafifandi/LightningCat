@@ -3,6 +3,8 @@ from app.api import api_bp
 from app.auth.utils import login_required
 from app.models.listing import Listing
 from app.models.booking import Booking
+from app.models.wallet import Wallet
+from app.models.transaction import Transaction
 
 @api_bp.route('/booking', methods=['OPTIONS'])
 def booking_options():
@@ -27,6 +29,10 @@ def get_booking(booking_id):
 @api_bp.route('/booking', methods=['POST'])
 @login_required
 def create_booking():
+  user_id = session.get('internal_user_id')
+  if not user_id:
+    return jsonify({"error": "User not found"}), 404
+  
   # Get data from request
   data = request.json
 
@@ -46,14 +52,20 @@ def create_booking():
   # Check if listing is at capacity
   if hasattr(listing, 'bookings') and len(listing.bookings) >= listing.capacity:
     return jsonify({'error': 'This listing is already at full capacity'}), 400
-
+  
+  # Check if user has enough balance in wallet
+  wallet = Wallet.get_wallet(user_id)
+  if not wallet:
+    return jsonify({'error': 'Wallet not found for the given user ID'}), 404
+  if wallet.balance < listing.fee:
+    return jsonify({'error': 'Insufficient balance in wallet'}), 400
+  
   # Create the booking
   try:
-    fee = int(data.get('fee', listing.fee)) if data.get('fee') else listing.fee // listing.capacity
     new_booking = Booking.create_booking(
       user_id=session['internal_user_id'],
       listing_id=data['listing_id'],
-      fee=fee,
+      fee=listing.fee,
       booking_status=data.get('booking_status', 'pending'),
       payment_status=data.get('payment_status', 'unpaid')
     )
@@ -61,9 +73,28 @@ def create_booking():
     if not new_booking:
       return jsonify({'error': 'Failed to create booking. You may already have a booking for this listing.'}), 400
     
-    if hasattr(listing, 'bookings') and len(listing.bookings) >= listing.capacity:
-      listing.status = 'full'
-      listing.save()
+    if hasattr(listing, 'bookings'):
+      if len(listing.bookings) >= listing.capacity:
+        listing.status = 'full'
+        listing.save()
+  
+      # create transaction
+      transaction = Transaction.create_transaction(
+        wallet_id=wallet.id,
+        amount=listing.fee,
+        transaction_type='debit',
+        status='completed',
+        booking_id=new_booking.id,
+        listing_id=listing.id
+      )
+      if not transaction:
+        return jsonify({'error': 'Failed to create transaction'}), 400
+      # Update wallet balance
+      wallet.balance -= listing.fee
+      wallet.save()
+      # Update booking
+      new_booking.payment_status = 'paid'
+      new_booking.booking_status = 'confirmed'
 
     return jsonify(new_booking.to_dict()), 201
 

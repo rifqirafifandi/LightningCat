@@ -97,7 +97,7 @@ Reference: [app/models/listing.py](app/models/listing.py)
 | `date` | DATE NOT NULL |
 | `duration` | INTEGER NOT NULL |
 | `capacity` | INTEGER NOT NULL |
-| `fee` | INTEGER NOT NULL |
+| `fee` | DECIMAL(12,2) NOT NULL |
 | `status` | listing_status DEFAULT 'open' |
 | `created_at` | TIMESTAMP DEFAULT CURRENT_TIMESTAMP |
 
@@ -111,7 +111,7 @@ Reference: [app/models/booking.py](app/models/booking.py)
 | `user_id` | INTEGER NOT NULL REFERENCES users(id) |
 | `booking_status` | booking_status DEFAULT 'pending' |
 | `payment_status` | payment_status DEFAULT 'unpaid' |
-| `fee` | INTEGER NOT NULL |
+| `fee` | DECIMAL(12,2) NOT NULL |
 | `created_at` | TIMESTAMP DEFAULT CURRENT_TIMESTAMP |
 || UNIQUE(listing_id, user_id) |
 

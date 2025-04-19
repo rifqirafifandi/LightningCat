@@ -17,7 +17,7 @@ class Listing(db.Model):
   date = db.Column(db.Date, nullable=False)
   duration = db.Column(db.Integer, nullable=False)
   capacity = db.Column(db.Integer, nullable=False)
-  fee = db.Column(db.Integer, nullable=False)
+  fee = db.Column(db.Numeric(10, 2), nullable=False)
   status = db.Column(ENUM(*LISTING_STATUS, name='listing_status', create_type=False), default='open')
   created_at = db.Column(db.DateTime, default=datetime.utcnow)
 

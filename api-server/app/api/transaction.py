@@ -1,3 +1,4 @@
+from decimal import Decimal
 from flask import jsonify, session, request
 from app.api import api_bp
 from app.auth.utils import login_required
@@ -24,7 +25,7 @@ def get_transaction(transaction_id):
 @api_bp.route('/transaction', methods=['POST'])
 @login_required
 def create_transaction():
-  data = {}
+  data = request.json
   user_id = session.get('internal_user_id')
   if not user_id:
     return jsonify({"error": "User not found"}), 404
@@ -32,28 +33,22 @@ def create_transaction():
   wallet = Wallet.get_wallet(user_id)
   if not wallet:
     return jsonify({'error': 'Wallet not found for the given internal user ID'}), 404
-  
-  transaction_type = request.data.get('transaction_type')
-
-  data['wallet_id'] = wallet.id
-  data['amount'] = request.data.get('amount')
-  data['transaction_type'] = transaction_type
-  data['booking_id'] = request.data.get('booking_id')
-  data['listing_id'] = request.data.get('listing_id')
 
   # Validation
-  required_fields = ['wallet_id', 'amount', 'transaction_type']
+  required_fields = ['amount', 'transaction_type']
   missing_fields = [field for field in required_fields if field not in data or not data[field]]
   if missing_fields:
     return jsonify({'error': f'Missing required fields: {", ".join(missing_fields)}'}), 400
 
   try:
-    amount = float(data['amount']) if data['amount'] else None
-    
+    amount_float = data.get('amount') / 100.0
+    amount_float_str = str(amount_float)
+    amount = Decimal(amount_float_str)
+
     transaction = Transaction.create_transaction(
-      wallet_id=data['wallet_id'],
+      wallet_id=wallet.id,
       amount=amount,
-      transaction_type=data['transaction_type'],
+      transaction_type=data.get('transaction_type'),
       status='completed', # assume completed
       booking_id=data.get('booking_id'),
       listing_id=data.get('listing_id'),

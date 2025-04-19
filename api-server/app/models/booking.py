@@ -14,7 +14,7 @@ class Booking(db.Model):
   user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
   booking_status = db.Column(ENUM(*BOOKING_STATUS, name='booking_status', create_type=False), default='pending')
   payment_status = db.Column(ENUM(*PAYMENT_STATUS, name='payment_status', create_type=False), default='unpaid')
-  fee = db.Column(db.Numeric(10, 2))
+  fee = db.Column(db.Numeric(10, 2), nullable=False)
   created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
   # Relationships
