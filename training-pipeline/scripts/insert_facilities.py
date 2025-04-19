@@ -4,7 +4,7 @@ Insert facilities data to mongodb
 
 import typer
 import json
-from recommender import database
+from training_pipeline import database
 from pathlib import Path
 
 app = typer.Typer(pretty_exceptions_show_locals=False)

@@ -151,3 +151,45 @@ e.g.
   "s3_key": "apidata/capacity_api_30min.json"
 }
 ```
+
+# Starting Recommendation Service. 
+
+0. Update AWS's DocumentDB credentials in `.env_local` if necessary.
+1. Install necessary dependencies on EC2:
+
+```bash
+sudo yum update -y
+sudo yum install -y docker
+sudo service docker start
+sudo usermod -a -G docker ec2-user
+```
+
+2. Cd to the recommendation codebase:
+
+```bash
+make docker-build
+make docker-serve
+```
+
+# Running Training-Pipeline service
+
+0. Update AWS's DocumentDB credentials in `.env_local` if necessary.
+1. Insert dependencies:
+    a. Insert [uv](https://docs.astral.sh/uv/getting-started/installation/)
+    b. Setup Python environment
+
+```bash
+uv venv
+uv sync
+```
+
+2. Insert data to DocumentDB.
+```bash
+python scripts/insert_facilities.py ../dataAndDataCleanup/facility_data.json
+```
+3. Model Training:
+```bash
+python main.py
+```
+
+`output_index` then can be used in `recommender` by directly copy to `recommender` codebase.
