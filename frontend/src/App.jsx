@@ -442,37 +442,53 @@ map.on('click', 'sportFacilitiesFill', (e) => {
 
   const handleRecommendButtonClick = async () => {
     if (!isAuthenticated || !user) return;
+  
     if (!user.preferences || !user.preferences.facilities.length) {
       setShowRecommenderModal(true);
       return;
     }
-
+  
     let payload = {};
     payload.activities = user.preferences.activities.length ? user.preferences.activities : [];
     payload.location = facilities.find(facility => facility.name === user.preferences.facilities[0])?.location;
-
+  
     if (Object.keys(payload).length === 0) {
       console.error('No preferences or location found');
       return;
     }
-
-    const response = fetch('https://api.chucklenuts.party/recommender', {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    })
-
-    if (response.status > 204) {
-      throw new Error(`Error: ${response.status} ${response.statusText}`);
+  
+    try {
+      const response = await fetch('https://api.chucklenuts.party/recommender', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+    
+      if (response.status > 204) {
+        throw new Error(`Error: ${response.status} ${response.statusText}`);
+      }
+    
+      const data = await response.json(); // This will now work correctly
+    
+      const filtered = [];
+      for (const block of data) {
+        if (!Array.isArray(block.activities) || !Array.isArray(block.alternatives)) continue;
+    
+        block.alternatives = block.alternatives.filter(item => block.activities.includes(item));
+        if (block.alternatives.length === 0) continue;
+    
+        filtered.push(block);
+        if (filtered.length === 5) break;
+      }
+    
+      console.log(filtered);
+    } catch (error) {
+      console.error('Error fetching or processing data:', error);
     }
-
-    const data = await response.json();
-    console.log(data);
-  }
-
+  };
   return (
     <>
       <Modal
