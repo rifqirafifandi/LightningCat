@@ -12,24 +12,23 @@ import * as turf from '@turf/turf';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import { factorial } from 'simple-statistics';
-import { autofill } from '@mapbox/search-js-web';
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
 const App = () => {
+  const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
   const { facilities, setFacilities } = useAppData();
+  
   const mapContainerRef = useRef(null);
   const [map, setMap] = useState(null);
+  
   const popupRef = useRef(null);
   const [showRecommenderModal, setShowRecommenderModal] = useState(false);
-  const navigate = useNavigate();
-
-  const [areaState, setAreaState] = useState({});
-
+  
   const [customRecordsData, setCustomRecordsData] = useState(null);
   const [recommendedPolygons, setRecommendedPolygons] = useState([]);
+  const recommendedPolygonsRef = useRef([]);
   const [layerVisibility, setLayerVisibility] = useState({
     towns: true,
     sportFacilities: true,
@@ -91,11 +90,11 @@ const App = () => {
     });
 
     mapInstance.on('load', () => {
-      updateBounds(mapInstance.getBounds().toArray());
+      //updateBounds(mapInstance.getBounds().toArray());
     });
 
     mapInstance.on('moveend', () => {
-      updateBounds(mapInstance.getBounds().toArray());
+      //updateBounds(mapInstance.getBounds().toArray());
     });
 
     setMap(mapInstance);
@@ -281,15 +280,27 @@ const App = () => {
             capacityDetailsHtml = `<p>No matching facility found for ${sportsCen}.</p>`;
           }
 
-          // Combine everything into the popup HTML with lightning alert immediately after address
+          // Combine everything into the popup HTML with recommended alternatives, lightning alert, and capacity details
+          const matchingRecommendation = recommendedPolygonsRef.current.find(
+            (rec) => rec.name === facilityName
+          );
+
+          const recommendationHtml = matchingRecommendation
+            ? `
+              <p><strong>Given the current weather, we recommend these alternatives:</strong></p>
+              <p>${matchingRecommendation.alternatives.join(', ')}</p>
+            `
+            : '';
+
           const popupHtml = `
             <div>
               <h4>${facilityName}</h4>
               <p><strong>Address:</strong> ${facilityAddress}</p>
+              ${recommendationHtml}
               ${lightningAlertHtml}
               ${capacityDetailsHtml}
             </div>
-`;
+          `;
 
           // Show the popup
           new mapboxgl.Popup({ maxWidth: '600px' })
@@ -489,43 +500,28 @@ const App = () => {
     });
 
     map.on('click', 'recommended-fill', (e) => {
-      const props = e.features[0].properties;
-      const gym = JSON.parse(props.gym);
-      const swimming = JSON.parse(props.swimming);
-
-      const popupHtml = `
-        <div>
-          <h4>${props.name}</h4>
-          <p><strong>Alternatives:</strong> ${props.alternatives}</p>
-          ${gym?.available ? `<p><strong>Gym:</strong> ${gym.closed ? 'Closed' : 'Open'} (${gym.capacity} cap)</p>` : ''}
-          ${swimming?.available ? `<p><strong>Swimming:</strong> ${swimming.closed ? 'Closed' : 'Open'} (${swimming.capacity} cap)</p>` : ''}
-        </div>
-      `;
-
-      new mapboxgl.Popup({ maxWidth: '400px' })
-        .setLngLat(e.lngLat)
-        .setHTML(popupHtml)
-        .addTo(map);
+      // Let the sportFacilitiesFill layer handle the click if it's overlapping
+      // Do not show a separate popup from the recommended layer
     });
 
   }, [map, recommendedPolygons]);
 
   // Update bounds in areaState so that queries can use the current viewport.
-  const updateBounds = (bounds) => {
-    const [lonMin, latMin, lonMax, latMax] = [
-      bounds[0][0],
-      bounds[0][1],
-      bounds[1][0],
-      bounds[1][1],
-    ];
-    setAreaState((prevState) => ({
-      ...prevState,
-      latRangeGte: latMin,
-      latRangeLte: latMax,
-      lonRangeGte: lonMin,
-      lonRangeLte: lonMax,
-    }));
-  };
+  // const updateBounds = (bounds) => {
+  //   const [lonMin, latMin, lonMax, latMax] = [
+  //     bounds[0][0],
+  //     bounds[0][1],
+  //     bounds[1][0],
+  //     bounds[1][1],
+  //   ];
+  //   setAreaState((prevState) => ({
+  //     ...prevState,
+  //     latRangeGte: latMin,
+  //     latRangeLte: latMax,
+  //     lonRangeGte: lonMin,
+  //     lonRangeLte: lonMax,
+  //   }));
+  // };
 
 // Fly the map to a specific coordinate (used by SearchInputBox)
 const onFlyTo = ({ lng, lat }) => {
@@ -555,6 +551,9 @@ const updateLayerVisibility = (layerId, visible) => {
     let payload = {};
     payload.activities = user.preferences.activities.length ? user.preferences.activities : [];
     payload.location = facilities.find(facility => facility.name === user.preferences.facilities[0])?.location;
+    if (payload.location && payload.location.length === 2) {
+      onFlyTo({ lat: payload.location[0], lng: payload.location[1] });
+    }
 
     if (Object.keys(payload).length === 0) {
       console.error('No preferences or location found');
@@ -580,16 +579,19 @@ const updateLayerVisibility = (layerId, visible) => {
       const filtered = [];
       for (const block of data) {
         if (!Array.isArray(block.activities) || !Array.isArray(block.alternatives)) continue;
-
-        block.alternatives = block.alternatives.filter(item => block.activities.includes(item));
+      
+        block.alternatives = block.alternatives
+          .filter(item => block.activities.includes(item) && item !== 'Indoor');
+      
         if (block.alternatives.length === 0) continue;
-
+      
         filtered.push(block);
         if (filtered.length === 5) break;
       }
 
       console.log(filtered);
       setRecommendedPolygons(filtered);
+      recommendedPolygonsRef.current = filtered;
     } catch (error) {
       console.error('Error fetching or processing data:', error);
     }
