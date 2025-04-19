@@ -414,6 +414,93 @@ map.on('click', 'sportFacilitiesFill', (e) => {
     return null;
   };
 
+  useEffect(() => {
+    if (!map || recommendedPolygons.length === 0) return;
+  
+    if (map.getSource('recommended')) {
+      map.getSource('recommended').setData({
+        type: 'FeatureCollection',
+        features: recommendedPolygons.map((rec) => ({
+          type: 'Feature',
+          geometry: {
+            type: 'Polygon',
+            coordinates: [[...rec.coordinates.map(coord => [coord[1], coord[0]])]],
+          },
+          properties: {
+            name: rec.name,
+            alternatives: rec.alternatives.join(', '),
+            gym: JSON.stringify(rec.gym),
+            swimming: JSON.stringify(rec.swimming),
+          },
+        })),
+      });
+      return;
+    }
+  
+    const geoJson = {
+      type: 'FeatureCollection',
+      features: recommendedPolygons.map((rec) => ({
+        type: 'Feature',
+        geometry: {
+          type: 'Polygon',
+          coordinates: [[...rec.coordinates.map(coord => [coord[1], coord[0]])]],
+        },
+        properties: {
+          name: rec.name,
+          alternatives: rec.alternatives.join(', '),
+          gym: JSON.stringify(rec.gym),
+          swimming: JSON.stringify(rec.swimming),
+        },
+      })),
+    };
+  
+    map.addSource('recommended', {
+      type: 'geojson',
+      data: geoJson,
+    });
+  
+    map.addLayer({
+      id: 'recommended-fill',
+      type: 'fill',
+      source: 'recommended',
+      paint: {
+        'fill-color': '#ffffff',
+        'fill-opacity': 0.5,
+      },
+    });
+  
+    map.addLayer({
+      id: 'recommended-outline',
+      type: 'line',
+      source: 'recommended',
+      paint: {
+        'line-color': '#000000',
+        'line-width': 2,
+      },
+    });
+  
+    map.on('click', 'recommended-fill', (e) => {
+      const props = e.features[0].properties;
+      const gym = JSON.parse(props.gym);
+      const swimming = JSON.parse(props.swimming);
+  
+      const popupHtml = `
+        <div>
+          <h4>${props.name}</h4>
+          <p><strong>Alternatives:</strong> ${props.alternatives}</p>
+          ${gym?.available ? `<p><strong>Gym:</strong> ${gym.closed ? 'Closed' : 'Open'} (${gym.capacity} cap)</p>` : ''}
+          ${swimming?.available ? `<p><strong>Swimming:</strong> ${swimming.closed ? 'Closed' : 'Open'} (${swimming.capacity} cap)</p>` : ''}
+        </div>
+      `;
+  
+      new mapboxgl.Popup({ maxWidth: '400px' })
+        .setLngLat(e.lngLat)
+        .setHTML(popupHtml)
+        .addTo(map);
+    });
+  
+  }, [map, recommendedPolygons]);
+
   // Update bounds in areaState so the GraphQL queries use the current viewport.
   const updateBounds = (bounds) => {
     const [lonMin, latMin, lonMax, latMax] = [
