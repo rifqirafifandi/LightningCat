@@ -23,7 +23,7 @@ const App = () => {
   const mapContainerRef = useRef(null);
   const [map, setMap] = useState(null);
   const [showRecommenderModal, setShowRecommenderModal] = useState(false);
-  const navigate = useNavigate();  
+  const navigate = useNavigate();
 
   const [areaState, setAreaState] = useState({});
 
@@ -44,13 +44,13 @@ const App = () => {
 
   // Function to check if a point is within 8 km of any lightning strike
   const isWithinLightningRadius = (facility, lightningStrikes) => {
-  const facilityCoords = [parseFloat(facility.longitude), parseFloat(facility.latitude)];
-  return lightningStrikes.some((strike) => {
-    const strikeCoords = [parseFloat(strike.location.longitude), parseFloat(strike.location.latitude)];
-    const distance = turf.distance(facilityCoords, strikeCoords, { units: 'kilometers' });
-    return distance <= 8;
-  });
-};
+    const facilityCoords = [parseFloat(facility.longitude), parseFloat(facility.latitude)];
+    return lightningStrikes.some((strike) => {
+      const strikeCoords = [parseFloat(strike.location.longitude), parseFloat(strike.location.latitude)];
+      const distance = turf.distance(facilityCoords, strikeCoords, { units: 'kilometers' });
+      return distance <= 8;
+    });
+  };
 
   // 1) Fetch all required static files and store each response in its respective state.
   useEffect(() => {
@@ -75,7 +75,7 @@ const App = () => {
           setSportFacilitiesGeoJson(sportsData);
           setWeatherData(weatherJsonData);
           setLightningData(lightningData);
-        } 
+        }
       )
       .catch((err) => console.error('Error fetching data:', err));
   }, []);
@@ -106,7 +106,7 @@ const App = () => {
   // Add layers (town polygons & sport facilities polygons) once both the map and corresponding GeoJSON data are available.
   useEffect(() => {
     if (!map) return;
-    
+
     map.on('load', () => {
       // Add Towns Layer
       if (townsGeoJson && !map.getSource('towns')) {
@@ -126,25 +126,25 @@ const App = () => {
           source: 'towns',
           paint: { 'line-color': '#000000', 'line-width': 2 },
         });
-  
+
         // Town polygon click event to show weather forecast
         map.on('click', 'townsFill', (e) => {
 
           const sportFeatures = map.queryRenderedFeatures(e.point, { layers: ['sportFacilitiesFill'] });
           if (sportFeatures && sportFeatures.length > 0) return; // A sports facility was clicked, so skip the townsFill handler
-         
+
           const feature = e.features && e.features[0];
           if (!feature) return;
-  
+
           const clickedTown = feature.properties.PLN_AREA_N;
           const clickedTownLower = clickedTown.toLowerCase();
-  
+
           if (weatherData?.data?.items?.[0]?.forecasts) {
             const forecasts = weatherData.data.items[0].forecasts;
             const matchingForecast = forecasts.find(
               (f) => f.area.toLowerCase() === clickedTownLower
             );
-  
+
             let popupContent = `<div><h4>${clickedTown}</h4>`;
             if (matchingForecast) {
               popupContent += `<p><strong>Forecast:</strong> ${matchingForecast.forecast}</p>`;
@@ -152,7 +152,7 @@ const App = () => {
               popupContent += `<p>No forecast available</p>`;
             }
             popupContent += `</div>`;
-  
+
             new mapboxgl.Popup({ maxWidth: '400px' })
               .setLngLat(e.lngLat)
               .setHTML(popupContent)
@@ -189,172 +189,171 @@ const App = () => {
           map.getCanvas().style.cursor = '';
         });
 
-// Click event for sport facilities polygons
-map.on('click', 'sportFacilitiesFill', (e) => {
-  const feature = e.features && e.features[0];
-  if (!feature) return;
+        // Click event for sport facilities polygons
+        map.on('click', 'sportFacilitiesFill', (e) => {
+          const feature = e.features && e.features[0];
+          if (!feature) return;
 
-  // Build a record object for the side panel
-  let recordObj = {};
-  Object.entries(feature.properties).forEach(([key, value]) => {
-    if (key !== 'Description' && value) {
-      recordObj[key] = value;
-    }
-  });
+          // Build a record object for the side panel
+          let recordObj = {};
+          Object.entries(feature.properties).forEach(([key, value]) => {
+            if (key !== 'Description' && value) {
+              recordObj[key] = value;
+            }
+          });
 
-  // The property for facility name in the GEOJSON
-  const sportsCen = feature.properties.SPORTS_CEN;
+          // The property for facility name in the GEOJSON
+          const sportsCen = feature.properties.SPORTS_CEN;
 
-  // Find matching facility details from the external JSON (facilitiesCapacities)
-  const details = findFacilityByName(sportsCen, facilities);
+          // Find matching facility details from the external JSON (facilitiesCapacities)
+          const details = findFacilityByName(sportsCen, facilities);
 
-  // Fetch lightning data if available
-  const lightningReadings = lightningData.data.records[0].item.readings;
+          // Fetch lightning data if available
+          const lightningReadings = lightningData.data.records[0].item.readings;
 
-  // Fallback values from the feature if no matching details are found
-  let facilityName = feature.properties.FacilityName || 'Facility Information';
-  let facilityAddress = feature.properties.Address || 'Not available';
-  const facilityType = feature.properties.Type || 'Not specified';
+          // Fallback values from the feature if no matching details are found
+          let facilityName = feature.properties.FacilityName || 'Facility Information';
+          let facilityAddress = feature.properties.Address || 'Not available';
+          const facilityType = feature.properties.Type || 'Not specified';
 
-  // If details exist, override the name/address from the facility data
-  if (details) {
-    if (details.name) facilityName = details.name;
-    if (details.address) facilityAddress = details.address;
-  }
+          // If details exist, override the name/address from the facility data
+          if (details) {
+            if (details.name) facilityName = details.name;
+            if (details.address) facilityAddress = details.address;
+          }
 
-  // Build the capacity details section only if details exist
-  // and at least one of swimming/gym is available
-  let capacityDetailsHtml = '';
-  if (details) {
-    const swimmingAvailable = details.swimming?.available;
-    const gymAvailable = details.gym?.available;
-
-    if (swimmingAvailable || gymAvailable) {
-      capacityDetailsHtml = `
+          // Build the capacity details section only if details exist
+          // and at least one of swimming/gym is available
+          let capacityDetailsHtml = '';
+          let lightningAlertHtml = '';
+          if (details) {
+            // Unconditionally check for lightning risk regardless of capacity details
+            if (details.location) {
+              const facilityLoc = {
+                latitude: details.location[0],
+                longitude: details.location[1],
+              };
+              if (isWithinLightningRadius(facilityLoc, lightningReadings)) {
+                lightningAlertHtml = `
+                        <div style="color: red;">
+                          <h6>Lightning Risk</h6>
+                          This facility is within 8 km of a recent lightning strike.
+                        </div>
+                      `;
+              }
+            }
+            const swimmingAvailable = details.swimming?.available;
+            const gymAvailable = details.gym?.available;
+  
+            if (swimmingAvailable || gymAvailable) {
+              capacityDetailsHtml = `
         <hr/>
         <h5>Facility Capacity Details</h5>
         <p></p>
-          ${
-            swimmingAvailable
-              ? `
+          ${swimmingAvailable
+                  ? `
                 <div>
                   <h6>Swimming Facility</h6>
                   <strong>Capacity:</strong> ${details.swimming.capacity}
                   <strong>Status:</strong> ${details.swimming.closed ? 'Closed' : 'Open'}
                 </div>
               `
-              : ''
-          }
+                  : ''
+                }
           <p></p>
-          ${
-            gymAvailable
-              ? `
+          ${gymAvailable
+                  ? `
                 <div>
                   <h6>Gym Facility</h6>
-                  <strong>Capacity:</strong> ${
-                    details.gym.capacity !== null ? details.gym.capacity : 'N/A'
+                  <strong>Capacity:</strong> ${details.gym.capacity !== null ? details.gym.capacity : 'N/A'
                   }
-                  <strong>Status:</strong> ${
-                    details.gym.closed === null
-                      ? 'Not Available'
-                      : (details.gym.closed ? 'Closed' : 'Open')
+                  <strong>Status:</strong> ${details.gym.closed === null
+                    ? 'Not Available'
+                    : (details.gym.closed ? 'Closed' : 'Open')
                   }
                 </div>
                 <p></p>
               `
-              : ''
-          }
+                  : ''
+                }
         
       `;
+            }
+          } else {
+            capacityDetailsHtml = `<p>No matching facility found for ${sportsCen}.</p>`;
+          }
 
-      // Check if the facility is within 8 km of any lightning strike
-      let facilityLoc = {
-        latitude: details.location[0],
-        longitude: details.location[1],
-      }
-      if (isWithinLightningRadius(facilityLoc, lightningReadings)) {
-        capacityDetailsHtml += `
-          <div style="color: red;">
-            <h6>Lightning Risk</h6>
-            This facility is within 8 km of a recent lightning strike.
-          </div>
-        `;
-      }
-    }
-  } else {
-    capacityDetailsHtml = `<p>No matching facility found for ${sportsCen}.</p>`;
-  }
+          // Combine everything into the popup HTML with lightning alert immediately after address
+          const popupHtml = `
+            <div>
+              <h4>${facilityName}</h4>
+              <p><strong>Address:</strong> ${facilityAddress}</p>
+              ${lightningAlertHtml}
+              ${capacityDetailsHtml}
+            </div>
+`;
 
-  // Combine everything into the popup HTML
-  const popupHtml = `
-    <div>
-      <h4>${facilityName}</h4>
-      <p><strong>Address:</strong> ${facilityAddress}</p>
-      ${capacityDetailsHtml}
-    </div>
-  `;
+          // Show the popup
+          new mapboxgl.Popup({ maxWidth: '600px' })
+            .setLngLat(e.lngLat)
+            .setHTML(popupHtml)
+            .addTo(map);
 
-  // Show the popup
-  new mapboxgl.Popup({ maxWidth: '600px' })
-    .setLngLat(e.lngLat)
-    .setHTML(popupHtml)
-    .addTo(map);
-
-  // Update the side panel
-  setCustomRecordsData({ isCustom: true, getRecords: [recordObj] });
-});
+          // Update the side panel
+          setCustomRecordsData({ isCustom: true, getRecords: [recordObj] });
+        });
       }
 
-    // --- Add Lightning Layer ---
-    // Load the lightning icon image
-  map.loadImage('lightning-icon.png', (error, image) => {
-    if (error) throw error;
+      // --- Add Lightning Layer ---
+      // Load the lightning icon image
+      map.loadImage('lightning-icon.png', (error, image) => {
+        if (error) throw error;
 
-    // Add the image to the map
-    if (!map.hasImage('lightning-icon')) {
-      map.addImage('lightning-icon', image);
-    }
+        // Add the image to the map
+        if (!map.hasImage('lightning-icon')) {
+          map.addImage('lightning-icon', image);
+        }
 
-    // --- Add Lightning Strikes Layer ---
-    if (lightningData && !map.getSource('lightningStrikes')) {
-      const lightningReadings = lightningData.data.records[0].item.readings;
-      const lightningGeoJson = {
-        type: 'FeatureCollection',
-        features: lightningReadings.map((strike) => ({
-          type: 'Feature',
-          geometry: {
-            type: 'Point',
-            coordinates: [parseFloat(strike.location.longitude), parseFloat(strike.location.latitude)],
-          },
-          properties: {
-            type: strike.type,
-            text: strike.text,
-            datetime: strike.datetime,
-          },
-        })),
-      };
+        // --- Add Lightning Strikes Layer ---
+        if (lightningData && !map.getSource('lightningStrikes')) {
+          const lightningReadings = lightningData.data.records[0].item.readings;
+          const lightningGeoJson = {
+            type: 'FeatureCollection',
+            features: lightningReadings.map((strike) => ({
+              type: 'Feature',
+              geometry: {
+                type: 'Point',
+                coordinates: [parseFloat(strike.location.longitude), parseFloat(strike.location.latitude)],
+              },
+              properties: {
+                type: strike.type,
+                text: strike.text,
+                datetime: strike.datetime,
+              },
+            })),
+          };
 
-      map.addSource('lightningStrikes', {
-        type: 'geojson',
-        data: lightningGeoJson,
-      });
+          map.addSource('lightningStrikes', {
+            type: 'geojson',
+            data: lightningGeoJson,
+          });
 
-      map.addLayer({
-        id: 'lightningStrikesLayer',
-        type: 'symbol',
-        source: 'lightningStrikes',
-        layout: {
-          'icon-image': 'lightning-icon',
-          'icon-size': 0.05, // Adjust the size as needed
-        },
-      });
+          map.addLayer({
+            id: 'lightningStrikesLayer',
+            type: 'symbol',
+            source: 'lightningStrikes',
+            layout: {
+              'icon-image': 'lightning-icon',
+              'icon-size': 0.05, // Adjust the size as needed
+            },
+          });
 
-      map.on('click', 'lightningStrikesLayer', (e) => {
-        const feature = e.features && e.features[0];
-        if (!feature) return;
+          map.on('click', 'lightningStrikesLayer', (e) => {
+            const feature = e.features && e.features[0];
+            if (!feature) return;
 
-        const { text, datetime } = feature.properties;
-        const popupContent = `
+            const { text, datetime } = feature.properties;
+            const popupContent = `
           <div>
             <h5>Lightning Strike</h5>
             <p><strong>Type:</strong> ${text}</p>
@@ -362,13 +361,13 @@ map.on('click', 'sportFacilitiesFill', (e) => {
           </div>
         `;
 
-        new mapboxgl.Popup({ maxWidth: '300px' })
-          .setLngLat(feature.geometry.coordinates)
-          .setHTML(popupContent)
-          .addTo(map);
+            new mapboxgl.Popup({ maxWidth: '300px' })
+              .setLngLat(feature.geometry.coordinates)
+              .setHTML(popupContent)
+              .addTo(map);
+          });
+        }
       });
-    }
-  });
 
     })
   }, [
@@ -401,7 +400,7 @@ map.on('click', 'sportFacilitiesFill', (e) => {
 
   useEffect(() => {
     if (!map || recommendedPolygons.length === 0) return;
-  
+
     if (map.getSource('recommended')) {
       map.getSource('recommended').setData({
         type: 'FeatureCollection',
@@ -421,7 +420,7 @@ map.on('click', 'sportFacilitiesFill', (e) => {
       });
       return;
     }
-  
+
     const geoJson = {
       type: 'FeatureCollection',
       features: recommendedPolygons.map((rec) => ({
@@ -438,12 +437,12 @@ map.on('click', 'sportFacilitiesFill', (e) => {
         },
       })),
     };
-  
+
     map.addSource('recommended', {
       type: 'geojson',
       data: geoJson,
     });
-  
+
     map.addLayer({
       id: 'recommended-fill',
       type: 'fill',
@@ -453,7 +452,7 @@ map.on('click', 'sportFacilitiesFill', (e) => {
         'fill-opacity': 0.5,
       },
     });
-  
+
     map.addLayer({
       id: 'recommended-outline',
       type: 'line',
@@ -463,12 +462,12 @@ map.on('click', 'sportFacilitiesFill', (e) => {
         'line-width': 2,
       },
     });
-  
+
     map.on('click', 'recommended-fill', (e) => {
       const props = e.features[0].properties;
       const gym = JSON.parse(props.gym);
       const swimming = JSON.parse(props.swimming);
-  
+
       const popupHtml = `
         <div>
           <h4>${props.name}</h4>
@@ -477,13 +476,13 @@ map.on('click', 'sportFacilitiesFill', (e) => {
           ${swimming?.available ? `<p><strong>Swimming:</strong> ${swimming.closed ? 'Closed' : 'Open'} (${swimming.capacity} cap)</p>` : ''}
         </div>
       `;
-  
+
       new mapboxgl.Popup({ maxWidth: '400px' })
         .setLngLat(e.lngLat)
         .setHTML(popupHtml)
         .addTo(map);
     });
-  
+
   }, [map, recommendedPolygons]);
 
   // Update bounds in areaState so that queries can use the current viewport.
@@ -510,33 +509,26 @@ map.on('click', 'sportFacilitiesFill', (e) => {
     }
   };
 
-  // init user layer handling 
-  const updateLayerVisibility = (layerId, visible) => {
-    if (!map) return;
-    const visibility = visible ? 'visible' : 'none';
-    if (map.getLayer(layerId)) {
-      map.setLayoutProperty(layerId, 'visibility', visibility);
-    }
-  };
+
 
   // Handle the recommend button click
   const handleRecommendButtonClick = async () => {
     if (!isAuthenticated || !user) return;
-  
+
     if (!user.preferences || !user.preferences.facilities.length) {
       setShowRecommenderModal(true);
       return;
     }
-  
+
     let payload = {};
     payload.activities = user.preferences.activities.length ? user.preferences.activities : [];
     payload.location = facilities.find(facility => facility.name === user.preferences.facilities[0])?.location;
-  
+
     if (Object.keys(payload).length === 0) {
       console.error('No preferences or location found');
       return;
     }
-  
+
     try {
       const response = await fetch('https://api.chucklenuts.party/recommender', {
         method: 'POST',
@@ -546,24 +538,24 @@ map.on('click', 'sportFacilitiesFill', (e) => {
         },
         body: JSON.stringify(payload),
       });
-    
+
       if (response.status > 204) {
         throw new Error(`Error: ${response.status} ${response.statusText}`);
       }
-    
+
       const data = await response.json(); // This will now work correctly
-    
+
       const filtered = [];
       for (const block of data) {
         if (!Array.isArray(block.activities) || !Array.isArray(block.alternatives)) continue;
-    
+
         block.alternatives = block.alternatives.filter(item => block.activities.includes(item));
         if (block.alternatives.length === 0) continue;
-    
+
         filtered.push(block);
         if (filtered.length === 5) break;
       }
-    
+
       console.log(filtered);
       setRecommendedPolygons(filtered);
     } catch (error) {
@@ -592,74 +584,16 @@ map.on('click', 'sportFacilitiesFill', (e) => {
           <Button variant="primary" onClick={() => navigate('account/profile')}>Go</Button>
         </Modal.Footer>
       </Modal>
-      {/* Floating Controls */}
-      <div style={{
-        position: 'absolute',
-        bottom: 20,
-        left: 10,
-        backgroundColor: 'white',
-        padding: '10px',
-        borderRadius: '5px',
-        zIndex: 10
-      }}>
-        <div>
-          <input
-            type="checkbox"
-            checked={layerVisibility.towns}
-            onChange={(e) => {
-              const visible = e.target.checked;
-              setLayerVisibility(prev => ({ ...prev, towns: visible }));
-              updateLayerVisibility('townsFill', visible);
-              updateLayerVisibility('townsBorder', visible);
-            }}
-          /> Towns
-        </div>
-        <div>
-          <input
-            type="checkbox"
-            checked={layerVisibility.sportFacilities}
-            onChange={(e) => {
-              const visible = e.target.checked;
-              setLayerVisibility(prev => ({ ...prev, sportFacilities: visible }));
-              updateLayerVisibility('sportFacilitiesFill', visible);
-              updateLayerVisibility('sportFacilitiesBorder', visible);
-            }}
-          /> Sports Facilities
-        </div>
-        <div>
-          <input
-            type="checkbox"
-            checked={layerVisibility.lightning}
-            onChange={(e) => {
-              const visible = e.target.checked;
-              setLayerVisibility(prev => ({ ...prev, lightning: visible }));
-              updateLayerVisibility('lightningStrikesLayer', visible);
-            }}
-          /> Lightning
-        </div>
-        <div>
-          <input
-            type="checkbox"
-            checked={layerVisibility.recommended}
-            onChange={(e) => {
-              const visible = e.target.checked;
-              setLayerVisibility(prev => ({ ...prev, recommended: visible }));
-              updateLayerVisibility('recommended-fill', visible);
-              updateLayerVisibility('recommended-outline', visible);
-            }}
-          /> Recommended
-        </div>
-      </div>
       <div className="row">
         <div className="col-md-6 p-0 z-0">
           <div className="row mt-1 mb-1 d-flex flex-row justify-content-between">
             <div className="col-md-6 p-0">{map && <SearchInputBox onFlyTo={onFlyTo} />}</div>
             <div className="col-md-6 py-2 px-0 me-4 w-auto">
-              {}
+              { }
               {
                 isAuthenticated
-                ? <Button variant="primary" onClick={handleRecommendButtonClick} >Recommend <Magic className="magic-icon"/></Button>
-                : ''
+                  ? <Button variant="primary" onClick={handleRecommendButtonClick} >Recommend <Magic className="magic-icon" /></Button>
+                  : ''
               }
             </div>
           </div>
