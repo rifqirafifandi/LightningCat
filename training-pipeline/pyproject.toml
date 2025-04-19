@@ -17,6 +17,7 @@ dependencies = [
     "pip>=25.0.1",
     "pymongo[srv]>=4.11.1",
     "scikit-learn>=1.6.1",
+    "typer>=0.15.2",
 ]
 
 [tool]
