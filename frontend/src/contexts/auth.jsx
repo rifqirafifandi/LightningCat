@@ -16,6 +16,7 @@ const AuthProvider = ({ children }) => {
         setUser(json);
         setIsAuthenticated(true);
       } else {
+        
         setIsAuthenticated(false);
       }
     } catch (error) {
