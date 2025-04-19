@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import mapboxgl from 'mapbox-gl';
-// import FilterPanel from './components/FilterPanel';
 import { useAuth } from './contexts/auth';
 import { useAppData } from './contexts/appData';
 import SidePanel from './components/SidePanel';
@@ -603,12 +602,7 @@ map.on('click', 'sportFacilitiesFill', (e) => {
           <div className="row mt-1 mb-1 d-flex flex-row justify-content-between">
             <div className="col-md-6 p-0">{map && <SearchInputBox onFlyTo={onFlyTo} />}</div>
             <div className="col-md-6 py-2 px-0 me-4 w-auto">
-              {/* <FilterPanel
-                areaState={areaState}
-                setAreaState={setAreaState}
-                towns={townsData}
-                flatTypes={flatTypesData}
-              /> */}
+              {}
               {
                 isAuthenticated
                 ? <Button variant="primary" onClick={handleRecommendButtonClick} >Recommend <Magic className="magic-icon"/></Button>
