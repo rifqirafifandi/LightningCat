@@ -543,8 +543,6 @@ const updateLayerVisibility = (layerId, visible) => {
   }
 };
 
-
-
   // Handle the recommend button click
   const handleRecommendButtonClick = async () => {
     if (!isAuthenticated || !user) return;
