@@ -496,7 +496,7 @@ const App = () => {
       const popupHtml = `
         <div>
           <h4>${props.name}</h4>
-          <p><strong>Alternatives:</strong> ${props.alternatives}</p>
+          <p><strong>Given the current weather, we recommended these alternatives:</strong> ${props.alternatives}</p>
           ${gym?.available ? `<p><strong>Gym:</strong> ${gym.closed ? 'Closed' : 'Open'} (${gym.capacity} cap)</p>` : ''}
           ${swimming?.available ? `<p><strong>Swimming:</strong> ${swimming.closed ? 'Closed' : 'Open'} (${swimming.capacity} cap)</p>` : ''}
         </div>
@@ -580,10 +580,12 @@ const updateLayerVisibility = (layerId, visible) => {
       const filtered = [];
       for (const block of data) {
         if (!Array.isArray(block.activities) || !Array.isArray(block.alternatives)) continue;
-
-        block.alternatives = block.alternatives.filter(item => block.activities.includes(item));
+      
+        block.alternatives = block.alternatives
+          .filter(item => block.activities.includes(item) && item !== 'Indoor');
+      
         if (block.alternatives.length === 0) continue;
-
+      
         filtered.push(block);
         if (filtered.length === 5) break;
       }
