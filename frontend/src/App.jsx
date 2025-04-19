@@ -5,8 +5,6 @@ import { useAuth } from './contexts/auth';
 import { useAppData } from './contexts/appData';
 import SidePanel from './components/SidePanel';
 import SearchInputBox from './components/SearchInputBox';
-import Queries from './queries/Queries';
-import { useLazyQuery } from '@apollo/client';
 import { Button, Modal } from 'react-bootstrap';
 import { Magic } from 'react-bootstrap-icons';
 import * as turf from '@turf/turf';
@@ -25,18 +23,9 @@ const App = () => {
   const mapContainerRef = useRef(null);
   const [map, setMap] = useState(null);
   const [showRecommenderModal, setShowRecommenderModal] = useState(false);
-  const navigate = useNavigate();
-  
+  const navigate = useNavigate();  
 
-  const [areaState, setAreaState] = useState({
-    town: [],
-    flatType: [],
-    yearRangeGte: 2000,
-    minPsf: undefined,
-    maxPsf: undefined,
-    minSqf: undefined,
-    maxSqf: undefined,
-  });
+  const [areaState, setAreaState] = useState({});
 
   const [customRecordsData, setCustomRecordsData] = useState(null);
   const [recommendedPolygons, setRecommendedPolygons] = useState([]);
@@ -56,14 +45,6 @@ const App = () => {
     return distance <= 8;
   });
 };
-
-  // GraphQL lazy queries
-  const [getListingsData, { error: listingsError, loading: listingsLoading, data: listingsData }] =
-    useLazyQuery(Queries.GET_LISTINGS, { variables: areaState });
-  const [getDistinctTowns, { data: townsData }] = useLazyQuery(Queries.GET_DISTINCT_TOWNS);
-  const [getDistinctFlatTypes, { data: flatTypesData }] = useLazyQuery(
-    Queries.GET_DISTINCT_FLAT_TYPES
-  );
 
   // 1) Fetch all required static files and store each response in its respective state.
   useEffect(() => {
@@ -108,14 +89,13 @@ const App = () => {
 
     mapInstance.on('moveend', () => {
       updateBounds(mapInstance.getBounds().toArray());
-      getListingsData();
     });
 
     setMap(mapInstance);
 
     // Cleanup on unmount
     return () => mapInstance.remove();
-  }, [getListingsData, getDistinctTowns, getDistinctFlatTypes]);
+  }, []);
 
   // Add layers (town polygons & sport facilities polygons) once both the map and corresponding GeoJSON data are available.
   useEffect(() => {
@@ -500,7 +480,7 @@ map.on('click', 'sportFacilitiesFill', (e) => {
   
   }, [map, recommendedPolygons]);
 
-  // Update bounds in areaState so the GraphQL queries use the current viewport.
+  // Update bounds in areaState so that queries can use the current viewport.
   const updateBounds = (bounds) => {
     const [lonMin, latMin, lonMax, latMax] = [
       bounds[0][0],
