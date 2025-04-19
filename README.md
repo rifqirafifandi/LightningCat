@@ -2,8 +2,28 @@
 
 Contents of our repo:
 1. frontend - code for frontend in react (Installation instructions below)
-2. api-sever - code for api-server 
-3. lambda_function_s3 and lambda_function_capacities - lambda functions to poll government APIs (Installation instructions below)  
+2. api-sever - code for api-server
+3. dataAndDataCleanup - data files 
+4. lambda_function_s3 and lambda_function_capacities - lambda functions to poll government APIs (Installation instructions below)  
+
+## Data files
+- contains various data samples, raw datasets, their associated data processing scripts and the post processed output utilised in our webapp. 
+
+The town boundaries and polygons were taken from data.gov.sg 
+https://data.gov.sg/collections/2104/view
+
+SportSG facilities and polygons were taken from data.gov.sg
+https://data.gov.sg/datasets/d_9b87bab59d036a60fad2a91530e10773/view
+
+2 hour weather forecast data from data.gov.sg
+https://api-open.data.gov.sg/v2/real-time/api/two-hr-forecast
+
+lightning data from data.gov.sg
+https://api-open.data.gov.sg/v2/real-time/api/weather?api=lightning
+
+Facility Capacities are taken from activesg
+https://activesg.gov.sg/api/trpc/pass.getFacilityCapacities 
+
 
 ## Installing frontend onto ec2 
 Frontend is installed into its own EC2 server in AWS 
