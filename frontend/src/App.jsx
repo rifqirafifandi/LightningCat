@@ -30,6 +30,7 @@ const App = () => {
 
   const [customRecordsData, setCustomRecordsData] = useState(null);
   const [recommendedPolygons, setRecommendedPolygons] = useState([]);
+  const recommendedPolygonsRef = useRef([]);
   const [layerVisibility, setLayerVisibility] = useState({
     towns: true,
     sportFacilities: true,
@@ -281,15 +282,27 @@ const App = () => {
             capacityDetailsHtml = `<p>No matching facility found for ${sportsCen}.</p>`;
           }
 
-          // Combine everything into the popup HTML with lightning alert immediately after address
+          // Combine everything into the popup HTML with recommended alternatives, lightning alert, and capacity details
+          const matchingRecommendation = recommendedPolygonsRef.current.find(
+            (rec) => rec.name === facilityName
+          );
+
+          const recommendationHtml = matchingRecommendation
+            ? `
+              <p><strong>Given the current weather, we recommend these alternatives:</strong></p>
+              <p>${matchingRecommendation.alternatives.join(', ')}</p>
+            `
+            : '';
+
           const popupHtml = `
             <div>
               <h4>${facilityName}</h4>
               <p><strong>Address:</strong> ${facilityAddress}</p>
+              ${recommendationHtml}
               ${lightningAlertHtml}
               ${capacityDetailsHtml}
             </div>
-`;
+          `;
 
           // Show the popup
           new mapboxgl.Popup({ maxWidth: '600px' })
@@ -489,23 +502,8 @@ const App = () => {
     });
 
     map.on('click', 'recommended-fill', (e) => {
-      const props = e.features[0].properties;
-      const gym = JSON.parse(props.gym);
-      const swimming = JSON.parse(props.swimming);
-
-      const popupHtml = `
-        <div>
-          <h4>${props.name}</h4>
-          <p><strong>Given the current weather, we recommended these alternatives:</strong> ${props.alternatives}</p>
-          ${gym?.available ? `<p><strong>Gym:</strong> ${gym.closed ? 'Closed' : 'Open'} (${gym.capacity} cap)</p>` : ''}
-          ${swimming?.available ? `<p><strong>Swimming:</strong> ${swimming.closed ? 'Closed' : 'Open'} (${swimming.capacity} cap)</p>` : ''}
-        </div>
-      `;
-
-      new mapboxgl.Popup({ maxWidth: '400px' })
-        .setLngLat(e.lngLat)
-        .setHTML(popupHtml)
-        .addTo(map);
+      // Let the sportFacilitiesFill layer handle the click if it's overlapping
+      // Do not show a separate popup from the recommended layer
     });
 
   }, [map, recommendedPolygons]);
@@ -592,6 +590,7 @@ const updateLayerVisibility = (layerId, visible) => {
 
       console.log(filtered);
       setRecommendedPolygons(filtered);
+      recommendedPolygonsRef.current = filtered;
     } catch (error) {
       console.error('Error fetching or processing data:', error);
     }
