@@ -112,21 +112,18 @@ const App = () => {
       // Add Towns Layer
       if (townsGeoJson && !map.getSource('towns')) {
         map.addSource('towns', { type: 'geojson', data: townsGeoJson });
-        map.addLayer({
-          id: 'townsFill',
-          type: 'fill',
-          source: 'towns',
-          paint: {
-            'fill-color': 'lightblue',
-            'fill-opacity': 0.5,
-          },
-        });
-        map.addLayer({
-          id: 'townsBorder',
-          type: 'line',
-          source: 'towns',
-          paint: { 'line-color': '#000000', 'line-width': 2 },
-        });
+          map.addLayer({
+            id: 'townsFill',
+            type: 'fill',
+            source: 'towns',
+            paint: { 'fill-opacity': 0 },
+          });
+          map.addLayer({
+            id: 'townsBorder',
+            type: 'line',
+            source: 'towns',
+            paint: { 'line-color': '#999999', 'line-width': 2, 'line-dasharray': [2, 2] },
+          });
 
         // Town polygon click event to show weather forecast
         map.on('click', 'townsFill', (e) => {
@@ -164,16 +161,16 @@ const App = () => {
       // Add Sport Facilities Layer
       if (sportFacilitiesGeoJson && !map.getSource('sportFacilities')) {
         map.addSource('sportFacilities', {
-          type: 'geojson',
-          data: sportFacilitiesGeoJson,
-        });
+            type: 'geojson',
+            data: sportFacilitiesGeoJson
+          });
 
-        map.addLayer({
-          id: 'sportFacilitiesFill',
-          type: 'fill',
-          source: 'sportFacilities',
-          paint: { 'fill-color': '#800080', 'fill-opacity': 0.9 },
-        });
+          map.addLayer({
+            id: 'sportFacilitiesFill',
+            type: 'fill',
+            source: 'sportFacilities',
+            paint: { 'fill-color': '#800080', 'fill-opacity': 0.5 },
+          });
 
         map.addLayer({
           id: 'sportFacilitiesBorder',
@@ -476,7 +473,7 @@ const App = () => {
       type: 'fill',
       source: 'recommended',
       paint: {
-        'fill-color': '#ffffff',
+        'fill-color': '#ffa500',
         'fill-opacity': 0.5,
       },
     });
@@ -641,7 +638,7 @@ const updateLayerVisibility = (layerId, visible) => {
               updateLayerVisibility('townsFill', visible);
               updateLayerVisibility('townsBorder', visible);
             }}
-          /> Towns
+          /> Towns - Grey Borders
         </div>
         <div>
           <input
@@ -653,7 +650,7 @@ const updateLayerVisibility = (layerId, visible) => {
               updateLayerVisibility('sportFacilitiesFill', visible);
               updateLayerVisibility('sportFacilitiesBorder', visible);
             }}
-          /> Sports Facilities
+          /> Sports Facilities - Purple Polygons
         </div>
         <div>
           <input
@@ -664,7 +661,7 @@ const updateLayerVisibility = (layerId, visible) => {
               setLayerVisibility(prev => ({ ...prev, lightning: visible }));
               updateLayerVisibility('lightningStrikesLayer', visible);
             }}
-          /> Lightning
+          /> Lightning - Lightning Icon
         </div>
         <div>
           <input
@@ -676,7 +673,7 @@ const updateLayerVisibility = (layerId, visible) => {
               updateLayerVisibility('recommended-fill', visible);
               updateLayerVisibility('recommended-outline', visible);
             }}
-          /> Recommended
+          /> Recommended - Orange Polygon
         </div>
       </div>
       <div className="row">
