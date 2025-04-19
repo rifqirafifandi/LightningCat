@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import jsonify, request
 import requests
 from app.api import api_bp
 
@@ -8,9 +8,15 @@ def recommender_options():
 
 @api_bp.route('/recommender', methods=['POST'])
 def get_recommendation():
+  payload = request.get_json()
+  if not payload or 'activities' not in payload:
+    return jsonify({'error': 'Missing activities in payload'}), 400
+
+  activities = payload['activities']
+  location = payload['location']
   proxied_url = 'http://13.251.208.162:8000/rec'
   try:
-    response = requests.get(proxied_url, headers={'Accept': 'application/json'})
+    response = requests.post(proxied_url, json={'activities': activities, 'location': location}, headers={'Content-Type': 'application/json'})
     if response.status_code != 200:
       return jsonify({'error': 'Failed to get recommendations'}), 500
     

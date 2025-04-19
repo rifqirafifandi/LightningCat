@@ -1,25 +1,33 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import mapboxgl from 'mapbox-gl';
 // import FilterPanel from './components/FilterPanel';
 import { useAuth } from './contexts/auth';
+import { useAppData } from './contexts/appData';
 import SidePanel from './components/SidePanel';
 import SearchInputBox from './components/SearchInputBox';
 import Queries from './queries/Queries';
 import { useLazyQuery } from '@apollo/client';
-import { Button } from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 import { Magic } from 'react-bootstrap-icons';
 import * as turf from '@turf/turf';
 
 import 'mapbox-gl/dist/mapbox-gl.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
+import { factorial } from 'simple-statistics';
+import { autofill } from '@mapbox/search-js-web';
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
 const App = () => {
-  const { isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuth();
+  const { facilities, setFacilities } = useAppData();
   const mapContainerRef = useRef(null);
   const [map, setMap] = useState(null);
+  const [showRecommenderModal, setShowRecommenderModal] = useState(false);
+  const navigate = useNavigate();
+  
 
   const [areaState, setAreaState] = useState({
     town: [],
@@ -34,7 +42,6 @@ const App = () => {
   const [customRecordsData, setCustomRecordsData] = useState(null);
 
   // States to store data for the various JSON files:
-  const [facilitiesCapacities, setFacilitiesCapacities] = useState(null);
   const [townsGeoJson, setTownsGeoJson] = useState(null);
   const [sportFacilitiesGeoJson, setSportFacilitiesGeoJson] = useState(null);
   const [weatherData, setWeatherData] = useState(null);
@@ -70,13 +77,13 @@ const App = () => {
       .then((responses) => Promise.all(responses.map((r) => r.json())))
       .then(
         ([
-          facilityCapacitiesData,
+          facilitiesData,
           townsData,
           sportsData,
           weatherJsonData,
           lightningData
         ]) => {
-          setFacilitiesCapacities(facilityCapacitiesData);
+          setFacilities(facilitiesData);
           setTownsGeoJson(townsData);
           setSportFacilitiesGeoJson(sportsData);
           setWeatherData(weatherJsonData);
@@ -216,7 +223,7 @@ map.on('click', 'sportFacilitiesFill', (e) => {
   const sportsCen = feature.properties.SPORTS_CEN;
 
   // Find matching facility details from the external JSON (facilitiesCapacities)
-  const details = findFacilityByName(sportsCen, facilitiesCapacities);
+  const details = findFacilityByName(sportsCen, facilities);
 
   // Fetch lightning data if available
   const lightningReadings = lightningData.data.records[0].item.readings;
@@ -386,7 +393,7 @@ map.on('click', 'sportFacilitiesFill', (e) => {
     townsGeoJson,
     sportFacilitiesGeoJson,
     weatherData,
-    facilitiesCapacities,
+    facilities,
     lightningData,
   ]);
 
@@ -433,8 +440,61 @@ map.on('click', 'sportFacilitiesFill', (e) => {
     }
   };
 
+  const handleRecommendButtonClick = async () => {
+    if (!isAuthenticated || !user) return;
+    if (!user.preferences || !user.preferences.facilities.length) {
+      setShowRecommenderModal(true);
+      return;
+    }
+
+    let payload = {};
+    payload.activities = user.preferences.activities.length ? user.preferences.activities : [];
+    payload.location = facilities.find(facility => facility.name === user.preferences.facilities[0])?.location;
+
+    if (Object.keys(payload).length === 0) {
+      console.error('No preferences or location found');
+      return;
+    }
+
+    const response = fetch('https://api.chucklenuts.party/recommender', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    })
+
+    if (response.status > 204) {
+      throw new Error(`Error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log(data);
+  }
+
   return (
     <>
+      <Modal
+        show={showRecommenderModal}
+        onHide={() => setShowRecommenderModal(false)}
+        backdrop="static"
+        keyboard={false}
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Unable to recommend</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>We are unable to recommend any facilities until you indicate your preferences in your profile. Proceed to do so?</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowRecommenderModal(false)}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={() => navigate('account/profile')}>Go</Button>
+        </Modal.Footer>
+      </Modal>
       <div className="row">
         <div className="col-md-6 p-0 z-0">
           <div className="row mt-1 mb-1 d-flex flex-row justify-content-between">
@@ -448,7 +508,7 @@ map.on('click', 'sportFacilitiesFill', (e) => {
               /> */}
               {
                 isAuthenticated
-                ? <Button variant="primary">Recommend <Magic className="magic-icon"/></Button>
+                ? <Button variant="primary" onClick={handleRecommendButtonClick} >Recommend <Magic className="magic-icon"/></Button>
                 : ''
               }
             </div>

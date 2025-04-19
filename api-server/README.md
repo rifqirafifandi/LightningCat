@@ -22,6 +22,7 @@ Server is at [https://api.chucklenuts.party](https://api.chucklenuts.party)
 - GET `https://api.chucklenuts.party/health` - check if API is alive
 - GET `https://api.chucklenuts.party` - check if you're authenticated
 - GET `https://api.chucklenuts.party/facilities` - proxied URL to HTTP endpoint while SSL is not setup yet
+- POST `https://api.chucklenuts.party/recommender` - proxied URL to HTTP endpoint while SSL is not setup yet
 
 #### User & profile
 - GET `https://api.chucklenuts.party/profile` - get profile with session cookie
