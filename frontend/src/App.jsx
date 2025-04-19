@@ -22,6 +22,7 @@ const App = () => {
   const { facilities, setFacilities } = useAppData();
   const mapContainerRef = useRef(null);
   const [map, setMap] = useState(null);
+  const popupRef = useRef(null);
   const [showRecommenderModal, setShowRecommenderModal] = useState(false);
   const navigate = useNavigate();
 
@@ -349,20 +350,47 @@ const App = () => {
           });
 
           map.on('click', 'lightningStrikesLayer', (e) => {
-            const feature = e.features && e.features[0];
-            if (!feature) return;
-
-            const { text, datetime } = feature.properties;
+            e.originalEvent.stopImmediatePropagation();
+            const lightningFeature = e.features && e.features[0];
+            if (!lightningFeature) return;
+ 
+            const { text, datetime } = lightningFeature.properties;
+            const lightningCoords = lightningFeature.geometry.coordinates;
+ 
+            // Query rendered features at click point for town polygons
+            const townFeatures = map.queryRenderedFeatures(e.point, { layers: ['townsFill'] });
+            const townFeature = townFeatures && townFeatures[0];
+ 
+            let townPopupHtml = '';
+            if (townFeature && weatherData?.data?.items?.[0]?.forecasts) {
+              const clickedTown = townFeature.properties.PLN_AREA_N;
+              const clickedTownLower = clickedTown.toLowerCase();
+ 
+              const forecasts = weatherData.data.items[0].forecasts;
+              const matchingForecast = forecasts.find(f => f.area.toLowerCase() === clickedTownLower);
+ 
+              townPopupHtml = `<h4>${clickedTown}</h4>`;
+              if (matchingForecast) {
+                townPopupHtml += `<p><strong>2 Hour Weather Forecast:</strong> ${matchingForecast.forecast}</p>`;
+              } else {
+                townPopupHtml += `<p>No forecast available</p>`;
+              }
+            }
+ 
             const popupContent = `
-          <div>
-            <h5>Lightning Strike</h5>
-            <p><strong>Type:</strong> ${text}</p>
-            <p><strong>Time:</strong> ${new Date(datetime).toLocaleString()}</p>
-          </div>
-        `;
-
-            new mapboxgl.Popup({ maxWidth: '300px' })
-              .setLngLat(feature.geometry.coordinates)
+              <div>
+                ${townPopupHtml}
+                <h5>Lightning Strike</h5>
+                <p><strong>Type:</strong> ${text}</p>
+                <p><strong>Lightning Strike Time:</strong> ${new Date(datetime).toLocaleString()}</p>
+              </div>
+            `;
+ 
+            // Remove any existing popups at this point (e.g., town weather)
+            const existingPopups = document.querySelectorAll('.mapboxgl-popup');
+            existingPopups.forEach(p => p.remove());
+            popupRef.current = new mapboxgl.Popup({ maxWidth: '400px' })
+              .setLngLat(lightningCoords)
               .setHTML(popupContent)
               .addTo(map);
           });
