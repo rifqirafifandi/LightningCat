@@ -40,6 +40,7 @@ const App = () => {
   });
 
   const [customRecordsData, setCustomRecordsData] = useState(null);
+  const [recommendedPolygons, setRecommendedPolygons] = useState([]);
 
   // States to store data for the various JSON files:
   const [townsGeoJson, setTownsGeoJson] = useState(null);
@@ -47,15 +48,15 @@ const App = () => {
   const [weatherData, setWeatherData] = useState(null);
   const [lightningData, setLightningData] = useState(null);
 
-   // Function to check if a point is within 8 km of any lightning strike
-   const isWithinLightningRadius = (facility, lightningStrikes) => {
-    const facilityCoords = [parseFloat(facility.longitude), parseFloat(facility.latitude)];
-    return lightningStrikes.some((strike) => {
-      const strikeCoords = [parseFloat(strike.location.longitude), parseFloat(strike.location.latitude)];
-      const distance = turf.distance(facilityCoords, strikeCoords, { units: 'kilometers' });
-      return distance <= 8;
-    });
-  };
+  // Function to check if a point is within 8 km of any lightning strike
+  const isWithinLightningRadius = (facility, lightningStrikes) => {
+  const facilityCoords = [parseFloat(facility.longitude), parseFloat(facility.latitude)];
+  return lightningStrikes.some((strike) => {
+    const strikeCoords = [parseFloat(strike.location.longitude), parseFloat(strike.location.latitude)];
+    const distance = turf.distance(facilityCoords, strikeCoords, { units: 'kilometers' });
+    return distance <= 8;
+  });
+};
 
   // GraphQL lazy queries
   const [getListingsData, { error: listingsError, loading: listingsLoading, data: listingsData }] =
@@ -104,9 +105,6 @@ const App = () => {
 
     mapInstance.on('load', () => {
       updateBounds(mapInstance.getBounds().toArray());
-      // getListingsData();
-      // getDistinctTowns();
-      // getDistinctFlatTypes();
     });
 
     mapInstance.on('moveend', () => {
@@ -440,6 +438,7 @@ map.on('click', 'sportFacilitiesFill', (e) => {
     }
   };
 
+  // Handle the recommend button click
   const handleRecommendButtonClick = async () => {
     if (!isAuthenticated || !user) return;
   
@@ -485,6 +484,7 @@ map.on('click', 'sportFacilitiesFill', (e) => {
       }
     
       console.log(filtered);
+      setRecommendedPolygons(filtered);
     } catch (error) {
       console.error('Error fetching or processing data:', error);
     }
