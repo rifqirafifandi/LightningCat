@@ -29,6 +29,12 @@ const App = () => {
 
   const [customRecordsData, setCustomRecordsData] = useState(null);
   const [recommendedPolygons, setRecommendedPolygons] = useState([]);
+  const [layerVisibility, setLayerVisibility] = useState({
+    towns: true,
+    sportFacilities: true,
+    lightning: true,
+    recommended: true,
+  });
 
   // States to store data for the various JSON files:
   const [townsGeoJson, setTownsGeoJson] = useState(null);
@@ -504,6 +510,15 @@ map.on('click', 'sportFacilitiesFill', (e) => {
     }
   };
 
+  // init user layer handling 
+  const updateLayerVisibility = (layerId, visible) => {
+    if (!map) return;
+    const visibility = visible ? 'visible' : 'none';
+    if (map.getLayer(layerId)) {
+      map.setLayoutProperty(layerId, 'visibility', visibility);
+    }
+  };
+
   // Handle the recommend button click
   const handleRecommendButtonClick = async () => {
     if (!isAuthenticated || !user) return;
@@ -577,6 +592,64 @@ map.on('click', 'sportFacilitiesFill', (e) => {
           <Button variant="primary" onClick={() => navigate('account/profile')}>Go</Button>
         </Modal.Footer>
       </Modal>
+      {/* Floating Controls */}
+      <div style={{
+        position: 'absolute',
+        bottom: 20,
+        left: 10,
+        backgroundColor: 'white',
+        padding: '10px',
+        borderRadius: '5px',
+        zIndex: 10
+      }}>
+        <div>
+          <input
+            type="checkbox"
+            checked={layerVisibility.towns}
+            onChange={(e) => {
+              const visible = e.target.checked;
+              setLayerVisibility(prev => ({ ...prev, towns: visible }));
+              updateLayerVisibility('townsFill', visible);
+              updateLayerVisibility('townsBorder', visible);
+            }}
+          /> Towns
+        </div>
+        <div>
+          <input
+            type="checkbox"
+            checked={layerVisibility.sportFacilities}
+            onChange={(e) => {
+              const visible = e.target.checked;
+              setLayerVisibility(prev => ({ ...prev, sportFacilities: visible }));
+              updateLayerVisibility('sportFacilitiesFill', visible);
+              updateLayerVisibility('sportFacilitiesBorder', visible);
+            }}
+          /> Sports Facilities
+        </div>
+        <div>
+          <input
+            type="checkbox"
+            checked={layerVisibility.lightning}
+            onChange={(e) => {
+              const visible = e.target.checked;
+              setLayerVisibility(prev => ({ ...prev, lightning: visible }));
+              updateLayerVisibility('lightningStrikesLayer', visible);
+            }}
+          /> Lightning
+        </div>
+        <div>
+          <input
+            type="checkbox"
+            checked={layerVisibility.recommended}
+            onChange={(e) => {
+              const visible = e.target.checked;
+              setLayerVisibility(prev => ({ ...prev, recommended: visible }));
+              updateLayerVisibility('recommended-fill', visible);
+              updateLayerVisibility('recommended-outline', visible);
+            }}
+          /> Recommended
+        </div>
+      </div>
       <div className="row">
         <div className="col-md-6 p-0 z-0">
           <div className="row mt-1 mb-1 d-flex flex-row justify-content-between">
