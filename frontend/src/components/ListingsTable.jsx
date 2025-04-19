@@ -60,7 +60,7 @@ const ListingsTable = (props) => {
         </Modal.Header>
         <Modal.Body>
           <p>You are about to book a listing for {selectedListing?.activity} at {selectedListing?.facility_name} on {getFriendlyDate(selectedListing?.date)}.</p>
-          <p><strong>${ (selectedListing?.fee / selectedListing?.capacity).toFixed(2) }</strong> in credits will be deducted from your wallet. Are you sure you want to proceed?</p>
+          <p><strong>${ selectedListing?.fee }</strong> in credits will be deducted from your wallet. Are you sure you want to proceed?</p>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={toggleConfirmationModal}>

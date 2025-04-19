@@ -3,16 +3,16 @@ import { Outlet, NavLink } from 'react-router-dom';
 import { Container, Row, Col } from 'react-bootstrap';
 import { PersonSquare, ListTask, CalendarEvent, CashCoin } from 'react-bootstrap-icons';
 import { useAuth } from '../../contexts/auth';
+import EmptyStateNotLoggedIn from '../../assets/images/empty-state-not-logged-in.svg';
 import styles from './Account.module.css';
 
 const Account = () => {
   const { isAuthenticated } = useAuth();
-
-
   if (!isAuthenticated) {
     return (
-      <div>
-        <h1>Please log in to view your profile.</h1>
+      <div className={styles.emptyStateContainer}>
+        <img src={EmptyStateNotLoggedIn} alt="No listings" className={styles.emptyStateImage} />
+        <p>Please login to view your profile.</p>
       </div>
     );
   }

@@ -54,7 +54,7 @@ def create_listing():
   try:
     duration = int(data['duration']) if data['duration'] else None
     capacity = int(data['capacity']) if data['capacity'] else None
-    fee = int(data['fee']) if data['fee'] else None
+    fee = float(data['fee'])
     
     new_listing = Listing.create_listing(
       user_id=session['internal_user_id'],

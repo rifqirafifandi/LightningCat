@@ -9,6 +9,8 @@ import Listings from "./pages/Account/Listings/Listings";
 import CreateListing from "./pages/Account/Listings/CreateListing/CreateListing";
 import Bookings from "./pages/Account/Bookings/Bookings";
 import Wallet from "./pages/Account/Wallet/Wallet";
+import TopUp from "./pages/Account/Wallet/TopUp/TopUp";
+import TopUpComplete from "./pages/Account/Wallet/TopUpComplete/TopUpComplete";
 import ErrorPage from "./pages/404";
 
 const router = createBrowserRouter([
@@ -47,6 +49,14 @@ const router = createBrowserRouter([
           {
             path: "wallet",
             element: <Wallet />,
+          },
+          {
+            path: "wallet/topup",
+            element: <TopUp />,
+          },
+          {
+            path: "wallet/topup/complete",
+            element: <TopUpComplete />,
           }
         ]
       },
