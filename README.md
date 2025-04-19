@@ -5,6 +5,8 @@ Contents of our repo:
 2. api-sever - code for api-server
 3. dataAndDataCleanup - data files 
 4. lambda_function_s3 and lambda_function_capacities - lambda functions to poll government APIs (Installation instructions below)  
+5. training-pipeline - code for ML features/models preperation.
+6. recommender - code for the recommender service.
 
 ## Data files
 - contains various data samples, raw datasets, their associated data processing scripts and the post processed output utilised in our webapp. 
