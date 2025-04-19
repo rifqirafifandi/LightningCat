@@ -502,12 +502,21 @@ const App = () => {
     }));
   };
 
-  // Fly the map to a specific coordinate (used by SearchInputBox)
-  const onFlyTo = ({ lng, lat }) => {
-    if (map) {
-      map.flyTo({ center: [lng, lat], essential: true, zoom: 15 });
-    }
-  };
+// Fly the map to a specific coordinate (used by SearchInputBox)
+const onFlyTo = ({ lng, lat }) => {
+  if (map) {
+    map.flyTo({ center: [lng, lat], essential: true, zoom: 15 });
+  }
+};
+
+// init user layer handling 
+const updateLayerVisibility = (layerId, visible) => {
+  if (!map) return;
+  const visibility = visible ? 'visible' : 'none';
+  if (map.getLayer(layerId)) {
+    map.setLayoutProperty(layerId, 'visibility', visibility);
+  }
+};
 
 
 
@@ -584,16 +593,74 @@ const App = () => {
           <Button variant="primary" onClick={() => navigate('account/profile')}>Go</Button>
         </Modal.Footer>
       </Modal>
+     {/* Floating Controls */}
+     <div style={{
+        position: 'absolute',
+        bottom: 20,
+        left: 10,
+        backgroundColor: 'white',
+        padding: '10px',
+        borderRadius: '5px',
+        zIndex: 10
+      }}>
+        <div>
+          <input
+            type="checkbox"
+            checked={layerVisibility.towns}
+            onChange={(e) => {
+              const visible = e.target.checked;
+              setLayerVisibility(prev => ({ ...prev, towns: visible }));
+              updateLayerVisibility('townsFill', visible);
+              updateLayerVisibility('townsBorder', visible);
+            }}
+          /> Towns
+        </div>
+        <div>
+          <input
+            type="checkbox"
+            checked={layerVisibility.sportFacilities}
+            onChange={(e) => {
+              const visible = e.target.checked;
+              setLayerVisibility(prev => ({ ...prev, sportFacilities: visible }));
+              updateLayerVisibility('sportFacilitiesFill', visible);
+              updateLayerVisibility('sportFacilitiesBorder', visible);
+            }}
+          /> Sports Facilities
+        </div>
+        <div>
+          <input
+            type="checkbox"
+            checked={layerVisibility.lightning}
+            onChange={(e) => {
+              const visible = e.target.checked;
+              setLayerVisibility(prev => ({ ...prev, lightning: visible }));
+              updateLayerVisibility('lightningStrikesLayer', visible);
+            }}
+          /> Lightning
+        </div>
+        <div>
+          <input
+            type="checkbox"
+            checked={layerVisibility.recommended}
+            onChange={(e) => {
+              const visible = e.target.checked;
+              setLayerVisibility(prev => ({ ...prev, recommended: visible }));
+              updateLayerVisibility('recommended-fill', visible);
+              updateLayerVisibility('recommended-outline', visible);
+            }}
+          /> Recommended
+        </div>
+      </div>
       <div className="row">
         <div className="col-md-6 p-0 z-0">
           <div className="row mt-1 mb-1 d-flex flex-row justify-content-between">
             <div className="col-md-6 p-0">{map && <SearchInputBox onFlyTo={onFlyTo} />}</div>
             <div className="col-md-6 py-2 px-0 me-4 w-auto">
-              { }
+              {}
               {
                 isAuthenticated
-                  ? <Button variant="primary" onClick={handleRecommendButtonClick} >Recommend <Magic className="magic-icon" /></Button>
-                  : ''
+                ? <Button variant="primary" onClick={handleRecommendButtonClick} >Recommend <Magic className="magic-icon"/></Button>
+                : ''
               }
             </div>
           </div>
