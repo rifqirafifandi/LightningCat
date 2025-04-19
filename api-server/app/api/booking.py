@@ -5,6 +5,7 @@ from app.models.listing import Listing
 from app.models.booking import Booking
 from app.models.wallet import Wallet
 from app.models.transaction import Transaction
+from app.extensions import db
 
 @api_bp.route('/booking', methods=['OPTIONS'])
 def booking_options():
@@ -76,13 +77,13 @@ def create_booking():
     if hasattr(listing, 'bookings'):
       if len(listing.bookings) >= listing.capacity:
         listing.status = 'full'
-        listing.save()
+        db.session.commit()
   
       # create transaction
       transaction = Transaction.create_transaction(
         wallet_id=wallet.id,
         amount=listing.fee,
-        transaction_type='debit',
+        transaction_type='payment',
         status='completed',
         booking_id=new_booking.id,
         listing_id=listing.id
@@ -91,11 +92,12 @@ def create_booking():
         return jsonify({'error': 'Failed to create transaction'}), 400
       # Update wallet balance
       wallet.balance -= listing.fee
-      wallet.save()
+
       # Update booking
       new_booking.payment_status = 'paid'
       new_booking.booking_status = 'confirmed'
 
+      db.session.commit()
     return jsonify(new_booking.to_dict()), 201
 
   except Exception as e:
