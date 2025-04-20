@@ -5,6 +5,8 @@ Lightning Cat is a cloud-based platform solving the common frustrations Singapor
 
 Visit us at: https://web.chucklenuts.party/
 
+Video walkthrough of our UI: [click here](https://nusu-my.sharepoint.com/:v:/g/personal/e1101544_u_nus_edu/ESnkVrGhGtpBhlyKkPujzcYBmdDon9dnhZUk4JfMsvB7Ig?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=B5hoeR) NUS account is required.
+
 Contents of our repo:
 1. api-sever - code for api-server [api-server/README.md](api-server/README.md)
 2. architectureDiagram - drawio and png versions of our architecture diagram
