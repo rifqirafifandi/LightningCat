@@ -1,6 +1,7 @@
 from app.extensions import db
 from datetime import datetime
 from sqlalchemy.dialects.postgresql import ENUM
+from decimal import Decimal
 
 WALLET_STATUS = ['active', 'suspended', 'closed']
 
@@ -51,7 +52,7 @@ class Wallet(db.Model):
     if not wallet:
       return None
 
-    wallet.balance += amount
+    wallet.balance = wallet.balance + Decimal(str(amount))
     wallet.updated_at = datetime.utcnow()
 
     db.session.commit()

@@ -50,7 +50,7 @@ const Wallet = () => {
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>Amount</th>
+                  <th>Amount (SGD)</th>
                   <th>Type</th>
                   <th>Status</th>
                 </tr>
@@ -60,7 +60,7 @@ const Wallet = () => {
                   transactions.map((transaction) => (
                     <tr key={ transaction.id }>
                       <td>{ transaction.id }</td>
-                      <td>${parseFloat(transaction.amount).toFixed(2)}</td>
+                      <td>{parseFloat(transaction.amount).toFixed(2)}</td>
                       <td>{ transaction.transaction_type }</td>
                       <td>{ transaction.status }</td>
                     </tr>

@@ -82,7 +82,7 @@ def create_booking():
       # create transaction for booker
       transaction = Transaction.create_transaction(
         wallet_id=wallet.id,
-        amount=listing.fee,
+        amount=-listing.fee,
         transaction_type='payment',
         status='completed',
         booking_id=new_booking.id,
@@ -91,7 +91,7 @@ def create_booking():
       if not transaction:
         return jsonify({'error': 'Failed to create transaction'}), 400
       # Update wallet balance
-      wallet.balance -= listing.fee
+      Wallet.update_balance(wallet.id, -listing.fee)
 
       # Update booking
       new_booking.payment_status = 'paid'
@@ -102,15 +102,24 @@ def create_booking():
         listing_owner_wallet = Wallet.get_wallet(listing.owner_id)
         transaction = Transaction.create_transaction(
           wallet_id=listing_owner_wallet.id,
-          amount=1.00, # constant commission fee
+          amount=listing.fee,
+          transaction_type='fee',
+          status='completed',
+          booking_id=new_booking.id,
+          listing_id=listing.id,
+          description=f'Payment of booking fee of {listing.fee}.'
+        )
+        Wallet.update_balance(listing_owner_wallet.id, listing.fee)
+        transaction = Transaction.create_transaction(
+          wallet_id=listing_owner_wallet.id,
+          amount=-1.00, # constant commission fee
           transaction_type='deduction',
           status='completed',
           booking_id=new_booking.id,
           listing_id=listing.id,
-          description='Commission fee of SGD 1.00 deducted from listing owner per booking'
+          description='Commission fee of SGD 1.00 deducted from listing owner per booking.'
         )
-        listing_owner_wallet.balance -= 1.00
-        db.session.commit()
+        Wallet.update_balance(listing_owner_wallet.id, -1.00)
 
       except Exception as e:
         return jsonify({'error': 'Failed to deduct commission from listing owner'}), 400
