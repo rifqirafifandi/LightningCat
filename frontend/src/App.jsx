@@ -248,15 +248,15 @@ const App = () => {
         <h5>Facility Capacity Details</h5>
         <p></p>
           ${swimmingAvailable
-                  ? `
-                <div>
-                  <h6>Swimming Facility</h6>
-                  <strong>Capacity:</strong> ${details.swimming.capacity}
-                  <strong>Status:</strong> ${details.swimming.closed ? 'Closed' : 'Open'}
-                </div>
-              `
-                  : ''
-                }
+            ? `
+      <div>
+        <h6>Swimming Facility</h6>
+        <strong>Capacity:</strong> ${details.swimming.capacity}
+        <strong>Status:</strong> ${lightningAlertHtml ? 'Closed (Lightning)' : (details.swimming.closed ? 'Closed' : 'Open')}
+      </div>
+    `
+            : ''
+          }
           <p></p>
           ${gymAvailable
                   ? `
@@ -505,23 +505,6 @@ const App = () => {
     });
 
   }, [map, recommendedPolygons]);
-
-  // Update bounds in areaState so that queries can use the current viewport.
-  // const updateBounds = (bounds) => {
-  //   const [lonMin, latMin, lonMax, latMax] = [
-  //     bounds[0][0],
-  //     bounds[0][1],
-  //     bounds[1][0],
-  //     bounds[1][1],
-  //   ];
-  //   setAreaState((prevState) => ({
-  //     ...prevState,
-  //     latRangeGte: latMin,
-  //     latRangeLte: latMax,
-  //     lonRangeGte: lonMin,
-  //     lonRangeLte: lonMax,
-  //   }));
-  // };
 
 // Fly the map to a specific coordinate (used by SearchInputBox)
 const onFlyTo = ({ lng, lat }) => {

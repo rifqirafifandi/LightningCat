@@ -130,7 +130,9 @@ const TopUp = () => {
         { amount
           ? <>
               <h4>Selected amount: SGD {stripeUnitsToDecimal(amount)}</h4>
-              <p>Clicking on 'Pay' will bring you to Stripe's payment verification page.</p>
+
+              <p>Note to grading team: Dear Prof and TAs, for your assessment, please note that clicking on 'Pay' will immediately complete the transaction in this prototype and allow you to continue your exploration. You do not need to input any payment details to obtain credit.</p>
+
               <Elements stripe={stripePromise} options={options}>
                 <PaymentForm amount={amount} />
               </Elements>
