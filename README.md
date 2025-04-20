@@ -7,6 +7,8 @@ Visit us at: https://web.chucklenuts.party/
 
 Video walkthrough of our UI: [click here](https://nusu-my.sharepoint.com/:v:/g/personal/e1101544_u_nus_edu/ERfSTjxn3lhIr1tT1G2CdfkBvEzNcxJP7wDyqqdm5-7txQ?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D&e=oD3zjY) NUS account is required.
 
+AI was used in the completion of this project to aid in code development, troubleshooting, debugging, bug fixing and grammar corrections. 
+
 Contents of our repo:
 1. api-sever - code for api-server [additional info here in api-server/README.md](api-server/README.md)
 2. architectureDiagram - drawio and png versions of our architecture diagram
