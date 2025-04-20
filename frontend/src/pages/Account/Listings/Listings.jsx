@@ -23,8 +23,8 @@ const Listings = () => {
   return (
     <>
       <div className={styles.headerContainer}>
-      <h1>My Listings</h1>
-      <Button onClick={() => navigate('create')}>Post listing</Button>
+        <h1>My Listings</h1>
+        <Button onClick={() => navigate('create')}>Post listing</Button>
       </div>
       {
         listings.length

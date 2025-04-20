@@ -22,11 +22,20 @@ const Wallet = () => {
 
   return (
     <>
-      <h1>My Wallet</h1>
+      <div className={styles.headerContainer}>
+        <h1>My Wallet</h1>
+        {
+          parseFloat(wallet?.balance) > 0
+          ? <button onClick={handleTopUpButtonClick} className={styles.stripeButton}><span>Top-up with</span></button>
+          : ''
+        }
+      </div>
       <h4>Credits</h4>
       {
         parseFloat(wallet?.balance) > 0
-        ? <p>Your balance is ${parseFloat(wallet?.balance).toFixed(2)}</p>
+        ? <>
+            <p>Your current wallet balance is ${parseFloat(wallet?.balance).toFixed(2)}.</p>
+          </>
         : <div className={styles.emptyStateContainer}>
             <img src={EmptyStateWalletImage} alt="No listings" className={styles.emptyStateImage} />
             <p>You have no credits in your wallet.</p>

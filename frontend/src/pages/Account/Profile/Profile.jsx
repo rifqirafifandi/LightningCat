@@ -62,13 +62,10 @@ const Profile = () => {
   }
 
   const handleFacilityPreferencesChange = (e) => {
-    const { id, checked } = e.target;
     setPreferences((prevPreferences) => {
       const nextPreferences = {
         activities: prevPreferences.activities,
-        facilities: checked
-          ? [...prevPreferences.facilities, id]
-          : prevPreferences.facilities.filter((facility) => facility !== id),
+        facilities: e.target.value ? [e.target.value] : []
       }
       return nextPreferences;
     });
@@ -179,21 +176,17 @@ const Profile = () => {
           </fieldset>
           
           <fieldset>
-            <legend>Preferred facilities</legend>
-            <div className={styles.fieldsetWrapper}>
+            <legend>Preferred location</legend>
+            <Form.Select aria-label="Select preferred location" onChange={handleFacilityPreferencesChange}>
+              <option>--- Select your favourite facility ---</option>
               {
                 facilityNames.map((facilityName) => (
-                  <Form.Check
-                    type="checkbox"
-                    id={facilityName}
-                    label={facilityName}
-                    key={facilityName}
-                    onChange={handleFacilityPreferencesChange}
-                    checked={preferences.facilities.includes(facilityName)}
-                  />
+                  <option value={facilityName} key={facilityName}>
+                    {facilityName}
+                  </option>
                 ))
               }
-            </div>
+            </Form.Select>
           </fieldset>
         </div>
         <Button variant="primary" type="submit" disabled={!dirty}>

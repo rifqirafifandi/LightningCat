@@ -5,6 +5,7 @@ from app.models.listing import Listing
 from app.models.booking import Booking
 from app.models.wallet import Wallet
 from app.models.transaction import Transaction
+from app.extensions import db
 
 @api_bp.route('/booking', methods=['OPTIONS'])
 def booking_options():
@@ -76,13 +77,13 @@ def create_booking():
     if hasattr(listing, 'bookings'):
       if len(listing.bookings) >= listing.capacity:
         listing.status = 'full'
-        listing.save()
+        db.session.commit()
   
-      # create transaction
+      # create transaction for booker
       transaction = Transaction.create_transaction(
         wallet_id=wallet.id,
         amount=listing.fee,
-        transaction_type='debit',
+        transaction_type='payment',
         status='completed',
         booking_id=new_booking.id,
         listing_id=listing.id
@@ -91,11 +92,30 @@ def create_booking():
         return jsonify({'error': 'Failed to create transaction'}), 400
       # Update wallet balance
       wallet.balance -= listing.fee
-      wallet.save()
+
       # Update booking
       new_booking.payment_status = 'paid'
       new_booking.booking_status = 'confirmed'
 
+      try:
+        # create tranasaction for listing owner
+        listing_owner_wallet = Wallet.get_wallet(listing.owner_id)
+        transaction = Transaction.create_transaction(
+          wallet_id=listing_owner_wallet.id,
+          amount=1.00, # constant commission fee
+          transaction_type='deduction',
+          status='completed',
+          booking_id=new_booking.id,
+          listing_id=listing.id,
+          description='Commission fee of SGD 1.00 deducted from listing owner per booking'
+        )
+        listing_owner_wallet.balance -= 1.00
+        db.session.commit()
+
+      except Exception as e:
+        return jsonify({'error': 'Failed to deduct commission from listing owner'}), 400
+
+      db.session.commit()
     return jsonify(new_booking.to_dict()), 201
 
   except Exception as e:

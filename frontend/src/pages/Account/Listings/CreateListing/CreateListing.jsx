@@ -213,7 +213,7 @@ const CreateListing = () => {
 
         <Form.Group className="mb-3" controlId="duration">
           <Form.Label>Duration (hours)</Form.Label>
-          <Form.Control type="number" step="1" placeholder="Enter fee" min={1} onChange={handleDurationChange} />
+          <Form.Control type="number" step="1" placeholder="Enter duration" min={1} onChange={handleDurationChange} />
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="capacity">
