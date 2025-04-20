@@ -1,5 +1,9 @@
 # LightningCat
 
+Lightning Cat is a cloud-based platform solving the common frustrations Singapore residents face when accessing public sporting facilities. By providing real-time information on facility status, weather conditions, and availability in one intuitive interface, we help users avoid the disappointment of unexpected closures and navigate the challenging booking process. Our dynamic map showcases all sporting venues across Singapore with up-to-date operational information, while also connecting users with potential activity partners to reduce underutilized bookings. Lightning Cat supports Singapore's vision for an active population by making sports participation more accessible, efficient, and enjoyable for everyone.
+
+Visit us at: https://web.chucklenuts.party/
+
 Contents of our repo:
 1. api-sever - code for api-server [api-server/README.md](api-server/README.md)
 2. architectureDiagram - drawio and png versions of our architecture diagram
