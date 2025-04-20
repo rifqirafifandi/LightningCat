@@ -24,6 +24,21 @@ https://api-open.data.gov.sg/v2/real-time/api/weather?api=lightning
 Facility Capacities are taken from activesg
 https://activesg.gov.sg/api/trpc/pass.getFacilityCapacities 
 
+## frontend Folder
+The frontend is developed using React.JS framework. The frontend directory consists of two subfolders, *public* and *src*. *Public* subfolder contains the files and the assets that will be delivered to the users when they enter the website from the browser, such as HTML file, image files, and compiled webpage script. *Src* subfolder contains the main frontend scripts that is used for developing the frontend. These scripts will be compiled and placed to the *public* subfolder. 
+
+In the main frontend directory itself there are environment files (used for map library tokens) and *package.json* file listing the dependencies required to run the frontend.
+
+### src Subfolder
+The *src* subfolder contains all the code that we developed for the frontend. There are further subfolders inside *src*, shown below with a brief description of each subfolder.
+- assets: images files for the webpage
+- components: scripts for webpage components such as navigation bar, search box, etc.
+- contexts: scripts for handling use cases such as login (authentication) and notifications
+- pages: scripts for routed webpages such as account details, booking history, wallet, etc.
+- queries: Function calls to the api-server
+- types: Enumeration of activity types and facility names
+
+In the main *src* subfolder, there are files to define the routing logic of the webpage (*routes.js*) and the entry point file for the webpage (*App.jsx*). 
 
 ## Installing frontend onto ec2 
 Frontend is installed into its own EC2 server in AWS 
