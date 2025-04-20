@@ -2,7 +2,7 @@ from app.extensions import db
 from datetime import datetime
 from sqlalchemy.dialects.postgresql import ENUM, JSONB
 
-TRANSACTION_TYPES = ['deposit', 'withdrawal', 'payment', 'refund', 'fee', 'commission']
+TRANSACTION_TYPES = ['deposit', 'withdrawal', 'payment', 'refund', 'fee', 'commission', 'deduction']
 TRANSACTION_STATUS = ['pending', 'completed', 'failed', 'reversed', 'canceled']
 
 class Transaction(db.Model):

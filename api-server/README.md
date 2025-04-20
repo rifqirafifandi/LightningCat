@@ -156,7 +156,7 @@ Reference: [app/models/transactions.py](app/models/transactions.py)
 | `booking_status` | `pending`, `confirmed`, `rejected`, `cancelled` |
 | `payment_status` | `unpaid`, `paid`, `refunded` |
 | `wallet_status` | `active`, `suspended`, `closed` |
-| `transaction_type` | `deposit`, `withdrawal`, `payment`, `refund`, `fee`, `commission` |
+| `transaction_type` | `deposit`, `withdrawal`, `payment`, `refund`, `fee`, `commission`, `deduction` |
 | `transaction_status` | `pending`, `completed`, `failed`, `reversed`, `canceled` |
 
 -----

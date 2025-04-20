@@ -79,7 +79,7 @@ def create_booking():
         listing.status = 'full'
         db.session.commit()
   
-      # create transaction
+      # create transaction for booker
       transaction = Transaction.create_transaction(
         wallet_id=wallet.id,
         amount=listing.fee,
@@ -96,6 +96,24 @@ def create_booking():
       # Update booking
       new_booking.payment_status = 'paid'
       new_booking.booking_status = 'confirmed'
+
+      try:
+        # create tranasaction for listing owner
+        listing_owner_wallet = Wallet.get_wallet(listing.owner_id)
+        transaction = Transaction.create_transaction(
+          wallet_id=listing_owner_wallet.id,
+          amount=1.00, # constant commission fee
+          transaction_type='deduction',
+          status='completed',
+          booking_id=new_booking.id,
+          listing_id=listing.id,
+          description='Commission fee of SGD 1.00 deducted from listing owner per booking'
+        )
+        listing_owner_wallet.balance -= 1.00
+        db.session.commit()
+
+      except Exception as e:
+        return jsonify({'error': 'Failed to deduct commission from listing owner'}), 400
 
       db.session.commit()
     return jsonify(new_booking.to_dict()), 201
