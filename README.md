@@ -1,10 +1,10 @@
 # LightningCat
 
 Contents of our repo:
-1. api-sever - code for api-server
+1. api-sever - code for api-server [api-server/README.md](api-server/README.md)
 2. architectureDiagram - drawio and png versions of our architecture diagram
 3. dataAndDataCleanup - various data files used 
-4. frontend - code for frontend in react (Installation instructions below)
+4. frontend - code for frontend in react (Installation instructions below) [frontend/README.md](frontend/README.md)
 5. lambdaFunctions - lambda functions to poll government APIs (Installation instructions below)
 6. recommender - code for the recommender service.
 7. training-pipeline - code for ML features/models preperation.
