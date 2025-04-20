@@ -177,7 +177,11 @@ const Profile = () => {
           
           <fieldset>
             <legend>Preferred location</legend>
-            <Form.Select aria-label="Select preferred location" onChange={handleFacilityPreferencesChange}>
+            <Form.Select 
+              aria-label="Select preferred location" 
+              onChange={handleFacilityPreferencesChange}
+              value={preferences.facilities.length > 0 ? preferences.facilities[0] : ''}
+            >
               <option>--- Select your favourite facility ---</option>
               {
                 facilityNames.map((facilityName) => (
