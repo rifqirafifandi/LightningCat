@@ -1,70 +1,142 @@
-# Getting Started with Create React App
+# LightningCat Frontend React SPA
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+## Getting started
 
-In the project directory, you can run:
+Install dependencies:
+```sh
+npm i
+```
 
-### `npm start`
+Run local dev server:
+```sh
+npm start
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Build
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```sh
+npm run build
+```
 
-### `npm test`
+## Folder Structure
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```
+├── root/
+│   ├── build/
+│   ├── public/
+│   │   ├── ...
+│   ├── src/
+│   │   ├── assets/
+│   │   │   └── data/
+│   │   │   └── images/
+│   │   └── components/
+│   │       ├── ...
+│   │   └── contexts/
+│   │       ├── ...
+│   │   └── pages/
+│   │   │   └── Account/
+│   │   │   │   └── Bookings/
+│   │   │   │   └── Listings/
+│   │   │   │   │   └── CreateListing/
+│   │   │   │   └── Profile/
+│   │   │   │   └── Wallet/
+│   │   │   │   │   └── TopUp/
+│   │   │   │   │   └── TopUpComplete/
+│   │   │   └── 404.jsx
+│   │   │   └── Login.jsx
+│   │   │   └── Logout.jsx
+│   │   └── types/
+│   │       ├── ...
+│   │   └── App.jsx
+│   │   └── index.jsx
+│   │   └── routes.js
+```
 
-### `npm run build`
+#### [index.jsx](src/index.jsx)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Entry point for entire application and injection into DOM. Providers are wrapped in the following sequence:
+```jsx
+<React.StrictMode>
+  <ApolloProvider client={client}>
+    <AuthProvider>
+      <AppDataProvider>
+        <NotificationProvider>
+          <UserDataProvider>
+            <RouterProvider router={router} />
+          </UserDataProvider>
+        </NotificationProvider>
+      </AppDataProvider>
+    </AuthProvider>
+  </ApolloProvider>
+</React.StrictMode>
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+#### [routes.js](src/routes.js)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Frontend routing is implemented using `react-router-dom` and our layout tree is registered using `createBrowserRouter`.
 
-### `npm run eject`
+#### [App.jsx](src/App.jsx)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+The meat of the application. The core of the application that bootstraps MapBox, fetches data from our backend and third-praty API to draw map layers and polygons. This feature is made available pre-login so that unauthenticated users can enjoy its features.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```jsx
+// Step 1: Fetch data
+useEffect(() => {
+    Promise.all([
+      fetch('https://api.chucklenuts.party/facilities'),
+      fetch('/MasterPlan2019PlanningAreaBoundaryNoSea.processed.geojson'),
+      fetch('/SportSGSportFacilitiesGEOJSON.geojson'),
+      fetch('https://cc5224-bucket1.s3.ap-southeast-1.amazonaws.com/apidata/weather2h.json'),
+      fetch('https://cc5224-bucket1.s3.ap-southeast-1.amazonaws.com/apidata/lightning10min.json'),
+    ])
+      .then((responses) => Promise.all(responses.map((r) => r.json())))
+      // ...
+})
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+// Step 2: Initialise MapBox
+useEffect(() => {
+  const mapInstance = new mapboxgl.Map({
+    container: mapContainerRef.current,
+    style: 'mapbox://styles/mapbox/streets-v11',
+    center: [103.8198, 1.3521],
+    zoom: 11,
+  });
+  // ...
+})
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+// Step 3: Add layers
+useEffect(() => {
+  if (!map) return;
+  map.on('load', () => {
+    if (townsGeoJson && !map.getSource('towns')) {
+      map.addSource('towns', { type: 'geojson', data: townsGeoJson });
+    }
+  })
+  // town layer, sports facility layer, lightning status layer
+})
+```
 
-## Learn More
+#### [contexts](src/contexts/)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Context providers and hooks are implemented in this folder, separating data boundaries by domain:
+- [Global application data](src/contexts/appData.jsx)
+- [Global notification service/data](src/contexts/notification.jsx)
+- [Authentication data](src/contexts/auth.jsx)
+- [User data](src/contexts/userData.jsx)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+#### Frontend Structure
 
-### Code Splitting
+The application is conceptually organised by pages, with reusable components in [src/components](src/components/). Layout is composited by the [AppLayout](src/components/AppLayout.jsx) which structures the layout into 3 broad sections:
+1. Navbar
+2. Content body
+3. Toast notifications
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```jsx
+<>
+  <Navbar />
+  <Outlet />
+  <ToastContainer />
+</>
+```
