@@ -4,3 +4,5 @@ build/
 frontend-server-key.pem
 #build files 
 dist/ 
+lambda_function_capacities
+lambda_function_s3
