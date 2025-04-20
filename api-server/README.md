@@ -170,13 +170,38 @@ sudo apt install python3-venv
 python3 -m venv api-server-venv
 # activate venv
 source api-server-venv/bin/activate
-# install Flask
+# install Flask and other dependencies
 pip install flask uwsgi authlib requests flask-session redis
 ```
 
-## On the cloud
+### Database scripts
 
-### Components
+Use the initialisation script to create tables and enums:
+```sh
+sh db/init.sh
+```
+
+For resetting the DB:
+```sh
+sh db/reset.sh
+```
+
+### Redis session management
+
+Run redis on default configuration, such that your REDIS_URL is at `redis://localhost:6379/0`.
+
+### UWSGI
+
+The primary purpose of UWSGI is to enable thread pooling for our Flask application and expose a single UNIX socket to the reverse-proxy on Nginx. For our application that has a maximum of 200 concurrent users, this configuration is sufficient:
+```sh
+processes = 4
+threads = 2
+socket = /opt/api-server/api-server.sock
+```
+
+Read [uwsgi-config.ini](/uwsgi-config.ini) for the rest of the configuration.
+
+### Configuring systemd services
 
 - Flask app (Python3.9) [main.py](main.py)
 - Redis
@@ -184,15 +209,66 @@ pip install flask uwsgi authlib requests flask-session redis
 - uWSGI
 - nginx (reverse-proxy)
 
-All components have been configured as systemd services that run on startup.
+All components have been configured as systemd services that run on server startup.
 
 Config locations on the server (copied here for reference):
 - [/etc/systemd/system/api-server.service](systemd-config/api-server.service)
 - [/etc/nginx/nginx.conf](systemd-config/nginx.conf)
-- [/etc/redis/redis.conf](systemd-config/redis.conf)
 
 ## Logging
 
 ```sh
 tail -f /opt/api-server/uwsgi.log
+```
+
+## Project structure
+
+```
+├── api-server/
+│   ├── app/
+│   │   ├── api/
+│   │   │   ├── booking.py
+│   │   │   ├── facility.py
+│   │   │   ├── listing.py
+│   │   │   ├── payment.py
+│   │   │   ├── profile.py
+│   │   │   ├── recommender.py
+│   │   │   ├── routes.py
+│   │   │   ├── transaction.py
+│   │   │   ├── wallet.py
+│   │   ├── auth/
+│   │   │   ├── providers/
+│   │   │   ├── cognito.py
+│   │   │   ├── google.py
+│   │   ├── models/
+│   │   │   ├── booking.py
+│   │   │   ├── listing.py
+│   │   │   ├── transaction.py
+│   │   │   ├── user.py
+│   │   │   ├── wallet.py
+│   │   └── __init__.py
+│   │   └── config.py
+│   │   └── extensions.py
+```
+
+### [__init__.py](app/__init__.py)
+
+This is where the Flask application is Bootstrapped. Take note of the oauth registration for both Cognito and Google providers as we are using the [authlib library](https://authlib.org/). Endpoints are configured in [app/api/__init__.py](app/api/__init__.py) and registered here blueprints as well:
+
+```py
+# Register blueprints
+app.register_blueprint(auth_bp)
+app.register_blueprint(cognito_bp)
+app.register_blueprint(google_bp)
+app.register_blueprint(api_bp)
+```
+
+### [config.py](app/config.py)
+
+The entire application's configuration sits in this file. Wherever `os.environ` is used, make sure that the env var is exported in the [systemd service](systemd-config/api-server.service) running the application.
+
+For OAuth redirect URLs, they have to be configured on the respective providers' console for them to work here:
+
+```py
+COGNITO_REDIRECT_URI = f"{BASE_URL}/auth/cognito/callback"
 ```

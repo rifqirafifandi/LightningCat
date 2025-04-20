@@ -4,7 +4,7 @@ from datetime import timedelta
 class Config:
   SECRET_KEY = os.urandom(24)
 
-  # Strike Secrets
+  # Stripe Secrets
   STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
   STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET')
   
