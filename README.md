@@ -1,14 +1,15 @@
 # LightningCat
 
 Contents of our repo:
-1. frontend - code for frontend in react (Installation instructions below)
-2. api-sever - code for api-server
-3. dataAndDataCleanup - data files 
-4. lambda_function_s3 and lambda_function_capacities - lambda functions to poll government APIs (Installation instructions below)  
-5. training-pipeline - code for ML features/models preperation.
+1. api-sever - code for api-server
+2. architectureDiagram - drawio and png versions of our architecture diagram
+3. dataAndDataCleanup - various data files used 
+4. frontend - code for frontend in react (Installation instructions below)
+5. lambdaFunctions - lambda functions to poll government APIs (Installation instructions below)
 6. recommender - code for the recommender service.
+7. training-pipeline - code for ML features/models preperation.
 
-## Data files
+## dataAndDataCleanup - various data files used 
 - contains various data samples, raw datasets, their associated data processing scripts and the post processed output utilised in our webapp. 
 
 The town boundaries and polygons were taken from data.gov.sg 
@@ -26,7 +27,7 @@ https://api-open.data.gov.sg/v2/real-time/api/weather?api=lightning
 Facility Capacities are taken from activesg
 https://activesg.gov.sg/api/trpc/pass.getFacilityCapacities 
 
-## frontend Folder
+## frontend - code for frontend in react
 The frontend is developed using React.JS framework. The frontend directory consists of two subfolders, *public* and *src*. *Public* subfolder contains the files and the assets that will be delivered to the users when they enter the website from the browser, such as HTML file, image files, and compiled webpage script. *Src* subfolder contains the main frontend scripts that is used for developing the frontend. These scripts will be compiled and placed to the *public* subfolder. 
 
 In the main frontend directory itself there are environment files (used for map library tokens) and *package.json* file listing the dependencies required to run the frontend.
