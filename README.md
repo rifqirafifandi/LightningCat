@@ -8,16 +8,18 @@ Visit us at: https://web.chucklenuts.party/
 Video walkthrough of our UI: [click here](https://nusu-my.sharepoint.com/:v:/g/personal/e1101544_u_nus_edu/ERfSTjxn3lhIr1tT1G2CdfkBvEzNcxJP7wDyqqdm5-7txQ?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D&e=oD3zjY) NUS account is required.
 
 Contents of our repo:
-1. api-sever - code for api-server [api-server/README.md](api-server/README.md)
+1. api-sever - code for api-server [additional info here in api-server/README.md](api-server/README.md)
 2. architectureDiagram - drawio and png versions of our architecture diagram
 3. dataAndDataCleanup - various data files used 
-4. frontend - code for frontend in react (Installation instructions below) [frontend/README.md](frontend/README.md)
+4. frontend - code for frontend in react (Installation instructions below) [additional info here in frontend/README.md](frontend/README.md)
 5. lambdaFunctions - lambda functions to poll government APIs (Installation instructions below)
 6. recommender - code for the recommender service.
 7. training-pipeline - code for ML features/models preperation.
+8. project logo 
+9. user-flow diagram
 
 ## dataAndDataCleanup - various data files used 
-- contains various data samples, raw datasets, their associated data processing scripts and the post processed output utilised in our webapp. 
+This folder contains various data samples, raw datasets, their associated data processing scripts and the post processed output utilised in our webapp. 
 
 The town boundaries and polygons were taken from data.gov.sg 
 https://data.gov.sg/collections/2104/view
